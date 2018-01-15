@@ -1,0 +1,35 @@
+{% set version = "2.0.420" %}
+{% set sha256 = "0d28932e363e80b4519b04a512df899189c612a4c097130219d6e0ebbfde2a34" %}
+
+package:
+  name: libmaus2
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/gt1/libmaus2
+  license: Various
+  summary: Collection of data structures and algorithms.
+
+build:
+  number: 0
+
+source:
+  url: https://github.com/gt1/libmaus2/archive/{{ version }}-release-20171116172420.tar.gz
+  fn: libmaus2-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+features:
+  - irods
+  
+requirements:
+  build:
+    - boost
+    - nettle
+    - staden_io_lib
+    - zlib
+
+  run:
+    - boost
+    - nettle
+    - staden_io_lib
+    - zlib

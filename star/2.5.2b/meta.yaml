@@ -1,0 +1,24 @@
+{% set version = "2.5.2b" %}
+{% set sha256 = "f88b992740807ab10f2ac3b83781bf56951617f210001fab523f6480d0b546d9" %}
+
+package:
+  name: star
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/alexdobin/STAR
+  license: GPLv3
+  summary: Spliced Transcripts Alignment to a Reference.
+
+source:
+  url: https://github.com/alexdobin/STAR/archive/{{ version }}.tar.gz
+  fn: star-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc >=4.7
+    - zlib
+
+  run:
+    - zlib

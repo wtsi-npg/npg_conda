@@ -1,0 +1,16 @@
+{% set version = "3.3" %}
+{% set sha256 = "46942627d5d0ca11720fec18d81fc38f7ef837ea4197c1f630e71ce0d470b11e" %}
+
+package:
+  name: nettle
+  version: "{{ version }}"
+
+about:
+  home: https://www.lysator.liu.se/~nisse/nettle/
+  license: GPL2 
+  summary: A low-level cryptographic library
+
+source:
+  url: https://ftp.gnu.org/gnu/nettle/nettle-{{ version }}.tar.gz
+  fn: nettle-{{ version }}.tar.gz
+  sha256: {{ sha256 }}

@@ -1,0 +1,16 @@
+{% set version = "0.8.2" %}
+{% set sha256 = "9def7ad603153bc22ca4ed54a607075ccdf513b0e1a8deeaff15d3cdb5563711" %}
+
+package:
+  name: salmon
+  version: "{{ version }}"
+
+about:
+  home: https://combine-lab.github.io/salmon/
+  license: GPL3
+  summary: Transcript-level quantification from RNA-seq reads using lightweight alignments.
+
+source:
+  url: https://github.com/COMBINE-lab/salmon/releases/download/v{{ version }}/Salmon-{{ version }}_linux_x86_64.tar.gz
+  fn: salmon-{{ version }}.tar.gz
+  sha256: {{ sha256 }}

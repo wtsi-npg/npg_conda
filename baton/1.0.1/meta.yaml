@@ -1,0 +1,29 @@
+{% set version = "1.0.1" %}
+{% set sha256 = "db34f008e3f775b8a72f01a3bf8cca70c81d8f927992424395585b7f9b23f2a8" %}
+
+package:
+  name: baton
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/wtsi-npg/baton
+  license: GPL2
+  summary: Client programs and API for use with iRODS (Integrated Rule-Oriented Data System).
+
+build:
+  number: 0
+  
+source:
+  url: https://github.com/wtsi-npg/baton/releases/download/{{ version }}/baton-{{ version }}.tar.gz
+  fn: baton-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+features:
+  - irods
+
+requirements:
+  build:
+    - jansson
+
+  run:
+    - jansson

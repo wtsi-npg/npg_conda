@@ -1,0 +1,29 @@
+{% set version = "2.0.79" %}
+{% set sha256 = "1ff1a8afd8fb9f738c4d293e75fb22202db465936f627ea74bc7eff80a4a1e61" %}
+
+package:
+  name: biobambam2
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/gt1/biobambam2
+  license: GPLv3
+  summary: Tools for early stage alignment file processing.
+
+build:
+  number: 0
+    
+source:
+  url: https://github.com/gt1/biobambam2/archive/{{ version }}-release-20171006114010.tar.gz
+  fn: biobambam2-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - libmaus2
+    - zlib
+
+  run:
+    - libmaus2
+    - zlib
+
