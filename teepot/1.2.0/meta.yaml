@@ -1,0 +1,20 @@
+{% set version = "1.2.0" %}
+{% set sha256 = "1ab91cc639241b91b58c283b14152d51af7415938d1fc6f723a9eca1fc0535fc" %}
+
+package:
+  name: teepot
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/wtsi-npg/teepot
+  license: GPLv3
+  summary: A spillable pipe buffer.
+
+build:
+  number: 0
+  
+source:
+  url: https://github.com/wtsi-npg/teepot/releases/download/{{ version }}/teepot-1.2.0.tar.gz
+  fn: teepot-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+

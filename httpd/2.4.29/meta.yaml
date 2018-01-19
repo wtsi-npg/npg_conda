@@ -1,0 +1,32 @@
+{% set version = "2.4.29" %}
+{% set sha256 = "948e4a11278a5954698b880b30f401b1e9ab743713ee2c7280a54dd4ddd87085" %}
+
+package:
+  name: httpd
+  version: "{{ version }}"
+
+about:
+  home: https://httpd.apache.org/
+  license: ASL
+  summary: Apache HTTP Server
+
+source:
+  url: https://mirrors.ukfast.co.uk/sites/ftp.apache.org/httpd/httpd-{{ version }}.tar.gz
+  fn: httpd-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - apr
+    - apr-util
+    - openssl
+    - gcc_linux-64 >=5.4
+    - libxml2
+    - pcre
+
+  run:
+    - apr
+    - apr-util
+    - libxml2
+    - openssl
+    - pcre

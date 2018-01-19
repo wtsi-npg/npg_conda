@@ -20,6 +20,7 @@ source:
 
 requirements:
   build:
+    - irods-dev
     - libmaus2
     - zlib
 

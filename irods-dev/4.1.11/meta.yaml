@@ -1,0 +1,16 @@
+{% set version = "4.1.11" %}
+{% set sha256 = "991e5a45857785490af59b30707cc6fa2d97ff47a7b799c1f2b1ec390602dae2" %}
+
+package:
+  name: irods-dev
+  version: "{{ version }}"
+
+about:
+  home: https://irods.org
+  license: BSD
+  summary: Open Source Data Management Software.
+
+source:
+  url: ftp://ftp.renci.org/pub/irods/releases/{{ version }}/ubuntu12/irods-dev-{{ version }}-ubuntu12-x86_64.deb
+  fn: irods-dev.deb
+  sha256: {{ sha256 }}

@@ -1,0 +1,25 @@
+{% set version = "1.72" %}
+{% set sha256 = "c755eef60023d842ab959c845155c3264e512ad4775ede0f84f0e95082343397" %}
+
+package:
+  name: picard
+  version: "{{ version }}"
+
+about:
+  home: https://broadinstitute.github.io/picard/
+  license: MIT
+  summary: A set of command line tools (in Java) for manipulating high-throughput sequencing (HTS) data and formats such as SAM/BAM/CRAM and VCF.
+
+build:
+  number: 0
+  
+source:
+  url: https://sourceforge.net/projects/picard/files/picard-tools/{{ version }}/picard-tools-{{ version }}.zip/download
+  fn: picard-tools-{{ version}}.zip
+  sha256: {{ sha256 }}
+
+# requirements:
+#   build:
+
+#   run:
+

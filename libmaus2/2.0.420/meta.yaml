@@ -23,13 +23,12 @@ features:
   
 requirements:
   build:
-    - boost
+    - irods-dev
     - nettle
     - staden_io_lib
     - zlib
 
   run:
-    - boost
     - nettle
     - staden_io_lib
     - zlib

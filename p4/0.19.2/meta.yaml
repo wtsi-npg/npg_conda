@@ -1,0 +1,31 @@
+{% set version = "0.19.2" %}
+
+package:
+  name: p4
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/wtsi-npg/p4
+  license: Unknown
+  summary: Process and Pipe Pipeline Panacea.
+
+build:
+  number: 0
+  
+source:
+  git_url: https://github.com/wtsi-npg/p4.git
+  git_rev: {{ version }}
+
+requirements:
+  build:
+    - gcc_linux-64 >=5.4
+    - perl ==5.22.2.1
+    - perl-app-cpanminus
+    - perl-local-lib
+    - perl-module-build
+
+
+  run:
+    - perl ==5.22.2.1
+    - perl-local-lib
+

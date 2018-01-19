@@ -30,5 +30,6 @@ requirements:
   build:
     - bzip2 # provides libbz2
     - curl
-    - xz    # provides liblzma
+    - irods-dev # for plugins
+    - xz # provides liblzma
     - zlib

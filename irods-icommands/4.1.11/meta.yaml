@@ -1,0 +1,16 @@
+{% set version = "4.1.11" %}
+{% set sha256 = "851bf73abee49d460b96a03f3d81c66685682fc86d9d59e3e7da5dbed43cf779" %}
+
+package:
+  name: irods-icommands
+  version: "{{ version }}"
+
+about:
+  home: https://irods.org
+  license: BSD
+  summary: Open Source Data Management Software.
+
+source:
+  url: ftp://ftp.renci.org/pub/irods/releases/{{ version }}/ubuntu12/irods-icommands-{{ version }}-ubuntu12-x86_64.deb
+  fn: irods-icommands.deb
+  sha256: {{ sha256 }}

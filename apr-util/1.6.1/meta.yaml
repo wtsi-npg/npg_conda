@@ -1,0 +1,26 @@
+{% set version = "1.6.1" %}
+{% set sha256 = "" %}
+
+package:
+  name: apr-util
+  version: "{{ version }}"
+
+about:
+  home: https://apr.apache.org/
+  license: ASL
+  summary: Apache Portable Runtime utility library.
+
+source:
+  url: https://mirrors.ukfast.co.uk/sites/ftp.apache.org/apr/apr-util-{{ version }}.tar.gz
+  fn: apr-util-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - apr >=1.6.3
+    - expat
+    - gcc_linux-64 >=5.4
+
+  run:
+    - apr >=1.6.3
+    - expat

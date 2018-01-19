@@ -1,0 +1,27 @@
+{% set version = "1.13.0" %}
+
+package:
+  name: bam_stats
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/ICGC-TCGA-PanCancer/PCAP-core
+  license: GPLv2
+  summary: "Legacy, see cancerit/PCAP-core: NGS reference implementations and helper code for the IGCG/TCGA Pan-Cancer Analysis Project."
+
+build:
+  number: 0
+  
+source:
+  git_url: https://github.com/ICGC-TCGA-PanCancer/PCAP-core.git
+  git_rev: b8201e219ac7c7a7d968a23ea836b708a133deb8
+
+features:
+  - irods
+
+requirements:
+  build:
+    - htslib
+
+  run:
+    - htslib

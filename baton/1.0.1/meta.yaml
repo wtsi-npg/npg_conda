@@ -23,6 +23,7 @@ features:
 
 requirements:
   build:
+    - irods-dev
     - jansson
 
   run:

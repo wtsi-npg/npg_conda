@@ -1,0 +1,22 @@
+{% set version = "1.0.1_dkj_fopen_with_mm" %}
+
+package:
+  name: bowtie
+  version: "{{ version }}"
+
+about:
+  home: http://bowtie-bio.sourceforge.net/index.shtml
+  license: Perl Artistic Licence
+  summary: An ultrafast memory-efficient short read aligner.
+
+build:
+  number: 0
+  
+source:
+  git_url: https://github.com/dkj/bowtie.git
+  git_rev: f65b0e7b527d6dfb93f9e618e4e8d206b284bd90
+
+# requirements:
+#   build:
+
+#   run:

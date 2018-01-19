@@ -6,7 +6,8 @@ tar xvfz bcl2fastq2-v2.20.0.422-Source.tar.gz
 mkdir bcl2fastq/build
 cd bcl2fastq/build
 
-export CFLAGS="-I$PREFIX/include -B/usr/lib/x86_64-linux-gnu"
+export CPPFLAGS="-I$PREFIX/include"
+export CFLAGS="-B/usr/lib/x86_64-linux-gnu"
 export LDFLAGS="-L$PREFIX/lib"
 
 n=`expr $CPU_COUNT / 4 \| 1`

@@ -1,0 +1,30 @@
+{% set version = "1.2.3" %}
+
+package:
+  name: tears
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/whitwham/tears
+  license: GPLv3
+  summary:  Stream files to and from iRODS.
+
+build:
+  number: 0
+
+source:
+  git_url: https://github.com/whitwham/tears.git
+  git_rev: v{{ version }}
+
+features:
+  - irods
+
+requirements:
+  build:
+    - htslib
+    - irods-dev
+    - jansson
+
+  run:
+    - htslib
+    - jansson
