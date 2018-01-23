@@ -1,0 +1,16 @@
+{% set version = "6.12.2" %}
+{% set sha256 = "1bb1d3a033d69ccfa4051ffa79bedad9bcfd43bc0d4b2b6678c3e53883bfd6eb" %}
+
+package:
+  name: nodejs
+  version: "{{ version }}"
+
+about:
+  home: https://nodejs.org
+  license: MIT
+  summary: Node.js is a JavaScript runtime built on Chrome's V8 JavaScript engine.
+
+source:
+  url: https://nodejs.org/dist/v{{ version }}/node-v{{ version }}.tar.gz
+  fn: node-v{{ version }}-linux-x64.tar.gz
+  sha256: {{ sha256 }}
