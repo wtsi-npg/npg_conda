@@ -10,6 +10,9 @@ about:
   license: BSD
   summary: DNA sequence assembly, editing and analysis tools.
 
+build:
+  number: 0
+
 source:
   url: https://sourceforge.net/projects/staden/files/io_lib/{{ version }}/io_lib-{{ version }}.tar.gz/download
   fn: io_lib-{{ version }}.tar.gz
@@ -19,6 +22,7 @@ requirements:
   build:
     - bzip2
     - curl
+    - gcc_npg >=7.3
     - xz
     - zlib
 
@@ -27,3 +31,9 @@ requirements:
     - curl
     - xz
     - zlib
+
+test:
+  commands:
+    - test -f ${PREFIX}/include/io_lib/io_lib_config.h
+    - test -f ${PREFIX}/lib/libstaden-read.a
+    - test -h ${PREFIX}/lib/libstaden-read.so

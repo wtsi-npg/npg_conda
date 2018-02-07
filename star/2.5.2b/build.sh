@@ -2,9 +2,11 @@
 
 set -e
 
+n=`expr $CPU_COUNT / 4 \| 1`
+
 cd source
 
-make STAR STARlong
+make -j $n STAR STARlong
 make install
 
 mkdir -p "$PREFIX/bin"

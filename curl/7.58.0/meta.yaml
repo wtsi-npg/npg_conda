@@ -1,0 +1,34 @@
+{% set version = "7.58.0" %}
+{% set sha256 = "1cb081f97807c01e3ed747b6e1c9fee7a01cb10048f1cd0b5f56cfe0209de731" %}
+
+package:
+  name: curl
+  version: "{{ version }}"
+
+about:
+  home: http://curl.haxx.se/
+  license: MIT
+  summary: Command line tool and library for transferring data with URLs.
+
+build:
+  number: 0
+
+source:
+  - url: http://curl.haxx.se/download/curl-{{ version }}.tar.bz2
+    fn: 
+    sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+    - zlib
+
+  run:
+    - zlib
+
+test:
+  commands:
+    - curl -h
+    - test -f ${PREFIX}/include/curl/curl.h
+    - test -f ${PREFIX}/lib/libcurl.a
+    - test -h ${PREFIX}/lib/libcurl.so

@@ -1,0 +1,36 @@
+{% set version = "1.8.20" %}
+{% set short_version = "1.8" %}
+{% set sha256 = "a4f2db7e0a078aa324f64e0216a80731731f73025367fa94d158c9b1d3fbdf6f" %}
+
+package:
+  name: hdf5
+  version: "{{ version }}"
+
+about:
+  home: https://support.hdfgroup.org/HDF5/
+  license: BSD
+  summary: A data model, library, and file format for storing and managing data.
+
+build:
+  number: 0
+  string: threadsafe_{{ PKG_BUILDNUM }}
+  
+source:
+  url: https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-{{ short_version }}/hdf5-{{ version }}/src/hdf5-{{ version }}.tar.bz2
+  fn: hdf5-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+    - zlib
+
+  run:
+    - zlib
+
+test:
+  commands:
+    - h5dump -h
+    - test -f ${PREFIX}/include/hdf5.h
+    - test -f ${PREFIX}/lib/libhdf5.a
+    - test -h ${PREFIX}/lib/libhdf5.so

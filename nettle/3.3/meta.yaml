@@ -10,7 +10,20 @@ about:
   license: GPL2 
   summary: A low-level cryptographic library
 
+build:
+  number: 0
+
 source:
   url: https://ftp.gnu.org/gnu/nettle/nettle-{{ version }}.tar.gz
   fn: nettle-{{ version }}.tar.gz
   sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+
+test:
+  commands:
+    - test -f ${PREFIX}/include/nettle/sha1.h
+    - test -f ${PREFIX}/lib/libnettle.a
+    - test -h ${PREFIX}/lib/libnettle.so

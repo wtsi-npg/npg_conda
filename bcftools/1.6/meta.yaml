@@ -20,4 +20,8 @@ source:
 
 requirements:
   build:
-    - htslib >=1.6
+    - gcc_npg >=7.3
+    - htslib =={{ version }}
+
+  run:
+    - htslib =={{ version }}

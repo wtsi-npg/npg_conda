@@ -1,0 +1,53 @@
+From 2af850f732400a8bf3728ce1104221804f8908f9 Mon Sep 17 00:00:00 2001
+From: Keith James <kdj@sanger.ac.uk>
+Date: Thu, 25 Jan 2018 10:24:09 +0000
+Subject: [PATCH 1/2] Fix building with system htslib.
+
+---
+ Makefile |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 3cab7a6..11eb580 100644
+--- a/Makefile
++++ b/Makefile
+@@ -52,7 +52,9 @@ ifeq ($(HTS), install)
+     HTS_INCLUDE=-I./htslib
+ else
+     # Use system-wide htslib
+-    HTS_LIB=-lhts
++	HTS_LIB=
++	HTS_INCLUDE=
++    LIBS += -lhts
+ endif
+ 
+ # Include the header-only fast5 library
+-- 
+1.7.9.5
+
+
+From 786e4576d2d8082f9804a3b655e149314d733dd3 Mon Sep 17 00:00:00 2001
+From: Keith James <kdj@sanger.ac.uk>
+Date: Thu, 25 Jan 2018 10:24:51 +0000
+Subject: [PATCH 2/2] Fixed omp linking.
+
+---
+ Makefile |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 11eb580..49d7627 100644
+--- a/Makefile
++++ b/Makefile
+@@ -8,7 +8,7 @@ SUBDIRS := src src/hmm src/thirdparty src/thirdparty/scrappie src/common src/ali
+ #
+ 
+ #Basic flags every build needs
+-LIBS=-lz
++LIBS=-lz -lgomp
+ CXXFLAGS ?= -g -O3
+ CXXFLAGS += -std=c++11 -fopenmp -fsigned-char
+ CFLAGS ?= -O3 -std=c99
+-- 
+1.7.9.5
+

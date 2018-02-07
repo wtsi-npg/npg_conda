@@ -1,0 +1,29 @@
+{% set version = "1.2.11" %}
+{% set sha256 = "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1" %}
+
+package:
+  name: zlib
+  version: "{{ version }}"
+
+about:
+  home: http://zlib.net/
+  license: zlib
+  summary: A Massively Spiffy Yet Delicately Unobtrusive Compression Library.
+
+build:
+  number: 0
+  
+source:
+  url: https://sourceforge.mirrorservice.org/l/li/libpng/zlib/{{ version }}/zlib-{{ version }}.tar.gz
+  fn: zlib-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+
+test:
+  commands:
+    - test -f ${PREFIX}/include/zlib.h
+    - test -f ${PREFIX}/lib/libz.a
+    - test -h ${PREFIX}/lib/libz.so

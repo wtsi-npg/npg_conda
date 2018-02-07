@@ -17,4 +17,10 @@ source:
 
 requirements:
   build:
-    - gcc_linux-64 >=5.4
+    - gcc_npg >=7.3
+
+test:
+  commands:
+    - test -f ${PREFIX}/include/apr-1/apr.h
+    - test -f ${PREFIX}/lib/libapr-1.a
+    - test -h ${PREFIX}/lib/libapr-1.so.0

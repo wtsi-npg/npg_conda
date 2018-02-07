@@ -1,0 +1,28 @@
+{% set version = "1.7" %}
+{% set sha256 = "aaa" %}
+
+package:
+  name: samtools
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/samtools/samtools
+  license: MIT
+  summary: C library for high-throughput sequencing data formats.
+
+source:
+  url: https://github.com/samtools/samtools/releases/download/{{ version }}/samtools-{{ version }}.tar.bz2
+  fn: samtools-{{ version }}.tar.bz2
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+    - htslib =={{ version }}
+
+  run:
+    - htslib =={{ version }}
+
+test:
+  commands:
+    - echo '@HD VN:1.0 SO:coordinate' | samtools view

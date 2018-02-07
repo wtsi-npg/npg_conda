@@ -22,3 +22,7 @@ requirements:
 
   run:
     - zlib
+
+test:
+  commands:
+    - test -x ${PREFIX}/bin/bwa

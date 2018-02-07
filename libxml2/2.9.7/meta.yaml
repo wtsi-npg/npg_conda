@@ -1,0 +1,35 @@
+{% set version = "2.9.7" %}
+{% set sha256 = "f63c5e7d30362ed28b38bfa1ac6313f9a80230720b7fb6c80575eeab3ff5900c" %}
+
+package:
+  name: libxml2
+  version: "{{ version }}"
+
+about:
+  home: http://www.xmlsoft.org/
+  license: MIT
+  summary: "XML C parser and toolkit developed for the Gnome project."
+
+build:
+  number: 0
+  
+source:
+  url: ftp://xmlsoft.org/libxml2/libxml2-{{ version }}.tar.gz
+  fn: libxml2-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+    - xz
+    - zlib
+
+  run:
+    - xz
+    - zlib
+    
+test:
+  commands:
+    - test -f ${PREFIX}/include/libxml2/libxml/uri.h
+    - test -f ${PREFIX}/lib/libxml2.a
+    - test -h ${PREFIX}/lib/libxml2.so

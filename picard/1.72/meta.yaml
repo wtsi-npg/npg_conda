@@ -17,9 +17,3 @@ source:
   url: https://sourceforge.net/projects/picard/files/picard-tools/{{ version }}/picard-tools-{{ version }}.zip/download
   fn: picard-tools-{{ version}}.zip
   sha256: {{ sha256 }}
-
-# requirements:
-#   build:
-
-#   run:
-

@@ -23,8 +23,14 @@ features:
 
 requirements:
   build:
+    - gcc_npg >=7.3
     - irods-dev
     - jansson
 
   run:
     - jansson
+    - libgcc_npg >=7.3
+
+test:
+  commands:
+    - baton-list --version

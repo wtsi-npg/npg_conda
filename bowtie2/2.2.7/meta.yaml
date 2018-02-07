@@ -7,17 +7,26 @@ package:
 about:
   home: http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
   license: GPLv3
-  summary: A fast and sensitive gapped read aligner.
+  summary: "A fast and sensitive gapped read aligner."
 
 build:
   number: 0
-  
+
+  rpaths:
+    - lib64
+    - lib
+
 source:
   git_url: https://github.com/BenLangmead/bowtie2.git
   git_rev: ee49a01c536b8b4915a88c469f2f1ccc78bdf70a
 
 requirements:
   build:
+    - gcc_npg >=7.3
 
   run:
+    - libgcc_npg >=7.3
 
+test:
+  commands:
+    - bowtie2 -h

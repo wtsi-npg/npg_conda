@@ -21,6 +21,14 @@ source:
 requirements:
   build:
     - boost
+    - gcc_npg >=4.6,<5.0
+    - zlib
 
   run:
     - boost
+    - libgcc_npg >=4.6,<5.0
+    - zlib
+
+test:
+  commands:
+    - tophat2 --version

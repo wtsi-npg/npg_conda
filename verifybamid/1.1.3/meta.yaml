@@ -10,6 +10,13 @@ about:
   license: Various
   summary: Verify identity and purity of sequence data.
 
+build:
+  number: 0
+
+  rpaths:
+    - lib64
+    - lib
+
 source:
   - git_url: https://github.com/statgen/verifyBamID.git
     git_rev: v{{ version }}
@@ -20,4 +27,13 @@ source:
 
 requirements:
   build:
+    - gcc_npg <7.0
     - zlib
+
+  run:
+    - libgcc_npg <7.0
+    - zlib
+
+test:
+  commands:
+    - test -x ${PREFIX}/bin/verifyBamID

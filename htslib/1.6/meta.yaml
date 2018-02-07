@@ -3,7 +3,7 @@
 {% set sha256 = "9588be8be0c2390a87b7952d644e7a88bead2991b3468371347965f2e0504ccb" %}
 
 package:
-  name: "htslib"
+  name: htslib
   version: "{{ version }}"
 
 about:
@@ -28,8 +28,23 @@ features:
 
 requirements:
   build:
-    - bzip2 # provides libbz2
+    - bzip2
     - curl
+    - gcc_npg >=7.3
     - irods-dev # for plugins
-    - xz # provides liblzma
+    - xz
     - zlib
+
+  run:
+    - bzip2
+    - curl
+    - xz
+    - zlib
+
+test:
+  commands:
+    - test -f ${PREFIX}/include/htslib/sam.h
+    - test -f ${PREFIX}/lib/libhts.a
+    - test -h ${PREFIX}/lib/libhts.so
+    - test -f ${PREFIX}/libexec/htslib/hfile_irods.so
+    - test -f ${PREFIX}/libexec/htslib/hfile_libcurl.so

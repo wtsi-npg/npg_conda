@@ -1,0 +1,35 @@
+{% set version = "2.8.9" %}
+{% set short_version = "2.8" %}
+{% set sha256 = "dc3dcc7399be8636471975f955086cdf800739862c240858a98e89719e45e6f9" %}
+
+package:
+  name: cmake
+  version: "{{ version }}"
+
+about:
+  home: https://cmake.org/
+  license: CMake
+  summary: Cross Platform Makefile Generator.
+
+source:
+  url: https://cmake.org/files/v{{ short_version }}/cmake-{{ version }}.tar.gz
+  fn: cmake-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+build:
+  number: 0
+
+  rpaths:
+    - lib64
+    - lib
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+
+  run:
+    - libgcc_npg
+
+test:
+  commands:
+    - cmake --help

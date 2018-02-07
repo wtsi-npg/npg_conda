@@ -1,0 +1,26 @@
+{% set version = "2.2.5" %}
+{% set sha256 = "d9dc32efba7e74f788fcc4f212a43216fc37cf5f23f4c2339664d473353aedf6" %}
+
+package:
+  name: expat
+  version: "{{ version }}"
+
+about:
+  home: https://libexpat.github.io/
+  license: MIT
+  summary: "A C library for parsing XML."
+
+source:
+  url: https://github.com/libexpat/libexpat/releases/download/R_2_2_5/expat-{{ version}}.tar.bz2
+  fn: expat-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+
+test:
+  commands:
+    - test -f ${PREFIX}/include/expat.h
+    - test -f ${PREFIX}/lib/libexpat.a
+    - test -h ${PREFIX}/lib/libexpat.so

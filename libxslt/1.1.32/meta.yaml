@@ -1,0 +1,37 @@
+{% set version = "1.1.32" %}
+{% set sha256 = "526ecd0abaf4a7789041622c3950c0e7f2c4c8835471515fd77eec684a355460" %}
+
+package:
+  name: libxslt
+  version: "{{ version }}"
+
+about:
+  home: http://xmlsoft.org/XSLT/
+  license: MIT
+  summary: "XSLT C library developed for the GNOME project."
+
+build:
+  number: 0
+  
+source:
+  url: ftp://xmlsoft.org/libxslt/libxslt-{{ version }}.tar.gz
+  fn: libxslt-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+    - libxml2 >={{ version }}
+    - zlib
+
+  run:
+    - libxml2 >={{ version }}
+    - xz
+    - zlib
+    
+test:
+  commands:
+    - xsltproc --version
+    - test -f ${PREFIX}/include/libxslt/xslt.h
+    - test -f ${PREFIX}/lib/libxslt.a
+    - test -h ${PREFIX}/lib/libxslt.so

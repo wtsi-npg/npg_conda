@@ -12,7 +12,11 @@ about:
 
 build:
   number: 0
-    
+
+  rpaths:
+    - lib64
+    - lib
+
 source:
   url: https://github.com/gt1/biobambam2/archive/{{ version }}-release-20171006114010.tar.gz
   fn: biobambam2-{{ version }}.tar.gz
@@ -20,11 +24,17 @@ source:
 
 requirements:
   build:
+    - cmake
+    - gcc_npg >=7.3
     - irods-dev
     - libmaus2
     - zlib
 
   run:
+    - libgcc_npg >=7.3
     - libmaus2
     - zlib
 
+test:
+  commands:
+    - bamcat --version

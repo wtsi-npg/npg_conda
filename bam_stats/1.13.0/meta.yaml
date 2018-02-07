@@ -21,7 +21,13 @@ features:
 
 requirements:
   build:
-    - htslib
+    - gcc_npg >=7.3
+    - htslib >=1.7
 
   run:
-    - htslib
+    - htslib >=1.7
+    - zlib
+
+test:
+  commands:
+    - bam_stats -h

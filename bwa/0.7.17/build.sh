@@ -2,7 +2,9 @@
 
 set -e
 
-make 
+n=`expr $CPU_COUNT / 4 \| 1`
+
+make -j $n
 
 mkdir -p "$PREFIX/bin"
 cp bwa "$PREFIX/bin/"

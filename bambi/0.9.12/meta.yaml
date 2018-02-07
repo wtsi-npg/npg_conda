@@ -18,4 +18,12 @@ source:
 
 requirements:
   build:
-    - htslib >=1.6
+    - gcc_npg >=7.3
+    - htslib >=1.7
+
+  run:
+    - htslib >=1.7
+
+test:
+  commands:
+    - bambi --version

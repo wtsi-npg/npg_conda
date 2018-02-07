@@ -28,7 +28,23 @@ features:
 
 requirements:
   build:
-    - bzip2 # provides libbz2
+    - bzip2
     - curl
-    - xz    # provides liblzma
+    - gcc_npg >=7.3
+    - irods-dev # for plugins
+    - xz
     - zlib
+
+  run:
+    - bzip2
+    - curl
+    - xz
+    - zlib
+
+test:
+  commands:
+    - test -f ${PREFIX}/include/htslib/sam.h
+    - test -f ${PREFIX}/lib/libhts.a
+    - test -h ${PREFIX}/lib/libhts.so
+    - test -f ${PREFIX}/libexec/htslib/hfile_irods.so
+    # - test -f ${PREFIX}/libexec/htslib/hfile_libcurl.so

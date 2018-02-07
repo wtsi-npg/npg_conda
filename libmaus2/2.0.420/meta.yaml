@@ -13,6 +13,10 @@ about:
 build:
   number: 0
 
+  rpaths:
+    - lib64
+    - lib
+
 source:
   url: https://github.com/gt1/libmaus2/archive/{{ version }}-release-20171116172420.tar.gz
   fn: libmaus2-{{ version }}.tar.gz
@@ -23,12 +27,20 @@ features:
   
 requirements:
   build:
+    - gcc_npg >=7.3
     - irods-dev
     - nettle
     - staden_io_lib
     - zlib
 
   run:
+    - libgcc_npg >=7.3
     - nettle
     - staden_io_lib
     - zlib
+
+test:
+  commands:
+    - test -f ${PREFIX}/include/libmaus2/LibMausConfig.hpp
+    - test -f ${PREFIX}/lib/libmaus2.a
+    - test -h ${PREFIX}/lib/libmaus2.so

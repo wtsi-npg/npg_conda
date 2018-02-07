@@ -19,8 +19,14 @@ requirements:
   build:
     - apr >=1.6.3
     - expat
-    - gcc_linux-64 >=5.4
+    - gcc_npg >=7.3
 
   run:
     - apr >=1.6.3
     - expat
+
+test:
+  commands:
+    - test -f ${PREFIX}/include/apr-1/apu.h
+    - test -f ${PREFIX}/lib/libaprutil-1.a
+    - test -h ${PREFIX}/lib/libaprutil-1.so.0

@@ -2,5 +2,9 @@
 
 set -e
 
-./configure --prefix="$PREFIX" --with-irods="$PREFIX" CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
+n=`expr $CPU_COUNT / 4 \| 1`
+
+./configure --prefix="$PREFIX" --with-irods="$PREFIX" CPPFLAGS="-I$PREFIX/include/irods" LDFLAGS="-L$PREFIX/lib -L$PREFIX/lib/irods/externals"
+
+make -j $n
 make install prefix="$PREFIX"

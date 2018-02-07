@@ -1,0 +1,30 @@
+{% set version = "5.2.3" %}
+{% set sha256 = "fd9ca16de1052aac899ad3495ad20dfa906c27b4a5070102a2ec35ca3a4740c1" %}
+
+package:
+  name: xz
+  version: "{{ version }}"
+
+about:
+  home: https://tukaani.org/xz/
+  license: Various
+  summary: XZ Utils is free general-purpose data compression software.
+
+build:
+  number: 0
+  
+source:
+  url: https://tukaani.org/xz/xz-{{ version }}.tar.bz2
+  fn: xz-{{ version }}.tar.bz2
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+
+test:
+  commands:
+    - xz --help
+    - test -f ${PREFIX}/include/lzma.h
+    - test -f ${PREFIX}/lib/liblzma.a
+    - test -h ${PREFIX}/lib/liblzma.so

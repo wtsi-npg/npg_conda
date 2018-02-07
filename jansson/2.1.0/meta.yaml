@@ -14,3 +14,13 @@ source:
   url: https://github.com/akheron/jansson/archive/v{{ version }}.tar.gz
   fn: jansson-{{ version }}.tar.gz
   sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+
+test:
+  commands:
+    - test -f ${PREFIX}/include/jansson.h
+    - test -f ${PREFIX}/lib/libjansson.a
+    - test -h ${PREFIX}/lib/libjansson.so

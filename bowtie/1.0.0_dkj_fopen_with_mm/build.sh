@@ -3,6 +3,7 @@
 set -e
 
 n=`expr $CPU_COUNT / 4 \| 1`
+
 make -j $n prefix="$PREFIX" CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
 
 # There is no install target in the Makefile

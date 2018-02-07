@@ -1,0 +1,33 @@
+{% set version = "1.0.6" %}
+{% set sha256 = "a2848f34fcd5d6cf47def00461fcb528a0484d8edef8208d6d2e2909dc61d9cd" %}
+
+package:
+  name: bzip2
+  version: "{{ version }}"
+
+about:
+  home: http://bzip.org/index.html
+  license: BSD
+  summary: Data compressor.
+
+build:
+  number: 0
+  
+source:
+  url: http://bzip.org/{{ version }}/bzip2-{{ version }}.tar.gz
+  fn: bzip2-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+  patches:
+    - Makefile.patch
+
+requirements:
+  build:
+    - gcc_npg >=7.3.0
+
+test:
+  commands:
+  - bzip2 --help
+  - bunzip2 --help
+  - test -f ${PREFIX}/include/bzlib.h
+  - test -f ${PREFIX}/lib/libbz2.a
+  - test -h ${PREFIX}/lib/libbz2.so.1.0

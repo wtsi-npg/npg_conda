@@ -8,7 +8,7 @@ package:
 about:
   home: https://nodejs.org
   license: MIT
-  summary: Node.js is a JavaScript runtime built on Chrome's V8 JavaScript engine.
+  summary: "Node.js is a JavaScript runtime built on Chrome's V8 JavaScript engine."
 
 source:
   url: https://nodejs.org/dist/v{{ version }}/node-v{{ version }}.tar.gz

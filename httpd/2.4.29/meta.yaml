@@ -19,14 +19,14 @@ requirements:
   build:
     - apr
     - apr-util
-    - openssl
-    - gcc_linux-64 >=5.4
+    - gcc_npg >=7.3
     - libxml2
     - pcre
+    - zlib
 
   run:
     - apr
     - apr-util
     - libxml2
-    - openssl
     - pcre
+    - zlib

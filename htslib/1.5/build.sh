@@ -2,8 +2,11 @@
 
 set -e
 
+n=`expr $CPU_COUNT / 4 \| 1`
+
 ./configure --prefix="$PREFIX" --enable-libcurl CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
+make -j $n prefix="$PREFIX"
 make install prefix="$PREFIX"
 
 cd ./plugins
-make install prefix="$PREFIX" CFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
+make install prefix="$PREFIX" CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib" IRODS_HOME="$PREFIX"

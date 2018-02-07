@@ -1,0 +1,26 @@
+{% set version = "0.2.3" %}
+{% set sha256 = "5cb373bd6a95ec9c7003c3c01501aafaf2ca3bc27fa843a016510ed88eecec93" %}
+
+package:
+  name: porechop
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/rrwick/Porechop
+  license: GPLv3
+  summary: "Adapter trimmer for Oxford Nanopore reads."
+
+build:
+  number: 0
+  
+source:
+  url: https://github.com/rrwick/Porechop/archive/v{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc_npg >=5.4,<7.0.0
+    - python >=3.4
+
+  run:
+    - python >=3.4

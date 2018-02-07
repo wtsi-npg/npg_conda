@@ -11,12 +11,22 @@ about:
 
 build:
   number: 0
-  
+
+  rpaths:
+    - lib64
+    - lib
+
 source:
   git_url: https://github.com/dkj/bowtie.git
   git_rev: f65b0e7b527d6dfb93f9e618e4e8d206b284bd90
 
-# requirements:
-#   build:
+requirements:
+  build:
+    - gcc_npg >=7.3
 
-#   run:
+  run:
+    - libgcc_npg >=7.3
+
+test:
+  commands:
+    - bowtie -h
