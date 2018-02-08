@@ -1,5 +1,5 @@
 {% set version = "0.2.3" %}
-{% set sha256 = "5cb373bd6a95ec9c7003c3c01501aafaf2ca3bc27fa843a016510ed88eecec93" %}
+{% set sha256 = "bfed39f82abc54f44fffd9b13d2121868084da7ac3d158ac9b9aa6fa0257f0f4" %}
 
 package:
   name: porechop
@@ -12,6 +12,10 @@ about:
 
 build:
   number: 0
+
+  rpaths:
+    - lib64
+    - lib
   
 source:
   url: https://github.com/rrwick/Porechop/archive/v{{ version }}.tar.gz
@@ -19,8 +23,13 @@ source:
 
 requirements:
   build:
-    - gcc_npg >=5.4,<7.0.0
+    - gcc_npg >=5.5,<7.0.0
     - python >=3.4
 
   run:
     - python >=3.4
+    - libgcc_npg >=5.5,<7.0.0
+
+test:
+  commands:
+    - porechop --help

@@ -24,7 +24,6 @@ source:
 
 requirements:
   build:
-    - cmake
     - gcc_npg >=7.3
     - irods-dev
     - libmaus2
