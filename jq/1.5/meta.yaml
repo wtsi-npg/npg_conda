@@ -1,0 +1,27 @@
+{% set version = "1.5" %}
+{% set sha256 = "c4d2bfec6436341113419debf479d833692cc5cdab7eb0326b5a4d4fbe9f493c" %}
+
+package:
+  name: jq
+  version: "{{ version }}"
+
+about:
+  home: http://stedolan.github.io/jq/
+  license: MIT
+  summary: "Command-line JSON processor."
+
+build:
+  number: 0
+
+source:
+  url: https://github.com/stedolan/jq/releases/download/jq-{{ version }}/jq-{{ version }}.tar.gz
+  fn: jq-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+
+test:
+  commands:
+    - jq --version

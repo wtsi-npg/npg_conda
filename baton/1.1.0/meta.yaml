@@ -1,5 +1,5 @@
-{% set version = "1.0.1" %}
-{% set sha256 = "db34f008e3f775b8a72f01a3bf8cca70c81d8f927992424395585b7f9b23f2a8" %}
+{% set version = "1.1.0" %}
+{% set sha256 = "1b8f5711eb04dd2c6f2c423e441054b327138719299864827a6148f127508c5e" %}
 
 package:
   name: baton
