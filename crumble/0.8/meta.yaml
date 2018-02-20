@@ -1,0 +1,30 @@
+{% set version = "0.8" %}
+{% set sha256 = "28f3465ba1a1a7a2404b46e80b3fcaffc17e18caef1ea5026f6033c122407485" %}
+
+package:
+  name: crumble
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/jkbonfield/crumble
+  license: Unknown
+  summary: "Exploration of controlled loss of quality values for compressing CRAM files."
+
+source:
+  url: https://github.com/jkbonfield/crumble/archive/v{{ version }}.tar.gz
+  fn: crumble-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+  patches:
+    - Makefile.patch
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+    - htslib >=1.7
+
+  run:
+    - htslib >=1.7
+
+test:
+  commands:
+    - test -x ${PREFIX}/bin/crumble
