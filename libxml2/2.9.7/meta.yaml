@@ -11,8 +11,8 @@ about:
   summary: "XML C parser and toolkit developed for the Gnome project."
 
 build:
-  number: 0
-  
+  number: 1
+
 source:
   url: ftp://xmlsoft.org/libxml2/libxml2-{{ version }}.tar.gz
   fn: libxml2-{{ version }}.tar.gz
@@ -27,7 +27,7 @@ requirements:
   run:
     - xz
     - zlib
-    
+
 test:
   commands:
     - test -f ${PREFIX}/include/libxml2/libxml/uri.h
