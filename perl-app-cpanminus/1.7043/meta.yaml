@@ -8,12 +8,19 @@ package:
 about:
   home: https://github.com/miyagawa/cpanminus
   license: Perl Artistic License
-  summary: Get, unpack, build and install modules from CPAN.
+  summary: "Get, unpack, build and install modules from CPAN."
 
 build:
-  number: 0
+  number: 1
   
 source:
   url: https://cpan.metacpan.org/authors/id/M/MI/MIYAGAWA/App-cpanminus-{{ version }}.tar.gz
   fn: App-cpanminus-{{ version }}.tar.gz
   sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - perl ==5.22.2
+
+  run:
+    - perl ==5.22.2
