@@ -2,7 +2,7 @@
 {% set sha256 = "8dd3044767d044aa4ce46de0de562b111c44e5b8b7348e04e665eb1b4f101fe3" %}
 
 package:
-  name: bc2lfastq
+  name: bcl2fastq
   version: "{{ version }}"
 
 about:
