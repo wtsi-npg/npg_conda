@@ -10,6 +10,9 @@ about:
   license: MIT
   summary: C library for high-throughput sequencing data formats.
 
+build:
+  number: 1
+  
 source:
   url: https://github.com/samtools/samtools/releases/download/{{ version }}/samtools-{{ version }}.tar.bz2
   fn: samtools-{{ version }}.tar.bz2
