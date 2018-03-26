@@ -1,0 +1,32 @@
+{% set version = "2.2.5" %}
+{% set sha256 = "a66111c9b4a04e818e9e2a37d7ae8d4aae0939a100a36b0ffb52c706a09074b5" %}
+
+package:
+  name: libgd
+  version: "{{ version }}"
+
+about:
+  home: https://libgd.github.io/
+  license: libgd
+  summary: "GD is an open source code library for the dynamic creation of images by programmers."
+
+source:
+  url: https://github.com/libgd/libgd/releases/download/gd-{{ version }}/libgd-{{ version }}.tar.gz
+  fn: libgd-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+    - libpng
+    - zlib
+
+  run:
+    - libpng
+    - zlib
+
+test:
+  commands:
+    - test -f ${PREFIX}/include/gd.h
+    - test -f ${PREFIX}/lib/libgd.a
+    - test -h ${PREFIX}/lib/libgd.so
