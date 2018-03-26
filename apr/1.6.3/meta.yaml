@@ -10,6 +10,9 @@ about:
   license: ASL
   summary: Apache Portable Runtime API.
 
+build:
+  number: 1
+
 source:
   url: https://mirrors.ukfast.co.uk/sites/ftp.apache.org/apr/apr-{{ version }}.tar.gz
   fn: apr-{{ version }}.tar.gz
@@ -18,6 +21,10 @@ source:
 requirements:
   build:
     - gcc_npg >=7.3
+    - libuuid
+
+  run:
+    - libuuid
 
 test:
   commands:

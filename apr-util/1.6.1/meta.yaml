@@ -1,5 +1,5 @@
 {% set version = "1.6.1" %}
-{% set sha256 = "" %}
+{% set sha256 = "b65e40713da57d004123b6319828be7f1273fbc6490e145874ee1177e112c459" %}
 
 package:
   name: apr-util
@@ -9,6 +9,9 @@ about:
   home: https://apr.apache.org/
   license: ASL
   summary: Apache Portable Runtime utility library.
+
+build:
+  number: 1
 
 source:
   url: https://mirrors.ukfast.co.uk/sites/ftp.apache.org/apr/apr-util-{{ version }}.tar.gz
@@ -20,10 +23,12 @@ requirements:
     - apr >=1.6.3
     - expat
     - gcc_npg >=7.3
+    - libuuid
 
   run:
     - apr >=1.6.3
     - expat
+    - libuuid
 
 test:
   commands:
