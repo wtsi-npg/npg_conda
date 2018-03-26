@@ -1,9 +1,10 @@
-{% set version = "2.000024" %}
+{% set cpan_version = "2.000024" %}
+{% set version = "2.24" %}
 {% set sha256 = "2e9b917bd48a0615e42633b2a327494e04610d8f710765b9493d306cead98a05" %}
 
 package:
   name: perl-local-lib
-  version: "{{ version }}"
+  version: "{{ canon_version }}"
 
 about:
   home: https://github.com/Perl-Toolchain-Gang/local-lib
@@ -14,6 +15,6 @@ build:
   number: 0
   
 source:
-  url: https://cpan.metacpan.org/authors/id/H/HA/HAARG/local-lib-{{ version }}.tar.gz
-  fn: local-lib-{{ version }}.tar.gz
+  url: https://cpan.metacpan.org/authors/id/H/HA/HAARG/local-lib-{{ cpan_version }}.tar.gz
+  fn: local-lib-{{ cpan_version }}.tar.gz
   sha256: {{ sha256 }}
