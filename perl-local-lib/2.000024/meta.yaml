@@ -1,5 +1,5 @@
 {% set cpan_version = "2.000024" %}
-{% set version = "2.24" %}
+{% set canon_version = "2.24" %}
 {% set sha256 = "2e9b917bd48a0615e42633b2a327494e04610d8f710765b9493d306cead98a05" %}
 
 package:
