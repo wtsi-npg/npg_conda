@@ -1,0 +1,40 @@
+{% set version = "0.0.14" %}
+{% set fastx_sha256 = "9e1f00c4c9f286be59ac0e07ddb7504f3b6433c93c5c7941d6e3208306ff5806" %}
+{% set gtextutils_version = "0.7" %}
+{% set gtextutils_sha256 = "792e0ea3c96ffe3ad65617a104b7dc50684932bc96d2adab501c952fd65c3e4a" %}
+
+package:
+  name: fastx_toolkit
+  version: "{{ version }}"
+
+about:
+  home: http://hannonlab.cshl.edu/fastx_toolkit/index.html
+  license: AGPL
+  summary: "A collection of command line tools for Short-Reads FASTA/FASTQ files preprocessing."
+
+build:
+  number: 0
+
+  rpaths:
+    - lib64
+    - lib
+
+source:
+  - url: https://github.com/agordon/fastx_toolkit/releases/download/{{ version }}/fastx_toolkit-{{ version }}.tar.bz2
+    folder: fastx_toolkit
+    sha256: {{ fastx_sha256 }}
+
+  - url: https://github.com/agordon/libgtextutils/releases/download/{{ gtextutils_version }}/libgtextutils-{{ gtextutils_version }}.tar.gz
+    folder: gtextutils
+    sha256: {{ gtextutils_sha256 }}
+
+requirements:
+  build:
+    - gcc_npg <7.3
+
+  run:
+    - libgcc_npg <7.3
+    
+test:
+  commands:
+    - text -x ${PREFIX}/bin/fastx_clipper
