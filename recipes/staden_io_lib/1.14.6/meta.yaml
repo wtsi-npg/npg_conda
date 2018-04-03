@@ -1,0 +1,39 @@
+{% set version = "1.14.6" %}
+{% set sha256 = "94f76bfb6abbe86c96e2b0bc7a52525821893526c9a077bf3896c5b653cdbcdb" %}
+
+package:
+  name: staden_io_lib
+  version: "{{ version }}"
+
+about:
+  home: https://sourceforge.net/projects/staden
+  license: BSD
+  summary: DNA sequence assembly, editing and analysis tools.
+
+build:
+  number: 0
+
+source:
+  url: https://sourceforge.net/projects/staden/files/io_lib/{{ version }}/io_lib-{{ version }}.tar.gz/download
+  fn: io_lib-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - bzip2
+    - curl
+    - gcc_npg >=7.3
+    - xz
+    - zlib
+
+  run:
+    - bzip2
+    - curl
+    - xz
+    - zlib
+
+test:
+  commands:
+    - test -f ${PREFIX}/include/io_lib/io_lib_config.h
+    - test -f ${PREFIX}/lib/libstaden-read.a
+    - test -h ${PREFIX}/lib/libstaden-read.so
