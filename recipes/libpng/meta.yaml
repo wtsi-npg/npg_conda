@@ -15,6 +15,9 @@ source:
   fn: libpng-{{ version }}.tar.gz
   sha256: {{ sha256 }}
 
+build:
+  number: 0
+
 requirements:
   build:
     - gcc_npg >=7.3
