@@ -1,0 +1,37 @@
+{% set version = "1.9.4" %}
+{% set sha256 = "fda92a9e711429a2a05b105a7061aea0adc2f8ab4e1a1d9cc12ed671763c099f" %}
+
+package:
+  name: olb
+  version: "{{ version }}"
+
+about:
+  home: https://illumina.com
+  license: "Illumina Sequencing Instrument Software License"
+  summary: "Off-Line Basecaller."
+
+# OLB is proprietary software - keep the source behind authentication
+source:
+  url: file:///somewhere/src/olb-{{ version }}.tar.gz
+  fn: olb-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+build:
+  number: 0
+
+  rpaths:
+    - lib64
+    - lib
+
+requirements:
+  build:
+    - boost ==1.42.0
+    - bzip2
+    - fftw
+    - gcc_npg ==4.6.4
+    - zlib
+
+test:
+  commands:
+    - ${PREFIX}/bin/bclToQseq -h
+
