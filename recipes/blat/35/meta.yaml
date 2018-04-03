@@ -1,0 +1,27 @@
+{% set version = "35" %}
+{% set sha256 = "06d9bcf114ec4a4b21fef0540a0532556b6602322a5a2b33f159dc939ae53620" %}
+
+package:
+  name: blat
+  version: "{{ version }}"
+
+about:
+  home: http://genome.ucsc.edu/
+  license: Blat
+  summary: Rapid mRNA/DNA and cross-species protein alignments.
+
+build:
+  number: 0
+
+source:
+  url: https://users.soe.ucsc.edu/~kent/src/blatSrc{{ version }}.zip
+  fn: blatSrc{{ version }}.zip
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+
+test:
+  commands:
+    - test -x ${PREFIX}/bin/blat
