@@ -21,6 +21,10 @@ source:
 requirements:
   build:
     - gcc_npg >=7.3
+    - libpng
+
+  run:
+    - libpng
 
 test:
   commands:
