@@ -37,4 +37,4 @@ requirements:
     
 test:
   commands:
-    - text -x ${PREFIX}/bin/fastx_clipper
+    - test -x ${PREFIX}/bin/fastx_clipper
