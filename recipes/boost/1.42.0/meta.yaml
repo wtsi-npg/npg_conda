@@ -1,0 +1,52 @@
+{% set version = "1.42.0" %}
+{% set alt_version = "1_42_0" %}
+{% set sha256 = "4b1eb95bd250ce15ac66435d6167f225b072b0d3a7eb72477a31847a9ca9e609" %}
+
+package:
+  name: boost
+  version: "{{ version }}"
+
+about:
+  home: http://www.boost.org
+  license: Boost
+  summary: "Free peer-reviewed portable C++ source libraries."
+
+build:
+  number: 0
+
+  rpaths:
+    - lib64
+    - lib
+
+source:
+  url: https://sourceforge.net/projects/boost/files/boost/{{ version }}/boost_{{ alt_version }}.tar.bz2/download
+  fn: boost_{{ alt_version }}.tar.bz2
+  sha256: {{ sha256 }}
+
+  patches:
+    # __GLIBC_HAVE_LONG_LONG define has been dropped from glibc in 2.17.
+    # See https://svn.boost.org/trac10/ticket/8731
+    - boost_glibc_2_17_cstdint.patch
+    # TIME_UTC is a macro in C11. See https://svn.boost.org/trac10/ticket/6940
+    - boost_time_utc_timeconv.patch
+    # TIME_UTC is a macro in C11. See https://svn.boost.org/trac10/ticket/6940
+    - boost_time_utc_xtime.patch
+
+requirements:
+  build:
+    - bzip2
+    - gcc_npg >=4.6,<5.0
+    - xz
+    - zlib
+
+  run:
+    - bzip2
+    - libgcc_npg >=4.6,<5.0
+    - xz
+    - zlib
+
+test:
+  commands:
+    - test -f ${PREFIX}/include/boost/config.hpp
+    - test -f ${PREFIX}/lib/libboost_system.a
+    - test -h ${PREFIX}/lib/libboost_system.so
