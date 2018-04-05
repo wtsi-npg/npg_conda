@@ -15,6 +15,11 @@ source:
   fn: node-v{{ version }}-linux-x64.tar.gz
   sha256: {{ sha256 }}
 
+build:
+  number: 1
+  ignore_prefix_files:
+    - bin/node
+
 requirements:
   build:
     - python 2.7.*
