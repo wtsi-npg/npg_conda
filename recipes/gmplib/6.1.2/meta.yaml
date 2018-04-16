@@ -1,0 +1,32 @@
+{% set version = "6.1.2" %}
+{% set sha256 = "87b565e89a9a684fe4ebeeddb8399dce2599f9c9049854ca8c0dfbdea0e21912" %}
+
+package:
+  name: gmplib
+  version: "{{ version }}"
+
+about:
+  home: https://gmplib.org/
+  license: 
+  summary: "The GNU Multiple Precision Arithmetic Library."
+
+build:
+  number: 0
+
+source:
+  url: https://gmplib.org/download/gmp/gmp-{{ version }}.tar.xz
+  fn: gmplib-{{ version }}.tar.xz
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+    - zlib
+
+  run:
+    - zlib
+
+test:
+  commands:
+    - test -f ${PREFIX}/lib/libgmp.a
+    - test -f ${PREFIX}/lib/libgmp.so

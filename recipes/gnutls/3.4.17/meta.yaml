@@ -1,0 +1,37 @@
+{% set version = "3.4.17" %}
+{% set short_version = "3.4" %}
+{% set sha256 = "9b50e8a670d5e950425d96935c7ddd415eb6f8079615a36df425f09a3143172e" %}
+
+package:
+  name: gnutls
+  version: "{{ version }}"
+
+about:
+  home: https://gnutls.org/
+  license: LGPL
+  summary: "The GnuTLS Transport Layer Security Library."
+
+build:
+  number: 0
+
+source:
+  - url: https://www.gnupg.org/ftp/gcrypt/gnutls/v{{ short_version }}/gnutls-{{ version }}.tar.xz
+    fn: gnutls-{{ version }}.tar.xz
+    sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+    - gmplib
+    - nettle
+    - zlib
+
+  run:
+    - libgcc_npg
+    - gmplib
+    - nettle
+    - zlib
+
+test:
+  commands:
+    - gnutls-cli -h
