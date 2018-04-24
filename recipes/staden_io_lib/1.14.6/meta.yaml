@@ -11,7 +11,7 @@ about:
   summary: DNA sequence assembly, editing and analysis tools.
 
 build:
-  number: 2
+  number: 3
 
 source:
   url: https://sourceforge.net/projects/staden/files/io_lib/{{ version }}/io_lib-{{ version }}.tar.gz/download
@@ -23,13 +23,13 @@ requirements:
     - libbzip2
     - libcurl
     - gcc_npg >=7.3
-    - xz
+    - liblzma
     - zlib
 
   run:
     - libbzip2
     - libcurl
-    - xz
+    - liblzma
     - zlib
 
 test:

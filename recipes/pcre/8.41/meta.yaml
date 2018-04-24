@@ -11,8 +11,8 @@ about:
   summary: "Perl Compatible Regular Expressions."
 
 build:
-  number: 1
-  
+  number: 2
+
 source:
   url: https://ftp.pcre.org/pub/pcre/pcre-{{ version }}.tar.gz
   fn: pcre-{{ version }}.tar.gz
@@ -22,14 +22,14 @@ requirements:
   build:
     - libbzip2
     - gcc_npg >=7.3
+    - liblzma
     - zlib
-    - xz
 
   run:
     - libbzip2
     - libgcc_npg >=7.3
+    - liblzma
     - zlib
-    - xz
 
 test:
   commands:
