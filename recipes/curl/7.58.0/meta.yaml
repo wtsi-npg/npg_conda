@@ -11,7 +11,7 @@ about:
   summary: Command line tool and library for transferring data with URLs.
 
 build:
-  number: 0
+  number: 1
 
 source:
   - url: http://curl.haxx.se/download/curl-{{ version }}.tar.bz2
@@ -21,14 +21,37 @@ source:
 requirements:
   build:
     - gcc_npg >=7.3
+    - gnutls
     - zlib
 
-  run:
-    - zlib
+outputs:
+  - name: curl
+    version: {{ version }}
+    requirements:
+      run:
+        - libcurl =={{ version}}
+    files:
+      - bin/curl
+      - bin/curl-config
+      - share/man/man1/curl.1
+      - share/man/man1/curl-config.1
+    test:
+      commands:
+        - curl -h
 
-test:
-  commands:
-    - curl -h
-    - test -f ${PREFIX}/include/curl/curl.h
-    - test -f ${PREFIX}/lib/libcurl.a
-    - test -h ${PREFIX}/lib/libcurl.so
+  - name: libcurl
+    version: {{ version }}
+    requirements:
+      run:
+        - gnutls
+        - zlib
+    files:
+      - include/curl
+      - lib/libcurl*
+      - lib/pkgconfig/libcurl.pc
+      - share/man/man4/libcurl*
+    test:
+      commands:
+        - test -f ${PREFIX}/include/curl/curl.h
+        - test -f ${PREFIX}/lib/libcurl.a
+        - test -h ${PREFIX}/lib/libcurl.so
