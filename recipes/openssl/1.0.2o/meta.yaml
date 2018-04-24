@@ -1,0 +1,33 @@
+{% set version = "1.0.2o" %}
+{% set sha256 = "ec3f5c9714ba0fd45cb4e087301eb1336c317e0d20b575a125050470e8089e4d" %}
+
+package:
+  name: openssl
+  version: "{{ version }}"
+
+about:
+  home: https://openssl.org/
+  license: OpenSSL
+  summary: "Cryptography and SSL/TLS Toolkit."
+
+build:
+  number: 0
+
+source:
+  - url: https://www.openssl.org/source/openssl-{{ version }}.tar.gz
+    fn: openssl-{{ version }}.tar.gz
+    sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+    - zlib
+
+  runn:
+    - zlib
+
+test:
+  commands:
+    - openssl s_client -CApath /etc/ssl/certs/ -connect www.sanger.ac.uk:443
+
+
