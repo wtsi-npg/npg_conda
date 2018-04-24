@@ -12,7 +12,7 @@ about:
   summary: C library for high-throughput sequencing data formats.
 
 build:
-  number: 2
+  number: 3
   string: plugins_{{ plugins_rev }}_{{ PKG_BUILDNUM }}
 
 source:
@@ -32,13 +32,13 @@ requirements:
     - libcurl
     - gcc_npg >=7.3
     - irods-dev # for plugins
-    - xz
+    - liblzma
     - zlib
 
   run:
     - libbzip2
     - libcurl
-    - xz
+    - liblzma
     - zlib
 
 test:

@@ -11,8 +11,8 @@ about:
   summary: XZ Utils is free general-purpose data compression software.
 
 build:
-  number: 0
-  
+  number: 1
+
 source:
   url: https://tukaani.org/xz/xz-{{ version }}.tar.bz2
   fn: xz-{{ version }}.tar.bz2
@@ -22,9 +22,50 @@ requirements:
   build:
     - gcc_npg >=7.3
 
-test:
-  commands:
-    - xz --help
-    - test -f ${PREFIX}/include/lzma.h
-    - test -f ${PREFIX}/lib/liblzma.a
-    - test -h ${PREFIX}/lib/liblzma.so
+outputs:
+  - name: xz
+    version: {{ version }}
+    requirements:
+      run:
+        - liblzma =={{ version }}
+    files:
+      - bin/lzless
+      - bin/xzless
+      - bin/lzmore
+      - bin/xzmore
+      - bin/xzegrep
+      - bin/lzfgrep
+      - bin/xzgrep
+      - bin/xzfgrep
+      - bin/lzgrep
+      - bin/lzegrep
+      - bin/xzdiff
+      - bin/lzdiff
+      - bin/lzcmp
+      - bin/xzcmp
+      - bin/lzmainfo
+      - bin/xzdec
+      - bin/lzmadec
+      - bin/lzcat
+      - bin/lzma
+      - bin/xzcat
+      - bin/xz
+      - bin/unlzma
+      - bin/unxz
+      - share/man/man1
+    test:
+      commands:
+        - xz --help
+
+  - name: liblzma
+    version: {{ version }}
+    files:
+      - include
+      - share/doc
+      - share/locale
+      - lib
+    test:
+      commands:
+        - test -f ${PREFIX}/include/lzma.h
+        - test -f ${PREFIX}/lib/liblzma.a
+        - test -h ${PREFIX}/lib/liblzma.so
