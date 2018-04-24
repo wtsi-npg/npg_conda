@@ -10,7 +10,7 @@ about:
   summary: "Software package for signal-level analysis of Oxford Nanopore sequencing data."
 
 build:
-  number: 0
+  number: 1
 
   rpaths:
     - lib64
@@ -24,7 +24,7 @@ source:
 
 requirements:
   build:
-    - bzip2
+    - libbzip2
     - eigen
     - gcc_npg >=7.3
     - hdf5
@@ -33,7 +33,7 @@ requirements:
     - zlib
 
   run:
-    - bzip2
+    - libbzip2
     - hdf5
     - htslib >=1.7
     - libgcc_npg >=7.3

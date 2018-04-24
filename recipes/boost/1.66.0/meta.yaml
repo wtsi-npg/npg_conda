@@ -12,7 +12,7 @@ about:
   summary: "Free peer-reviewed portable C++ source libraries."
 
 build:
-  number: 0
+  number: 1
 
   rpaths:
     - lib64
@@ -25,13 +25,13 @@ source:
 
 requirements:
   build:
-    - bzip2
+    - libbzip2
     - gcc_npg >=7.3
     - xz
     - zlib
 
   run:
-    - bzip2
+    - libbzip2
     - libgcc_npg >=7.3
     - xz
     - zlib
