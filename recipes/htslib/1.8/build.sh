@@ -14,4 +14,3 @@ make install prefix="$PREFIX"
 cd ./plugins
 make install prefix="$PREFIX" IRODS_HOME="$PREFIX" \
      CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib" \
-
