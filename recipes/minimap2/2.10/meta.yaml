@@ -1,0 +1,30 @@
+{% set version = "2.10" %}
+{% set sha256 = "52b36f726ec00bfca4a2ffc23036d1a2b5f96f0aae5a92fd826be6680c481c20" %}
+
+package:
+  name: minimap2
+  version: "{{ version }}"
+
+about:
+  home: https://lh3.github.io/minimap2
+  license: MIT
+  summary: "A versatile pairwise aligner for genomic and spliced nucleotide sequences."
+
+build:
+  number: 0
+
+source:
+  url: https://github.com/lh3/minimap2/releases/download/v{{ version }}/minimap2-{{ version }}.tar.bz2
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+    - zlib
+
+  run:
+    - zlib
+
+test:
+  commands:
+    - minimap2 --version
