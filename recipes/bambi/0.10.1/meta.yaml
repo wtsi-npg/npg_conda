@@ -14,7 +14,7 @@ build:
 
 source:
   git_url: https://github.com/wtsi-npg/bambi.git
-  git_rev: devel
+  git_rev: 0.10.1
 
 requirements:
   build:
