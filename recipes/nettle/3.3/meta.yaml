@@ -11,7 +11,7 @@ about:
   summary: A low-level cryptographic library
 
 build:
-  number: 0
+  number: 1
 
 source:
   url: https://ftp.gnu.org/gnu/nettle/nettle-{{ version }}.tar.gz
@@ -21,9 +21,12 @@ source:
 requirements:
   build:
     - gcc_npg >=7.3
+    - gmplib >=5.0
 
 test:
   commands:
     - test -f ${PREFIX}/include/nettle/sha1.h
     - test -f ${PREFIX}/lib/libnettle.a
     - test -h ${PREFIX}/lib/libnettle.so
+    - test -f ${PREFIX}/lib/libhogweed.a
+    - test -h ${PREFIX}/lib/libhogweed.so
