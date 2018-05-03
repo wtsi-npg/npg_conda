@@ -12,7 +12,7 @@ about:
   summary: A data model, library, and file format for storing and managing data.
 
 build:
-  number: 0
+  number: 1
   string: threadsafe_{{ PKG_BUILDNUM }}
   
 source:
@@ -25,12 +25,46 @@ requirements:
     - gcc_npg >=7.3
     - zlib
 
-  run:
-    - zlib
+outputs:
+  - name: hdf5
+    version: {{ version }}
+    requirements:
+      run:
+        - libhdf5 =={{ version }}
+    files:
+      - bin/gif2h5
+      - bin/h52gif
+      - bin/h5cc
+      - bin/h5copy
+      - bin/h5debug
+      - bin/h5diff
+      - bin/h5dump
+      - bin/h5import
+      - bin/h5jam
+      - bin/h5ls
+      - bin/h5mkgrp
+      - bin/h5perf_serial
+      - bin/h5redeploy
+      - bin/h5repack
+      - bin/h5repart
+      - bin/h5stat
+      - bin/h5unjam
+    test:
+      commands:
+        - h5dump -h
 
-test:
-  commands:
-    - h5dump -h
-    - test -f ${PREFIX}/include/hdf5.h
-    - test -f ${PREFIX}/lib/libhdf5.a
-    - test -h ${PREFIX}/lib/libhdf5.so
+  - name: libhdf5
+    version: {{ version }}
+    requirements:
+      run:
+        - zlib
+    files:
+      - include/H5*
+      - include/hdf5*
+      - lib/libhdf*
+      - share/hdf5_examples
+    test:
+      commands:
+        - test -f ${PREFIX}/include/hdf5.h
+        - test -f ${PREFIX}/lib/libhdf5.a
+        - test -h ${PREFIX}/lib/libhdf5.so
