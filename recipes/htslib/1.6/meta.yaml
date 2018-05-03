@@ -12,7 +12,7 @@ about:
   summary: C library for high-throughput sequencing data formats.
 
 build:
-  number: 3
+  number: 4
   string: plugins_{{ plugins_rev }}_{{ PKG_BUILDNUM }}
 
 source:
@@ -35,16 +35,43 @@ requirements:
     - liblzma
     - zlib
 
-  run:
-    - libbzip2
-    - libcurl
-    - liblzma
-    - zlib
+outputs:
+  - name: htsbin
+    version: {{ version }}
+    requirements:
+      run:
+        - htslib =={{ version }}
+        - libbzip2
+        - libcurl
+        - liblzma
+        - zlib
+    files:
+      - bin/bgzip
+      - bin/htsfile
+      - bin/tabix
+      - share/man/man1/htsfile.1
+      - share/man/man1/tabix.1
 
-test:
-  commands:
-    - test -f ${PREFIX}/include/htslib/sam.h
-    - test -f ${PREFIX}/lib/libhts.a
-    - test -h ${PREFIX}/lib/libhts.so
-    - test -f ${PREFIX}/libexec/htslib/hfile_irods.so
-    - test -f ${PREFIX}/libexec/htslib/hfile_libcurl.so
+  - name: htslib
+    version: {{ version }}
+    requirements:
+      run:
+        - libbzip2
+        - libcurl
+        - liblzma
+        - zlib
+    files:
+      - include/htslib
+      - libexec/htslib
+      - lib/libhts*
+      - share/man/man5/faidx.5
+      - share/man/man5/sam.5
+      - share/man/man5/vcf.5
+
+    test:
+      commands:
+        - test -f ${PREFIX}/include/htslib/sam.h
+        - test -f ${PREFIX}/lib/libhts.a
+        - test -h ${PREFIX}/lib/libhts.so
+        - test -f ${PREFIX}/libexec/htslib/hfile_irods.so
+        - test -f ${PREFIX}/libexec/htslib/hfile_libcurl.so
