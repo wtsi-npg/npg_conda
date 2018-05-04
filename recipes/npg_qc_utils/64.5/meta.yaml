@@ -1,8 +1,8 @@
 {% set version = "64.5" %}
-{% set htslib_version = "1.7" %}
+{% set htslib_version = "1.8" %}
 
-{% set samtools_version = "1.7" %}
-{% set samtools_sha256 = "e7b09673176aa32937abd80f95f432809e722f141b5342186dfef6a53df64ca1" %}
+{% set samtools_version = "1.8" %}
+{% set samtools_sha256 = "c942bc1d9b85fd1b05ea79c5afd2805d489cd36b2c2d8517462682a4d779be16" %}
 
 package:
   name: npg_qc_utils
