@@ -1,0 +1,32 @@
+{% set version = "1.2.2" %}
+
+package:
+  name: bowtie
+  version: "{{ version }}"
+
+about:
+  home: http://bowtie-bio.sourceforge.net/index.shtml
+  license: Perl Artistic Licence
+  summary: An ultrafast memory-efficient short read aligner.
+
+build:
+  number: 0
+
+  rpaths:
+    - lib64
+    - lib
+
+source:
+  git_url: https://github.com/BenLangmead/bowtie
+  git_rev: v{{ version}}_p1
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+
+  run:
+    - libgcc_npg >=7.3
+
+test:
+  commands:
+    - bowtie -h
