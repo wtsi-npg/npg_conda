@@ -1,20 +1,20 @@
-{% set version = "64.5" %}
-{% set htslib_version = "1.7" %}
+{% set version = "65.0" %}
+{% set htslib_version = "1.8" %}
 
-{% set samtools_version = "1.7" %}
-{% set samtools_sha256 = "e7b09673176aa32937abd80f95f432809e722f141b5342186dfef6a53df64ca1" %}
+{% set samtools_version = "1.8" %}
+{% set samtools_sha256 = "c942bc1d9b85fd1b05ea79c5afd2805d489cd36b2c2d8517462682a4d779be16" %}
 
 package:
   name: npg_qc_utils
   version: "{{ version }}"
 
 about:
-  home: https://github.com/keithj/npg_qc_utils
+  home: https://github.com/wtsi-npg/npg_qc_utils
   license: GPLv3
   summary: "C programs extracted from npg_qc."
 
 build:
-  number: 0
+  number: 1
 
 source:
   - url: https://sourceforge.net/projects/samtools/files/samtools/{{ samtools_version }}/samtools-{{ samtools_version }}.tar.bz2/download
@@ -22,7 +22,7 @@ source:
     folder: samtools
     sha256: {{ samtools_sha256 }}
 
-  - git_url: https://github.com/keithj/npg_qc_utils.git
+  - git_url: https://github.com/wtsi-npg/npg_qc_utils.git
     git_rev: {{ version }}
     folder: npg_qc_utils
 
@@ -39,3 +39,4 @@ requirements:
 test:
   commands:
     - ${PREFIX}/bin/fastq_summ -h
+    - test -e ${PREFIX}/bin/fastqcheck
