@@ -1,0 +1,125 @@
+{% set version = "4.1.12" %}
+
+package:
+  name: irods
+  version: "{{ version }}"
+
+about:
+  home: https://irods.org
+  license: BSD
+  summary: "Open Source Data Management Software."
+
+build:
+  number: 0
+
+  rpaths:
+    - lib64
+    - lib
+
+source:
+  git_url: https://github.com/irods/irods.git
+  git_rev: 4-1-stable
+
+  patches:
+    - irods.patch
+
+requirements:
+  build:
+    - gcc_npg ==4.6
+    - libbzip2
+    - libcurl
+    - libxml2
+    - openssl
+    - zlib
+
+outputs:
+  - name: irods-plugins
+    version: {{ version }}
+    files:
+      - lib/irods/plugins
+
+  - name: irods-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - irods-plugins =={{ version }}
+        - libbzip2
+        - libcurl
+        - libgcc_npg >=4.6
+        - libxml2
+        - openssl
+        - zlib
+    files:
+      - include/irods
+      - lib/irods/externals
+      - lib/libirods_client_api.a
+      - lib/libirods_client_plugins.a
+      - lib/libirods_client_api_table.a
+      - lib/libirods_client_core.a
+      - lib/libirods_client.a
+      - lib/libRodsAPIs.a
+      - lib/libirods_server.a
+      - share/irods
+
+  - name: irods-icommands
+    version: {{ version }}
+    requirements:
+      run:
+        - irods-plugins =={{ version }}
+        - libbzip2
+        - libcurl
+        - libgcc_npg >=4.6
+        - libxml2
+        - openssl
+        - zlib
+    files:
+      - bin/iadmin
+      - bin/ibun
+      - bin/ichksum
+      - bin/ichmod
+      - bin/icp
+      - bin/idbug
+      - bin/ienv
+      - bin/ierror
+      - bin/iexecmd
+      - bin/iexit
+      - bin/ifsck
+      - bin/iget
+      - bin/igroupadmin
+      - bin/ihelp
+      - bin/iinit
+      - bin/ils
+      - bin/ilsresc
+      - bin/imcoll
+      - bin/imeta
+      - bin/imiscsvrinfo
+      - bin/imkdir
+      - bin/imv
+      - bin/ipasswd
+      - bin/iphybun
+      - bin/iphymv
+      - bin/ips
+      - bin/iput
+      - bin/ipwd
+      - bin/iqdel
+      - bin/iqmod
+      - bin/iqmod
+      - bin/iqstat
+      - bin/iquest
+      - bin/iquota
+      - bin/irepl
+      - bin/irm
+      - bin/irmtrash
+      - bin/irsync
+      - bin/irule
+      - bin/iscan
+      - bin/isysmeta
+      - bin/iticket
+      - bin/itrim
+      - bin/iuserinfo
+      - bin/ixmsg
+      - bin/izonereport
+
+    test:
+      commands:
+        - ienv

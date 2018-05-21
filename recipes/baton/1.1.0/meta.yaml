@@ -11,7 +11,7 @@ about:
   summary: Client programs and API for use with iRODS (Integrated Rule-Oriented Data System).
 
 build:
-  number: 0
+  number: 1
 
 source:
   url: https://github.com/wtsi-npg/baton/releases/download/{{ version }}/baton-{{ version }}.tar.gz
@@ -23,13 +23,13 @@ features:
 
 requirements:
   build:
-    - gcc_npg >=7.3
-    - irods-dev
+    - gcc_npg
+    - irods-dev ==4.1.12
     - jansson
 
   run:
+    - irods-plugins ==4.1.12
     - jansson
-    - libgcc_npg >=7.3
 
 test:
   commands:
