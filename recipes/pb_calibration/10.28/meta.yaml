@@ -26,13 +26,15 @@ source:
 
 requirements:
   build:
-    - curl
-    - gcc_npg <=5.0
-    - staden_io_lib <=10.14.6
+    - libcurl
+    - gcc_npg >=7.3
+    - libgd
+    - staden_io_lib <=1.14.6
     - zlib
 
   run:
-    - curl
+    - libcurl
+    - libgd
     - staden_io_lib
     - zlib
 

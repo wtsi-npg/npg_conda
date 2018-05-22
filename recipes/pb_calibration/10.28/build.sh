@@ -5,7 +5,7 @@ set -e
 n=`expr $CPU_COUNT / 4 \| 1`
 
 pushd samtools
-make -j $n
+make -j $n DFLAGS="-D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -D_USE_KNETFILE" LIBCURSES=
 popd
 
 pushd pb_calibration
