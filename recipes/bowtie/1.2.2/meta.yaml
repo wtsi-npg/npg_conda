@@ -22,10 +22,10 @@ source:
 
 requirements:
   build:
-    - gcc_npg >=7.3
+    - gcc_npg <7.3
 
   run:
-    - libgcc_npg >=7.3
+    - libgcc_npg <7.3
 
 test:
   commands:
