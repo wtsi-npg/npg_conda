@@ -24,4 +24,10 @@ make -j $n INCLUDES="-I. -I$SRC_DIR/samtools -I$PREFIX/include" SAMTOOLSLIBPATH=
 make install installdir="$PREFIX/bin/"
 popd
 
+pushd norm_fit
+mkdir -p build
+make -j $n INCLUDES="-I. -I$PREFIX/include" LIBPATH="-L$PREFIX/lib"
+cp ./build/norm_fit "$PREFIX/bin/"
+popd
+
 popd
