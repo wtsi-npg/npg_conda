@@ -15,7 +15,6 @@ build:
 
 source:
   - url: http://curl.haxx.se/download/curl-{{ version }}.tar.bz2
-    fn: 
     sha256: {{ sha256 }}
 
 requirements:
