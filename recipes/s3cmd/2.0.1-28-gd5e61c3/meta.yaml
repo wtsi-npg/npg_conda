@@ -1,0 +1,36 @@
+{% set version = "2.0.1_28_gd5e61c3" %}
+
+package:
+  name: s3cmd
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/s3tools/s3cmd
+  license: GPLv2
+  summary: "Command line tool for managing Amazon S3 and CloudFront services."
+
+build:
+  number: 0
+
+source:
+  git_url: https://github.com/s3tools/s3cmd.git
+  git_rev: d5e61c3eb02a9b4e66d49fa0f1ad8279d007994b
+
+  patches:
+    - s3cmd.patch
+
+requirements:
+  build:
+    - python
+    - python-dateutil
+    - python-magic
+    - setuptools
+
+  run:
+    - python
+    - python-dateutil
+    - python-magic
+
+test:
+  commands:
+    - s3cmd --help
