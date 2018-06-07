@@ -14,7 +14,7 @@ about:
   summary: "C programs extracted from npg_qc."
 
 build:
-  number: 2
+  number: 3
 
 source:
   - url: https://sourceforge.net/projects/samtools/files/samtools/{{ samtools_version }}/samtools-{{ samtools_version }}.tar.bz2/download
@@ -39,5 +39,7 @@ requirements:
 test:
   commands:
     - ${PREFIX}/bin/fastq_summ -h
+    - ${PREFIX}/bin/find_gt_match -h
+    - ${PREFIX}/bin/gt_pack -h
     - test -e ${PREFIX}/bin/fastqcheck
     - test -e ${PREFIX}/bin/norm_fit
