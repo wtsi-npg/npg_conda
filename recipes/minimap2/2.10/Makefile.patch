@@ -1,0 +1,15 @@
+--- Makefile	2018-03-27 16:47:59.000000000 +0100
++++ Makefile.1	2018-06-18 14:45:26.262092000 +0100
+@@ -29,10 +29,10 @@
+ extra:all $(PROG_EXTRA)
+ 
+ minimap2:main.o getopt.o libminimap2.a
+-		$(CC) $(CFLAGS) main.o getopt.o -o $@ -L. -lminimap2 $(LIBS)
++		$(CC) $(CFLAGS) main.o getopt.o -o $@ -L. $(LDFLAGS) -lminimap2 $(LIBS)
+ 
+ minimap2-lite:example.o libminimap2.a
+-		$(CC) $(CFLAGS) $< -o $@ -L. -lminimap2 $(LIBS)
++		$(CC) $(CFLAGS) $< -o $@ -L. $(LDFLAGS) -lminimap2 $(LIBS)
+ 
+ libminimap2.a:$(OBJS)
+ 		$(AR) -csru $@ $(OBJS)
