@@ -11,7 +11,7 @@ about:
   summary: "The GNU Multiple Precision Arithmetic Library."
 
 build:
-  number: 0
+  number: 1
 
 source:
   url: https://gmplib.org/download/gmp/gmp-{{ version }}.tar.xz
