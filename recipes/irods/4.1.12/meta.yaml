@@ -25,7 +25,7 @@ source:
 
 requirements:
   build:
-    - gcc_npg ==4.6
+    - gcc_npg ==4.6.4
     - libbzip2
     - libcurl
     - libxml2
