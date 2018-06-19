@@ -20,27 +20,31 @@ about:
   summary: The GNU Compiler Collection.
 
 build:
-  number: 0
-    
+  number: 1
+
+  rpaths:
+    - lib64
+    - lib
+
 source:
   - url: ftp://ftp.mirrorservice.org/sites/sourceware.org/pub/gcc/releases/gcc-{{ version }}/gcc-{{ version }}.tar.gz
     fn: gcc-{{ version }}.tar.gz
-    folder: gcc
+    folder: gcc-src
     sha256: {{ sha256 }}
 
   - url: https://gmplib.org/download/gmp/archive/gmp-{{ gmp_version }}.tar.bz2
     fn: gmp-{{ gmp_version }}.tar.bz2
-    folder: gmp
+    folder: gmp-src
     sha256: {{ gmp_sha256 }}
 
   - url: http://www.mpfr.org/mpfr-{{ mpfr_version }}/mpfr-{{ mpfr_version }}.tar.bz2
     fn: mpfr-{{ mpfr_version }}.tar.bz2
-    folder: mpfr
+    folder: mpfr-src
     sha256: {{ mpfr_sha256 }}
 
   - url: http://www.multiprecision.org/downloads/mpc-{{ mpc_version }}.tar.gz
     fn: mpc-{{ mpc_version }}.tar.gz
-    folder: mpc
+    folder: mpc-src
     sha256: {{ mpc_sha256 }}
 
 outputs:
