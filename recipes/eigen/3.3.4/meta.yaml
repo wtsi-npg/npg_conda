@@ -15,7 +15,6 @@ build:
 
 source:
   url: https://bitbucket.org/eigen/eigen/get/{{ version }}.tar.bz2
-  fn: 
   sha256: {{ sha256 }}
 
 requirements:
