@@ -4,7 +4,7 @@ set -e
 
 n=`expr $CPU_COUNT / 4 \| 1`
 
-make -j $n
+make -j $n CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
 
 mkdir -p "$PREFIX/bin"
 cp bwa "$PREFIX/bin/"
