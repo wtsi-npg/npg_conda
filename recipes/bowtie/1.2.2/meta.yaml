@@ -10,7 +10,7 @@ about:
   summary: An ultrafast memory-efficient short read aligner.
 
 build:
-  number: 0
+  number: 1
 
   rpaths:
     - lib64
@@ -23,9 +23,13 @@ source:
 requirements:
   build:
     - gcc_npg <7.3
+    - tbb
+    - zlib
 
   run:
     - libgcc_npg <7.3
+    - tbb
+    - zlib
 
 test:
   commands:
