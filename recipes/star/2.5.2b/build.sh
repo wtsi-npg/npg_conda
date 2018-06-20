@@ -6,7 +6,7 @@ n=`expr $CPU_COUNT / 4 \| 1`
 
 # N.B. CPPFLAGS must reset all the values used by htslib subdirectory,
 # otherwise they will be lost. Don't set LDFLAGS because the STAR
-# Makefile is broken and the values of other flags will be lots.
+# Makefile is broken and the values of other flags will be lost.
 
 pushd source
 make -j $n STAR STARlong \
