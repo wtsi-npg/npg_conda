@@ -8,10 +8,10 @@ package:
 about:
   home: http://genome.ucsc.edu/
   license: Blat
-  summary: Rapid mRNA/DNA and cross-species protein alignments.
+  summary: "Rapid mRNA/DNA and cross-species protein alignments."
 
 build:
-  number: 0
+  number: 1
 
 source:
   url: https://users.soe.ucsc.edu/~kent/src/blatSrc{{ version }}.zip
