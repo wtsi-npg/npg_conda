@@ -1,0 +1,21 @@
+--- Makefile	2018-06-19 15:36:55.684554000 +0100
++++ Makefile.1	2018-06-19 15:36:46.075489000 +0100
+@@ -22,15 +22,15 @@
+ .SUFFIXES:.c .o .cc
+ 
+ .c.o:
+-		$(CC) -c $(CFLAGS) $(DFLAGS) $(INCLUDES) $< -o $@
++		$(CC) -c $(CFLAGS) $(DFLAGS) $(INCLUDES) $(CPPFLAGS) $< -o $@
+ 
+ all:$(PROG)
+ 
+ bwa:libbwa.a $(AOBJS) main.o
+-		$(CC) $(CFLAGS) $(DFLAGS) $(AOBJS) main.o -o $@ -L. -lbwa $(LIBS)
++		$(CC) $(CFLAGS) $(DFLAGS) $(AOBJS) main.o -o $@ -L. $(LDFLAGS) -lbwa $(LIBS)
+ 
+ bwamem-lite:libbwa.a example.o
+-		$(CC) $(CFLAGS) $(DFLAGS) example.o -o $@ -L. -lbwa $(LIBS)
++		$(CC) $(CFLAGS) $(DFLAGS) example.o -o $@ -L. $(LDFLAGS) -lbwa $(LIBS)
+ 
+ libbwa.a:$(LOBJS)
+ 		$(AR) -csru $@ $(LOBJS)
