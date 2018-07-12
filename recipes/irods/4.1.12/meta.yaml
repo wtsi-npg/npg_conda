@@ -10,7 +10,7 @@ about:
   summary: "Open Source Data Management Software."
 
 build:
-  number: 0
+  number: 1
 
   rpaths:
     - lib64
