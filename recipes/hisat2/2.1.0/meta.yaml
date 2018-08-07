@@ -1,0 +1,36 @@
+{% set version = "2.1.0" %}
+{% set sha256 = "89a276eed1fc07414b1601947bc9466bdeb50e8f148ad42074186fe39a1ee781" %}
+
+package:
+  name: hisat2
+  version: "{{ version }}"
+
+about:
+  home: http://ccb.jhu.edu/software/hisat2/index.shtml
+  license: GPLv3
+  summary: graph-based alignment of next generation sequencing reads to a population of genomes.
+
+build:
+  number: 0
+
+  rpaths:
+    - lib64
+    - lib
+
+source:
+  url: ftp://ftp.ccb.jhu.edu/pub/infphilo/hisat2/downloads/hisat2-{{ version }}-source.zip
+  fn: hisat2-{{ version }}-source.zip
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+    - zlib
+
+  run:
+    - libgcc_npg >=7.3
+    - zlib
+
+test:
+  commands:
+    - hisat2 -h
