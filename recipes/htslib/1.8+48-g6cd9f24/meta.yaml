@@ -1,0 +1,80 @@
+{% set version = "1.8+48_g6cd9f24" %}
+{% set plugins_rev = "201712" %}
+{% set htslib_rev = "6cd9f2477d729896d78c3ee6e6eb5fd89c50d372" %}
+
+package:
+  name: "htslib"
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/samtools/htslib
+  license: MIT
+  summary: C library for high-throughput sequencing data formats.
+
+build:
+  number: 0
+  string: plugins_{{ plugins_rev }}_{{ PKG_BUILDNUM }}
+
+source:
+  - git_url: https://github.com/samtools/htslib.git
+    git_rev: {{ htslib_rev }}
+    folder: htslib
+  - git_url: https://github.com/samtools/htslib-plugins.git
+    git_rev: {{ plugins_rev }}
+    folder: plugins
+
+features:
+  - irods
+
+requirements:
+  build:
+    - libbzip2
+    - libcurl
+    - gcc_npg >=7.3
+    - irods-dev >=4.1.12 # for plugins
+    - liblzma
+    - openssl
+    - zlib
+
+outputs:
+  - name: htsbin
+    version: {{ version }}
+    requirements:
+      run:
+        - htslib =={{ version }}
+        - libbzip2
+        - libcurl
+        - liblzma
+        - openssl
+        - zlib
+    files:
+      - bin/bgzip
+      - bin/htsfile
+      - bin/tabix
+      - share/man/man1/htsfile.1
+      - share/man/man1/tabix.1
+
+  - name: htslib
+    version: {{ version }}
+    requirements:
+      run:
+        - libbzip2
+        - libcurl
+        - liblzma
+        - openssl
+        - zlib
+    files:
+      - include/htslib
+      - libexec/htslib
+      - lib/libhts*
+      - share/man/man5/faidx.5
+      - share/man/man5/sam.5
+      - share/man/man5/vcf.5
+
+    test:
+      commands:
+        - test -f ${PREFIX}/include/htslib/sam.h
+        - test -f ${PREFIX}/lib/libhts.a
+        - test -h ${PREFIX}/lib/libhts.so
+        - test -f ${PREFIX}/libexec/htslib/hfile_irods.so
+        - test -f ${PREFIX}/libexec/htslib/hfile_libcurl.so

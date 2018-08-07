@@ -1,0 +1,34 @@
+{% set version = "2.1.1" %}
+{% set sha256 = "37840b96f3219630082b15642c47f5ef95d14f6ee99c06a369b08b3d05684da5" %}
+
+package:
+  name: tophat2
+  version: "{{ version }}"
+
+about:
+  home: http://ccb.jhu.edu/software/tophat/index.shtml
+  license: BSL
+  summary: Spliced read mapper for RNA-Seq.
+
+build:
+  number: 0
+  
+source:
+  url: http://ccb.jhu.edu/software/tophat/downloads/tophat-{{ version }}.tar.gz
+  fn: tophat2-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - boost
+    - gcc_npg >=5.5,<7.0.0
+    - zlib
+
+  run:
+    - boost
+    - libgcc_npg >=5.5
+    - zlib
+
+test:
+  commands:
+    - tophat2 --version
