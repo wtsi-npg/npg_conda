@@ -7,9 +7,9 @@ package:
   version: "{{ version }}"
 
 about:
-  home: https://github.com/samtools/samtools
+  home: https://github.com/samtools/bcftools
   license: MIT
-  summary: C library for high-throughput sequencing data formats.
+  summary: VCF commands and BCF calling.
 
 build:
   number: 0
