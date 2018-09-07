@@ -5,7 +5,7 @@
 
  $(HTSLIB_ROOT)/libhts.a:
 -	cd $(HTSLIB_ROOT) && make
-+	cd $(HTSLIB_ROOT) && make LDFLAGS="-L$PREFIX/lib" CPPFLAGS="-I$PREFIX/include"
++	cd $(HTSLIB_ROOT) && make LDFLAGS="-L$(PREFIX)/lib" CPPFLAGS="-I$(PREFIX)/include"
 
  $(SEQLIB_ROOT)/src/libseqlib.a:
  	cd $(SEQLIB_ROOT) && ./configure && make
