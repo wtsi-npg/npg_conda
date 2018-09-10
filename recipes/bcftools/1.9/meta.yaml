@@ -1,0 +1,32 @@
+{% set version = "1.9" %}
+{% set maxversion = "1.10" %}
+{% set sha256 = "6f36d0e6f16ec4acf88649fb1565d443acf0ba40f25a9afd87f14d14d13070c8" %}
+
+package:
+  name: bcftools
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/samtools/bcftools
+  license: MIT
+  summary: VCF commands and BCF calling.
+
+build:
+  number: 0
+  
+source:
+  url: https://github.com/samtools/bcftools/releases/download/{{ version }}/bcftools-{{ version }}.tar.bz2
+  fn: bcftools-{{ version }}.tar.bz2
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+    - htslib >={{ version }},<{{ maxversion }}
+
+  run:
+    - htslib >={{ version }},<{{ maxversion }}
+
+test:
+  commands:
+    - bcftools --help
