@@ -11,6 +11,9 @@ about:
 
 build:
   number: 0
+  rpaths:
+    - lib64
+    - lib
 
 source:
   git_url: https://github.com/ekg/freebayes.git
@@ -31,7 +34,6 @@ requirements:
   run:
     - libbzip2
     - libcurl
-    - gcc_npg >=7.3
     - libgcc_npg >=7.3
     - liblzma
     - openssl
