@@ -1,0 +1,20 @@
+--- src/Makefile	2018-09-07 14:27:44.368935165 +0000
++++ src/Makefile.lib	2018-09-07 14:27:32.380857346 +0000
+@@ -46,7 +46,7 @@
+ .PHONY: all static debug profiling gprof
+
+ $(HTSLIB_ROOT)/libhts.a:
+-	cd $(HTSLIB_ROOT) && make
++	cd $(HTSLIB_ROOT) && make LDFLAGS="-L$(PREFIX)/lib" CPPFLAGS="-I$(PREFIX)/include"
+
+ $(SEQLIB_ROOT)/src/libseqlib.a:
+ 	cd $(SEQLIB_ROOT) && ./configure && make
+@@ -256,7 +256,7 @@
+ autoversion:
+ 	@( \
+ 	if [ -d "../.git" ] && which git > /dev/null ; then \
+-		DETECTED_VERSION=$$(git describe --always --tags --dirty) ; \
++		DETECTED_VERSION=$$(git describe --always --tags) ; \
+ 	else \
+ 		DETECTED_VERSION=$$(grep -v "^#" "$(RELEASED_VERSION_FILE)") ; \
+ 	fi ; \
