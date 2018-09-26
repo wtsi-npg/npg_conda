@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# A mock s3cmd which copies files to a local directory instead of
+# uploading to S3. The local directory has the same path as the S3
+# bucket + prefix.
+
+ACL_PUBLIC=
+DRY_RUN=
+OP=
+
+ARGS=()
+
+for arg in "$@"; do
+    case "$arg" in
+        --acl-public)
+            ACL_PUBLIC=1
+            ;;
+        --dry-run)
+            DRY_RUN=1
+            ;;
+        sync)
+            OP=sync
+            ;;
+        *)
+            ARGS+=("$arg")
+            ;;
+    esac
+done
+
+UPLOAD_DIR=${ARGS[0]}
+URL=${ARGS[1]}
+
+if [ -z "$OP" ]; then
+    echo "sync command missing"
+    exit 4
+fi
+
+if [ -z "$ACL_PUBLIC" ]; then
+    echo "--acl-public option missing"
+    exit 4
+fi
+
+if [ -n "$DRY_RUN" ]; then
+    exit 0
+fi
+
+target_dir=$(echo "$URL" | sed -e 's|^s3://||')
+
+mkdir -p "$target_dir"
+cp -r --no-target-directory "$UPLOAD_DIR" "$target_dir"
