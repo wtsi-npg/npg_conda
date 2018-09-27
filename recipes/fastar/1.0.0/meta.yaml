@@ -1,0 +1,23 @@
+{% set version = "1.0.0" %}
+{% set sha256 = "49795490d1e1760f01b1647e53c7f119080d275c67b59a19a8cb827477c1db9c" %}
+
+package:
+  name: fastar
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/sb10/fastar
+  license: MIT
+  summary: "fasta regions by coverage."
+
+build:
+  number: 0
+  binary_relocation: false
+
+source:
+  url: https://github.com/sb10/fastar/releases/download/v{{ version }}/fastar
+  sha256: {{ sha256 }}
+
+test:
+  commands:
+    - fastar -h
