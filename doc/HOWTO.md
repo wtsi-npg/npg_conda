@@ -17,7 +17,7 @@ channels:
 
 The public channel URLs are structured by channel purpose (`prod`, for
 production, `test` for testing), OS distribution name (e.g. `Ubuntu`,
-`RedHat`) and OS release number (e.g. `18.08` for Ubuntu Bionic, `7`
+`RedHat`) and OS release number (e.g. `18.04` for Ubuntu Bionic, `7`
 for RedHat Enterprise Linux).
 
 Unless you are building a complete stack from scratch, you should have
