@@ -12,7 +12,7 @@ about:
   summary: C library for high-throughput sequencing data formats.
 
 build:
-  number: 0
+  number: 1
   string: plugins_{{ plugins_rev }}_{{ PKG_BUILDNUM }}
 
 source:
