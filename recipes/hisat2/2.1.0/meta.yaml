@@ -7,29 +7,26 @@ package:
 
 about:
   home: http://ccb.jhu.edu/software/hisat2/index.shtml
-  license: GPLv3
-  summary: graph-based alignment of next generation sequencing reads to a population of genomes.
+  license: GPL3
+  summary: "Graph-based alignment of next generation sequencing reads to a population of genomes."
 
 build:
-  number: 0
-
-  rpaths:
-    - lib64
-    - lib
+  number: 1
 
 source:
   url: ftp://ftp.ccb.jhu.edu/pub/infphilo/hisat2/downloads/hisat2-{{ version }}-source.zip
   fn: hisat2-{{ version }}-source.zip
   sha256: {{ sha256 }}
+  patches:
+    - Makefile.patch
 
 requirements:
   build:
-    - gcc_npg >=7.3
-    - zlib
-
+    - {{ compiler("cxx") }}
+  host:
+    - libz-dev
   run:
-    - libgcc_npg >=7.3
-    - zlib
+    - libz
 
 test:
   commands:

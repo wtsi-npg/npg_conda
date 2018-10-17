@@ -1,9 +1,9 @@
 #!/bin/sh
 
-set -e
+set -ex
 
-n=`expr $CPU_COUNT / 4 \| 1`
+n="$CPU_COUNT"
 
-prefix="$PREFIX" ./configure 
-make -j $n
+prefix="$PREFIX" CC="$GCC" ./configure
+make -j $n CC="$GCC" CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
 make install

@@ -1,0 +1,15 @@
+--- vcflib/tabixpp/Makefile	2018-10-12 09:46:11.236657824 +0100
++++ vcflib/tabixpp/Makefile.1	2018-10-12 09:46:05.452842794 +0100
+@@ -35,10 +35,10 @@
+ 	$(CXX) $(CXXFLAGS) -c tabix.cpp $(INCLUDES)
+ 
+ htslib/libhts.a:
+-	cd htslib && $(MAKE) lib-static
++	cd htslib && $(MAKE) lib-static LDFLAGS="$(LDFLAGS)" CPPFLAGS="$(CPPFLAGS)"
+ 
+ tabix++: tabix.o main.cpp $(HTS_LIB)
+-	$(CXX) $(CXXFLAGS) -o $@ main.cpp tabix.o $(INCLUDES) $(LIBPATH) \
++	$(CXX) $(CXXFLAGS) -o $@ main.cpp tabix.o $(INCLUDES) $(LDFLAGS) $(LIBPATH) \
+ 		-lhts -lpthread -lm -lz
+ 
+ cleanlocal:

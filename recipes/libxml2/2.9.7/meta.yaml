@@ -11,25 +11,63 @@ about:
   summary: "XML C parser and toolkit developed for the Gnome project."
 
 build:
-  number: 2
+  number: 3
 
 source:
   url: ftp://xmlsoft.org/libxml2/libxml2-{{ version }}.tar.gz
   fn: libxml2-{{ version }}.tar.gz
   sha256: {{ sha256 }}
 
-requirements:
-  build:
-    - gcc_npg >=7.3
-    - liblzma
-    - zlib
+outputs:
+  - name: libxml2-bin
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - make
+      host:
+        - liblzma-dev
+        - libz-dev
+      run:
+        - {{ pin_subpackage('libxml2', exact=True) }}
+        - liblzma
+        - libz
+    files:
+      - bin/xml2-config
+      - bin/xmlcatalog
+      - bin/xmllint
+    test:
+      commands:
+        - test -f ${PREFIX}/lib/libxml2.a
+        - test -h ${PREFIX}/lib/libxml2.so
 
-  run:
-    - liblzma
-    - zlib
+  - name: libxml2
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - make
+      host:
+        - liblzma-dev
+        - libz-dev
+      run:
+        - liblzma
+        - libz
+    files:
+      - lib/libxml2.*
+    test:
+      commands:
+        - test -f ${PREFIX}/lib/libxml2.a
+        - test -h ${PREFIX}/lib/libxml2.so
 
-test:
-  commands:
-    - test -f ${PREFIX}/include/libxml2/libxml/uri.h
-    - test -f ${PREFIX}/lib/libxml2.a
-    - test -h ${PREFIX}/lib/libxml2.so
+  - name: libxml2-dev
+    requirements:
+      run:
+         {{ pin_subpackage('libxml2', exact=True) }}
+    files:
+      - include/libxml2
+      - lib/xml2Conf.sh
+      - lib/pkgconfig/libxml-2.0.pc
+      - share/doc/libxml2-{{ version }}
+      - share/gtk-doc/html/libxml2
+    test:
+      commands:
+        - test -f ${PREFIX}/include/libxml2/libxml/uri.h

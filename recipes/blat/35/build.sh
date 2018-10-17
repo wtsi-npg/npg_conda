@@ -1,11 +1,12 @@
 #!/bin/sh
 
-set -e
+set -ex
 
-n=`expr $CPU_COUNT / 4 \| 1`
+n="$CPU_COUNT"
 
 mkdir -p "$SRC_DIR/bin"
-make -j $n MACHTYPE=X86_64 BINDIR="$SRC_DIR/bin"
+make -j $n MACHTYPE=X86_64 BINDIR="$SRC_DIR/bin" \
+     CC="$GCC" CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
 
 mkdir -p "$PREFIX/bin"
 

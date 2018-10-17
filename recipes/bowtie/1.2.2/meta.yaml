@@ -10,11 +10,7 @@ about:
   summary: An ultrafast memory-efficient short read aligner.
 
 build:
-  number: 1
-
-  rpaths:
-    - lib64
-    - lib
+  number: 2
 
 source:
   git_url: https://github.com/BenLangmead/bowtie
@@ -22,14 +18,13 @@ source:
 
 requirements:
   build:
-    - gcc_npg <7.3
-    - tbb
-    - zlib
-
+    - gcc # Needs g++ 4.8
+  host:
+    - tbb-devel
+    - libz-dev
   run:
-    - libgcc_npg <7.3
     - tbb
-    - zlib
+    - libz
 
 test:
   commands:

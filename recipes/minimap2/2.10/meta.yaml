@@ -11,22 +11,21 @@ about:
   summary: "A versatile pairwise aligner for genomic and spliced nucleotide sequences."
 
 build:
-  number: 1
+  number: 2
 
 source:
   url: https://github.com/lh3/minimap2/releases/download/v{{ version }}/minimap2-{{ version }}.tar.bz2
   sha256: {{ sha256 }}
-
   patches:
     - Makefile.patch
 
 requirements:
   build:
-    - gcc_npg >=7.3
-    - zlib
-
+    - {{ compiler("c") }}
+  host:
+    - libz-dev
   run:
-    - zlib
+    - libz
 
 test:
   commands:

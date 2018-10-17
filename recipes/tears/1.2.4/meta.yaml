@@ -6,28 +6,30 @@ package:
 
 about:
   home: https://github.com/whitwham/tears
-  license: GPLv3
+  license: GPL3
   summary:  Stream files to and from iRODS.
 
 build:
-  number: 1
+  number: 2
 
 source:
   git_url: https://github.com/whitwham/tears.git
   git_rev: v{{ version }}
 
-features:
-  - irods
-
 requirements:
   build:
-    - gcc_npg
+    - {{ compiler("c") }}
+    - autoconf
+    - make
+    - perl
+  host:
     - irods-dev ==4.1.12
-    - jansson
-
+    - libjansson-dev
+    - libssl-dev
   run:
     - irods-plugins ==4.1.12
-    - jansson
+    - libjansson
+    - libssl
 
 test:
   commands:

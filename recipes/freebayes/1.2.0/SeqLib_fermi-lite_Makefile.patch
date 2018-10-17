@@ -1,0 +1,17 @@
+--- SeqLib/fermi-lite/Makefile	2018-10-12 08:21:20.404073207 +0100
++++ SeqLib/fermi-lite/Makefile.1	2018-10-12 08:21:05.621086268 +0100
+@@ -1,4 +1,4 @@
+-CC=			gcc
++CC?=			gcc
+ CFLAGS=		-g -Wall -O2 -Wno-unused-function #-fno-inline-functions -fno-inline-functions-called-once
+ CPPFLAGS=
+ INCLUDES=	
+@@ -17,7 +17,7 @@
+ all:$(PROG)
+ 
+ fml-asm:libfml.a example.o
+-		$(CC) $(CFLAGS) $^ -o $@ -L. -lfml $(LIBS)
++		$(CC) $(CFLAGS) $^ -o $@ -L. -lfml $(LDFLAGS) $(LIBS)
+ 
+ libfml.a:$(OBJS)
+ 		$(AR) -csru $@ $(OBJS)

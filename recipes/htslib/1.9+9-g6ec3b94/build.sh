@@ -1,8 +1,8 @@
 #!/bin/sh
 
-set -e
+set -ex
 
-n=`expr $CPU_COUNT / 4 \| 1`
+n="$CPU_COUNT"
 
 pushd htslib
 
@@ -19,6 +19,7 @@ make install prefix="$PREFIX"
 popd
 
 pushd plugins
-make install prefix="$PREFIX" IRODS_HOME="$PREFIX" \
-     CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
+make IRODS_HOME="$PREFIX" \
+     CC="$GCC" CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
+make install prefix="$PREFIX"
 popd

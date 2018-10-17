@@ -1,10 +1,12 @@
 #!/bin/sh
 
-set -e
+set -ex
 
-n=`expr $CPU_COUNT / 4 \| 1`
+n="$CPU_COUNT"
 
-./configure --prefix="$PREFIX"
+./configure --prefix="$PREFIX" \
+            --with-include-path="$PREFIX/include" \
+            --with-lib-path="$PREFIX/lib"
 
-make -j $n
+make -j $n LDFLAGS="-Wl,-rpath-link,$PREFIX/lib -Wl,--disable-new-dtags -L$PREFIX/lib"
 make install prefix="$PREFIX"

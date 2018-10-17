@@ -1,0 +1,73 @@
+diff --git Makefiles/Makefile.lib Makefiles/Makefile.lib
+index f2c653b..097f346 100644
+--- Makefiles/Makefile.lib
++++ Makefiles/Makefile.lib
+@@ -34,11 +34,11 @@ profile: $(STAT_GEN_LIB_PROFILE)
+ # To build the library, build the objects
+ # Then add them to the library
+ $(STAT_GEN_LIB_OPT): $(OBJECTS_OPT)
+-	ar -cru $@ $(OBJECTS_OPT)
++	$(AR) -cru $@ $(OBJECTS_OPT)
+ $(STAT_GEN_LIB_DEBUG): $(OBJECTS_DEBUG)
+-	ar -cru $@ $(OBJECTS_DEBUG)
++	$(AR) -cru $@ $(OBJECTS_DEBUG)
+ $(STAT_GEN_LIB_PROFILE): $(OBJECTS_PROFILE)
+-	ar -cru $@ $(OBJECTS_PROFILE)
++	$(AR) -cru $@ $(OBJECTS_PROFILE)
+ 
+ UNAME=$(shell uname)
+ 
+diff --git Makefiles/Makefile.src Makefiles/Makefile.src
+index 590b468..dc67c47 100644
+--- Makefiles/Makefile.src
++++ Makefiles/Makefile.src
+@@ -20,9 +20,9 @@ MAKEFILES_PATH := $(dir $(lastword $(MAKEFILE_LIST)))
+ include $(MAKEFILES_PATH)Makefile.ext
+ 
+ # Set the build commands for executable
+-OPT_BUILD =     $(CXX) $(COMPFLAGS) $(USER_LINK_OPTIONS) -o $(PROG_OPT)     $(OBJECTS_OPT)     $(USER_LIBS) $(REQ_LIBS_OPT)     -lm $(ZLIB_LIB) $(UNAME_LIBS) $(OTHER_LIBS)
+-DEBUG_BUILD =   $(CXX) $(COMPFLAGS) $(USER_LINK_OPTIONS) -o $(PROG_DEBUG)   $(OBJECTS_DEBUG)   $(USER_LIBS) $(REQ_LIBS_DEBUG)   -lm $(ZLIB_LIB) $(UNAME_LIBS) $(OTHER_LIBS)
+-PROFILE_BUILD = $(CXX) $(COMPFLAGS) $(USER_LINK_OPTIONS) -o $(PROG_PROFILE) $(OBJECTS_PROFILE) $(USER_LIBS) $(REQ_LIBS_PROFILE) -lm $(ZLIB_LIB) $(UNAME_LIBS) $(OTHER_LIBS)
++OPT_BUILD =     $(CXX) $(COMPFLAGS) $(USER_LINK_OPTIONS) -o $(PROG_OPT)     $(OBJECTS_OPT)     $(USER_LIBS) $(REQ_LIBS_OPT) $(LDFLAGS) -lm $(ZLIB_LIB) $(UNAME_LIBS) $(OTHER_LIBS)
++DEBUG_BUILD =   $(CXX) $(COMPFLAGS) $(USER_LINK_OPTIONS) -o $(PROG_DEBUG)   $(OBJECTS_DEBUG)   $(USER_LIBS) $(REQ_LIBS_DEBUG) $(LDFLAGS) -lm $(ZLIB_LIB) $(UNAME_LIBS) $(OTHER_LIBS)
++PROFILE_BUILD = $(CXX) $(COMPFLAGS) $(USER_LINK_OPTIONS) -o $(PROG_PROFILE) $(OBJECTS_PROFILE) $(USER_LIBS) $(REQ_LIBS_PROFILE) $(LDFLAGS) -lm $(ZLIB_LIB) $(UNAME_LIBS) $(OTHER_LIBS)
+ 
+ ADDITIONAL_HELP= @echo "make install      Install binaries in $(INSTALLDIR)";\
+ 	echo "make install INSTALLDIR=directory_for_binaries";\
+diff --git Makefiles/Makefile.toolchain Makefiles/Makefile.toolchain
+index 36017ed..a82f15b 100644
+--- Makefiles/Makefile.toolchain
++++ Makefiles/Makefile.toolchain
+@@ -51,19 +51,19 @@ endif
+ 
+ # CPP0X=-std=c++0x
+ 
+-CXX     = $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)g++ $(CPP0X)
+-CC      = $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)gcc
+-LD      = $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)ld
+-AR      = $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)ar
+-RANLIB  = $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)ranlib
+-OBJCOPY = $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)objcopy
+-OBJDUMP = $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)objdump
+-STRIP   = $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)strip
+-NM      = $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)nm
+-SIZE    = $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)size
+-CPP     = $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)cpp
+-AS      = $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)as
+-F77     = $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)gfortran
++CXX     ?= $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)g++ $(CPP0X)
++CC      ?= $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)gcc
++LD      ?= $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)ld
++AR      ?= $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)ar
++RANLIB  ?= $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)ranlib
++OBJCOPY ?= $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)objcopy
++OBJDUMP ?= $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)objdump
++STRIP   ?= $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)strip
++NM      ?= $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)nm
++SIZE    ?= $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)size
++CPP     ?= $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)cpp
++AS      ?= $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)as
++F77     ?= $(TOOLCHAIN_DIR)$(TOOLCHAIN_PREFIX)gfortran
+ 
+ # 
+ # clang is a drop in replacement for c++ and cc:

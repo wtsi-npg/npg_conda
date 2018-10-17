@@ -11,8 +11,8 @@ about:
   summary: A Massively Spiffy Yet Delicately Unobtrusive Compression Library.
 
 build:
-  number: 0
-  
+  number: 1
+
 source:
   url: https://sourceforge.mirrorservice.org/l/li/libpng/zlib/{{ version }}/zlib-{{ version }}.tar.gz
   fn: zlib-{{ version }}.tar.gz
@@ -20,10 +20,32 @@ source:
 
 requirements:
   build:
-    - gcc_npg >=7.3
+    - {{ compiler("c") }}
+  run:
+    - {{ pin_subpackage('libz-dev', exact=True) }}
 
-test:
-  commands:
-    - test -f ${PREFIX}/include/zlib.h
-    - test -f ${PREFIX}/lib/libz.a
-    - test -h ${PREFIX}/lib/libz.so
+outputs:
+  - name: libz
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - make
+    files:
+      - lib/libz.*
+    test:
+      commands:
+        - test -f ${PREFIX}/lib/libz.a
+        - test -h ${PREFIX}/lib/libz.so
+
+  - name: libz-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage('libz', exact=True) }}
+    files:
+      - include
+      - lib/pkgconfig/zlib.pc
+    test:
+      commands:
+        - test -f ${PREFIX}/include/zlib.h

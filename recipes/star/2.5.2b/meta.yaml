@@ -11,11 +11,7 @@ about:
   summary: Spliced Transcripts Alignment to a Reference.
 
 build:
-  number: 1
-
-  rpaths:
-    - lib64
-    - lib
+  number: 2
 
 source:
   url: https://github.com/alexdobin/STAR/archive/{{ version }}.tar.gz
@@ -24,12 +20,11 @@ source:
 
 requirements:
   build:
-    - gcc_npg >=7.3
-    - zlib
-
+    - {{ compiler("cxx") }}
+  host:
+    - libz-dev
   run:
-    - libgcc_npg >=7.3
-    - zlib
+    - libz
 
 test:
   commands:

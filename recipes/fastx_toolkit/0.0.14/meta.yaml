@@ -13,11 +13,7 @@ about:
   summary: "A collection of command line tools for Short-Reads FASTA/FASTQ files preprocessing."
 
 build:
-  number: 0
-
-  rpaths:
-    - lib64
-    - lib
+  number: 1
 
 source:
   - url: https://github.com/agordon/fastx_toolkit/releases/download/{{ version }}/fastx_toolkit-{{ version }}.tar.bz2
@@ -28,13 +24,16 @@ source:
     folder: gtextutils
     sha256: {{ gtextutils_sha256 }}
 
-requirements:
-  build:
-    - gcc_npg <7.3
+outputs:
+  - name: fastx_toolkit
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("cxx") }}
+        - make
+    files:
+      - bin/fast*
 
-  run:
-    - libgcc_npg <7.3
-    
 test:
   commands:
     - test -x ${PREFIX}/bin/fastx_clipper

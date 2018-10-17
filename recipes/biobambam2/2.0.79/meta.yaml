@@ -11,11 +11,7 @@ about:
   summary: Tools for early stage alignment file processing.
 
 build:
-  number: 0
-
-  rpaths:
-    - lib64
-    - lib
+  number: 1
 
 source:
   url: https://github.com/gt1/biobambam2/archive/{{ version }}-release-20171006114010.tar.gz
@@ -24,15 +20,20 @@ source:
 
 requirements:
   build:
-    - gcc_npg >=7.3
+    - {{ compiler("cxx") }}
+    - make
+    - pkg-config
+  host:
     - irods-dev
-    - libmaus2
-    - zlib
-
+    - libgnutls-dev
+    - libmaus2-dev
+    - libnettle-dev
+    - libz-dev
   run:
-    - libgcc_npg >=7.3
+    - libgnutls
     - libmaus2
-    - zlib
+    - libnettle
+    - libz
 
 test:
   commands:

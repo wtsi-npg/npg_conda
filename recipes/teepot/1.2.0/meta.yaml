@@ -11,8 +11,8 @@ about:
   summary: A spillable pipe buffer.
 
 build:
-  number: 1
-  
+  number: 2
+
 source:
   url: https://github.com/wtsi-npg/teepot/releases/download/{{ version }}/teepot-1.2.0.tar.gz
   fn: teepot-{{ version }}.tar.gz
@@ -20,7 +20,8 @@ source:
 
 requirements:
   build:
-    - gcc_npg >=7.3
+    - {{ compiler("c") }}
+    - make
 
 test:
   commands:

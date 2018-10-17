@@ -11,28 +11,68 @@ about:
   summary: "Perl Compatible Regular Expressions."
 
 build:
-  number: 2
+  number: 3
 
 source:
   url: https://ftp.pcre.org/pub/pcre/pcre-{{ version }}.tar.gz
   fn: pcre-{{ version }}.tar.gz
   sha256: {{ sha256 }}
 
-requirements:
-  build:
-    - libbzip2
-    - gcc_npg >=7.3
-    - liblzma
-    - zlib
+outputs:
+  - name: pcre
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - {{ compiler("cxx") }}
+        - make
+      host:
+        - libbz2-dev
+        - liblzma-dev
+        - libz-dev
+      run:
+        - {{ pin_subpackage("libpcre", exact=True) }}
+        - libbz2
+        - liblzma
+        - libz
+    files:
+      - bin/pcregrep
+      - bin/pcretest
+    test:
+      commands:
+        - pcregrep --help
 
-  run:
-    - libbzip2
-    - libgcc_npg >=7.3
-    - liblzma
-    - zlib
+  - name: libpcre
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - {{ compiler("cxx") }}
+        - make
+      host:
+        - libbz2-dev
+        - liblzma-dev
+        - libz-dev
+      run:
+        - libbz2
+        - liblzma
+        - libz
+    files:
+      - lib/libpcre*.*
+    test:
+      commands:
+        - test -f ${PREFIX}/lib/libpcre.a
+        - test -h ${PREFIX}/lib/libpcre.so
 
-test:
-  commands:
-    - test -f ${PREFIX}/include/pcre.h
-    - test -f ${PREFIX}/lib/libpcre.a
-    - test -h ${PREFIX}/lib/libpcre.so
+  - name: libpcre-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libpcre", exact=True) }}
+    files:
+      - bin/pcre-config
+      - include/pcre*.h
+      - lib/pkgconfig/libpcre*.pc
+    test:
+      commands:
+        - test -f ${PREFIX}/include/pcre.h

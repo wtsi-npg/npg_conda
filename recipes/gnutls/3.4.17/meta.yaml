@@ -12,26 +12,78 @@ about:
   summary: "The GnuTLS Transport Layer Security Library."
 
 build:
-  number: 0
+  number: 1
 
 source:
   - url: https://www.gnupg.org/ftp/gcrypt/gnutls/v{{ short_version }}/gnutls-{{ version }}.tar.xz
     fn: gnutls-{{ version }}.tar.xz
     sha256: {{ sha256 }}
 
-requirements:
-  build:
-    - gcc_npg >=7.3
-    - gmplib
-    - nettle
-    - zlib
+outputs:
+  - name: gnutls
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - libtool
+        - make
+        - pkg-config
+      host:
+        - libgmp-dev
+        - libnettle-dev
+        - libz-dev
+      run:
+        - {{ pin_subpackage("libgnutls", exact=True) }}
+        - libgmp
+        - libnettle
+        - libz
+    files:
+      - bin/certtool
+      - bin/gnutls-cli
+      - bin/gnutls-cli-debug
+      - bin/gnutls-serv
+      - bin/ocsptool
+      - bin/psktool
+      - bin/srptool
+      - share/info
+      - share/man/man1
+    test:
+      commands:
+        - gnutls-cli -h
 
-  run:
-    - libgcc_npg
-    - gmplib
-    - nettle
-    - zlib
+  - name: libgnutls
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - libtool
+        - make
+        - pkg-config
+      host:
+        - libgmp-dev
+        - libnettle-dev
+        - libz-dev
+      run:
+        - libgmp
+        - libnettle
+        - libz 
+    files:
+      - lib/libgnutls.*
+      - lib/libgnutlsxx.*
+      - share/locale
+    tests:
+      commands:
+        - test -h ${PREFIX}/lib/libgnutls.so
 
-test:
-  commands:
-    - gnutls-cli -h
+  - name: libgnutls-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libgnutls", exact=True) }}
+    files:
+      - include/gnutls
+      - lib/pkgconfig/gnutls.pc
+      - man/man3
+    tests:
+      commands:
+        - test -f ${PREFIX}/include/gnutls/gnutls.h

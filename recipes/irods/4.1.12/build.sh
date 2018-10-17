@@ -2,7 +2,6 @@
 
 set -e
 
-
 function untar_data() {
     if [ -e data.tar.gz ]; then
         tar xz --strip-components=2 --directory="$PREFIX" --exclude='*.o' --exclude-backups < data.tar.gz
@@ -11,11 +10,25 @@ function untar_data() {
     fi
 }
 
+export TERM=dumb
+
 git submodule init && git submodule update
 
-export CCFLAGS="-I$PREFIX/include"
-export LDFLAGS="-L$PREFIX/lib"
-export TERM=dumb
+sudo apt-get install -y g++ g++-4.8 gcc gcc-4.8
+
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 100
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 100
+sudo update-alternatives --set gcc /usr/bin/gcc-4.8
+sudo update-alternatives --set g++ /usr/bin/g++-4.8
+
+sudo apt-get install -y autoconf automake help2man make \
+     libtool-bin pkg-config texinfo
+
+sudo apt-get install -y libjson-perl python-dev
+
+sudo apt-get install -y libbz2-dev libcurl4-gnutls-dev \
+     libfuse-dev libkrb5-dev libmysqlclient-dev libpam0g-dev \
+     libssl-dev unixodbc-dev libxml2-dev zlib1g-dev
 
 ./packaging/build.sh --verbose icat postgres
 ./packaging/build.sh --verbose icommands

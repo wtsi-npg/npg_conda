@@ -11,7 +11,7 @@ about:
   summary: "A python wrapper for libmagic."
 
 build:
-  number: 0
+  number: 1
 
 source:
   url: https://github.com/ahupp/python-magic/archive/{{ version }}.tar.gz
@@ -19,10 +19,9 @@ source:
   sha256: {{ sha256 }}
 
 requirements:
-  build:
+  host:
     - python
     - setuptools
-
   run:
     - python
 

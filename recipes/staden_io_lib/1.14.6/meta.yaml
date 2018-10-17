@@ -11,66 +11,33 @@ about:
   summary: DNA sequence assembly, editing and analysis tools.
 
 build:
-  number: 4
+  number: 5
 
 source:
   url: https://sourceforge.net/projects/staden/files/io_lib/{{ version }}/io_lib-{{ version }}.tar.gz/download
   fn: io_lib-{{ version }}.tar.gz
   sha256: {{ sha256 }}
 
-requirements:
-  build:
-    - libbzip2
-    - libcurl
-    - gcc_npg >=7.3
-    - liblzma
-    - zlib
-
 outputs:
   - name: staden_io_lib
     version: {{ version }}
     requirements:
+      build:
+        - {{ compiler("c") }}
+        - automake
+        - libtool
+        - make
+      host:
+        - libbz2-dev
+        - libcurl-dev
+        - liblzma-dev
+        - libz-dev
       run:
-        - libbzip2
+        - {{ pin_subpackage("libstaden-read", exact=True) }}
+        - libbz2
         - libcurl
         - liblzma
-        - zlib
-    files:
-      - bin/io_lib-config
-      - lib/libstaden-read*
-      - include/io_lib
-      - share/man/man3/ExperimentFile.3
-      - share/man/man3/exp2read.3
-      - share/man/man3/fread_reading.3
-      - share/man/man3/fread_scf.3
-      - share/man/man3/fwrite_reading.3
-      - share/man/man3/fwrite_scf.3
-      - share/man/man3/read2exp.3
-      - share/man/man3/read2scf.3
-      - share/man/man3/read_allocate.3
-      - share/man/man3/read_deallocate.3
-      - share/man/man3/read_reading.3
-      - share/man/man3/read_scf.3
-      - share/man/man3/read_scf_header.3
-      - share/man/man3/scf2read.3
-      - share/man/man3/write_reading.3
-      - share/man/man3/write_scf.3
-      - share/man/man3/write_scf_header.3
-      - share/man/man4/Read.4
-    test:
-      commands:
-        - test -f ${PREFIX}/include/io_lib/io_lib_config.h
-        - test -f ${PREFIX}/lib/libstaden-read.a
-        - test -h ${PREFIX}/lib/libstaden-read.so
-  - name: staden_io_bin
-    version: {{ version }}
-    requirements:
-      run:
-        - staden_io_lib =={{ version }}
-        - libbzip2
-        - libcurl
-        - liblzma
-        - zlib
+        - libz
     files:
       - bin/append_sff
       - bin/convert_trace
@@ -117,3 +84,58 @@ outputs:
     test:
       commands:
         - scramble -h
+
+  - name: libstaden-read
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - automake
+        - libtool
+        - make
+      host:
+        - libbz2-dev
+        - libcurl-dev
+        - liblzma-dev
+        - libz-dev
+      run:
+        - libbz2
+        - libcurl
+        - liblzma
+        - libz
+    files:
+      - lib/libstaden-read*
+    test:
+      commands:
+        - test -f ${PREFIX}/lib/libstaden-read.a
+        - test -h ${PREFIX}/lib/libstaden-read.so
+
+  - name: libstaden-read-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libstaden-read", exact=True) }}
+    files:
+      - bin/io_lib-config
+      - include/io_lib
+      - share/man/man3/ExperimentFile.3
+      - share/man/man3/exp2read.3
+      - share/man/man3/fread_reading.3
+      - share/man/man3/fread_scf.3
+      - share/man/man3/fwrite_reading.3
+      - share/man/man3/fwrite_scf.3
+      - share/man/man3/read2exp.3
+      - share/man/man3/read2scf.3
+      - share/man/man3/read_allocate.3
+      - share/man/man3/read_deallocate.3
+      - share/man/man3/read_reading.3
+      - share/man/man3/read_scf.3
+      - share/man/man3/read_scf_header.3
+      - share/man/man3/scf2read.3
+      - share/man/man3/write_reading.3
+      - share/man/man3/write_scf.3
+      - share/man/man3/write_scf_header.3
+      - share/man/man4/Read.4
+    test:
+      commands:
+        - test -f ${PREFIX}/include/io_lib/io_lib_config.h

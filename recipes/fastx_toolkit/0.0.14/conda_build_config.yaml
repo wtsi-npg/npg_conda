@@ -1,0 +1,5 @@
+c_compiler_version:
+  - 5.4
+
+cxx_compiler_version:
+  - 5.4

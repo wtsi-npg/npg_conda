@@ -10,7 +10,7 @@ about:
   summary: "A set of programs to manipulate SAM/BAM/CRAM files, using HTSLIB."
 
 build:
-  number: 2
+  number: 3
 
 source:
   git_url: https://github.com/wtsi-npg/bambi.git
@@ -18,15 +18,22 @@ source:
 
 requirements:
   build:
-    - gcc_npg >=7.3
-    - htslib >=1.9
-    - libgd
-    - libxml2
-
+    - {{ compiler("c") }}
+    - autoconf
+    - automake
+    - make
+    - perl
+    - pkg-config
+  host:
+    - libgd-dev
+    - libhts-dev
+    - libxml2-dev
+    - libz-dev
   run:
-    - htslib >=1.9
     - libgd
+    - libhts
     - libxml2
+    - libz
 
 test:
   commands:

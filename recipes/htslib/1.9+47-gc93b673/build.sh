@@ -1,10 +1,11 @@
 #!/bin/sh
 
-set -e
+set -ex
 
-n=`expr $CPU_COUNT / 4 \| 1`
+n="$CPU_COUNT"
 
 pushd htslib
+
 cp aclocal.m4 aclocal.m4.tmp
 autoreconf
 cp aclocal.m4.tmp aclocal.m4
@@ -18,6 +19,7 @@ make install prefix="$PREFIX"
 popd
 
 pushd plugins
-make install prefix="$PREFIX" IRODS_HOME="$PREFIX" \
-     CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
+make IRODS_HOME="$PREFIX" \
+     CC="$GCC" CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
+make install prefix="$PREFIX"
 popd

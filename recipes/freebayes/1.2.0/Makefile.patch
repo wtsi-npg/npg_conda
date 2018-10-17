@@ -1,0 +1,19 @@
+--- Makefile	2018-10-12 08:09:44.857349600 +0100
++++ Makefile.1	2018-10-12 08:08:12.901626040 +0100
+@@ -1,11 +1,12 @@
+-all: vcflib/Makefile log
++all: vcflib/Makefile # log
+ 	cd src && $(MAKE)
+ 
+-wbamtools: vcflib/Makefile log
++wbamtools: vcflib/Makefile # log
+ 	cd src && $(MAKE) -f Makefile.bamtools
+ 
+-log: src/version_git.h
+-	wget -q http://hypervolu.me/freebayes/build/$(shell cat src/version_git.h | grep v | cut -f 3 -d\  | sed s/\"//g) &
++# Oh, no you don't ...
++# log: src/version_git.h
++# 	wget -q http://hypervolu.me/freebayes/build/$(shell cat src/version_git.h | grep v | cut -f 3 -d\  | sed s/\"//g) &
+ 
+ src/version_git.h:
+ 	cd src && $(MAKE) autoversion

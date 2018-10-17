@@ -1,15 +1,12 @@
 #!/bin/sh
 
-set -e
+set -ex
 
-n=`expr $CPU_COUNT / 4 \| 1`
+n="$CPU_COUNT"
 
-export CPPFLAGS="-I$PREFIX/include"
-export LDFLAGS="-L$PREFIX/lib"
-
-cd libstatgen
-make -j $n
+cd libStatGen
+make -j $n CC="$GCC" CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
 
 cd ../verifybamid
-make -j $n
-make install INSTALLDIR="$PREFIX/bin" LIB_PATH_GENERAL="../libstatgen"
+make -j $n CC="$GCC" CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
+make install INSTALLDIR="$PREFIX/bin" LIB_PATH_GENERAL="../libStatGen"

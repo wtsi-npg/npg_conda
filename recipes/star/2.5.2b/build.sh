@@ -1,8 +1,8 @@
 #!/bin/sh
 
-set -e
+set -ex
 
-n=`expr $CPU_COUNT / 4 \| 1`
+n="$CPU_COUNT"
 
 # N.B. CPPFLAGS must reset all the values used by htslib subdirectory,
 # otherwise they will be lost. Don't set LDFLAGS because the STAR
