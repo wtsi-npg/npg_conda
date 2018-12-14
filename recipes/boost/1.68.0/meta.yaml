@@ -12,7 +12,7 @@ about:
   summary: "Free peer-reviewed portable C++ source libraries."
 
 build:
-  number: 0
+  number: 1
 
 source:
   url: https://dl.bintray.com/boostorg/release/{{ version }}/source/boost_{{ alt_version }}.tar.bz2
@@ -22,8 +22,15 @@ source:
 requirements:
   build:
     - {{ compiler("cxx") }}
+    - make
+  host:
+    - libbz2-dev
+    - liblzma-dev
+    - libz-dev
   run:
-    - {{ pin_subpackage("libboost-dev", exact=True) }}
+    - libbz2
+    - liblzma
+    - libz
 
 outputs:
   - name: libboost
