@@ -29,7 +29,10 @@ requirements:
   run:
     - libboost
     - libz
+    - python <3.0
 
 test:
+  requires:
+    - python <3.0
   commands:
     - tophat2 --version
