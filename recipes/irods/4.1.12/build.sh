@@ -1,45 +1,101 @@
 #!/bin/sh
 
-set -e
+set -ex
 
-function untar_data() {
+untar_data() {
     if [ -e data.tar.gz ]; then
-        tar xz --strip-components=2 --directory="$PREFIX" --exclude='*.o' --exclude-backups < data.tar.gz
+        tar xz --strip-components=2 --directory="$PREFIX" \
+            --exclude='*.o' --exclude-backups < data.tar.gz
     elif [ -e data.tar.xz ]; then
-        tar xJ --strip-components=2 --directory="$PREFIX" --exclude='*.o' --exclude-backups < data.tar.xz
+        tar xJ --strip-components=2 --directory="$PREFIX" \
+            --exclude='*.o' --exclude-backups < data.tar.xz
     fi
+}
+
+unrpm_data() {
+    local rpm="$1"
+    mkdir -p ./tmp
+    pushd tmp
+    rpm2cpio ../"$rpm" | cpio --extract --make-directories
+    popd
+    tar cf - -C ./tmp . | tar xv --strip-components=2 --directory="$PREFIX" \
+                              --exclude='*.o' --exclude-backups
+    rm -r ./tmp
+}
+
+install_gcc_ubuntu() {
+    sudo apt-get install -y g++ g++-4.8 gcc gcc-4.8
+
+    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 100
+    sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 100
+    sudo update-alternatives --set gcc /usr/bin/gcc-4.8
+    sudo update-alternatives --set g++ /usr/bin/g++-4.8
+}
+
+install_deps_ubuntu() {
+    sudo apt-get install -y autoconf automake help2man make \
+         libtool-bin pkg-config texinfo
+
+    sudo apt-get install -y libjson-perl python-dev
+
+    sudo apt-get install -y libbz2-dev libcurl4-gnutls-dev \
+         libfuse-dev libkrb5-dev libmysqlclient-dev libpam0g-dev \
+         libssl-dev unixodbc-dev libxml2-dev zlib1g-dev
+}
+
+# Requires:
+#
+# sudo subscription-manager register --org="..." --activationkey="..."
+# sudo subscription-manager repos --enable rhel-7-server-extras-rpms
+# sudo subscription-manager repos --enable rhel-7-server-supplementary-rpms
+# sudo subscription-manager repos --enable rhel-7-server-optional-rpms
+
+install_gcc_rhel() {
+    sudo yum install -y gcc-c++
+}
+
+install_deps_rhel() {
+    sudo yum install -y help2man make rpm-build
+
+    sudo yum install -y perl-JSON python-devel
+
+    sudo yum install -y bzip2-devel curl-devel \
+         fuse-devel krb5-devel pam-devel \
+         openssl-devel unixODBC-devel libxml2-devel zlib-devel
 }
 
 export TERM=dumb
 
 git submodule init && git submodule update
 
-sudo apt-get install -y g++ g++-4.8 gcc gcc-4.8
+if [ -f /etc/lsb-release ]; then
+    install_gcc_ubuntu
+    install_deps_ubuntu
 
-sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 100
-sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 100
-sudo update-alternatives --set gcc /usr/bin/gcc-4.8
-sudo update-alternatives --set g++ /usr/bin/g++-4.8
+    ./packaging/build.sh --verbose icat postgres
+    ./packaging/build.sh --verbose icommands
 
-sudo apt-get install -y autoconf automake help2man make \
-     libtool-bin pkg-config texinfo
+    cd build
 
-sudo apt-get install -y libjson-perl python-dev
+    ar vx irods-icommands-4.1.12-64bit.deb
+    untar_data
 
-sudo apt-get install -y libbz2-dev libcurl4-gnutls-dev \
-     libfuse-dev libkrb5-dev libmysqlclient-dev libpam0g-dev \
-     libssl-dev unixodbc-dev libxml2-dev zlib1g-dev
+    ar vx irods-dev-4.1.12-64bit.deb
+    untar_data
+fi
 
-./packaging/build.sh --verbose icat postgres
-./packaging/build.sh --verbose icommands
+if [ -f /etc/redhat-release ]; then
+    install_gcc_rhel
+    install_deps_rhel
 
-cd build
+    ./packaging/build.sh --verbose icat postgres
+    ./packaging/build.sh --verbose icommands
 
-ar vx irods-icommands-4.1.12-64bit.deb
-untar_data
+    cd build
 
-ar vx irods-dev-4.1.12-64bit.deb
-untar_data
+    unrpm_data irods-icommands-4.1.12-64bit-centos5.rpm
+    unrpm_data irods-dev-4.1.12-64bit-centos5.rpm
+fi
 
 # Fix all the absolute symlinks pointing to /usr/include
 perl -le 'use strict; use File::Basename; foreach (@ARGV) { if (my $f = readlink $_) { if ($f =~ m{^/usr/}sm) { unlink $_; symlink(basename($f), $_) } } }' $PREFIX/include/irods/*.hpp
