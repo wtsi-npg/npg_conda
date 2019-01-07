@@ -26,13 +26,35 @@ source:
 features:
   - irods
 
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - autoconf
+    - automake
+    - make
+    - perl
+  host:
+    - irods-dev >=4.1.12
+    - libbz2-dev
+    - libcurl-dev
+    - liblzma-dev
+    - libssl-dev
+    - libz-dev
+  run:
+    - libbz2
+    - libcurl
+    - liblzma
+    - libssl
+    - libz
+
 outputs:
-  - name: htslib
+  - name: htslib-bin
     version: {{ version }}
     requirements:
       build:
         - {{ compiler("c") }}
         - autoconf
+        - automake
         - make
         - perl
       host:
@@ -62,7 +84,9 @@ outputs:
       build:
         - {{ compiler("c") }}
         - autoconf
+        - automake
         - make
+        - perl
       host:
         - irods-dev >=4.1.12
         - libbz2-dev
