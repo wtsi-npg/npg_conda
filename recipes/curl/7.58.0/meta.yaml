@@ -17,8 +17,21 @@ source:
   - url: http://curl.haxx.se/download/curl-{{ version }}.tar.bz2
     sha256: {{ sha256 }}
 
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - make
+  host:
+    - libgnutls-dev
+    - libnettle-dev
+    - libz-dev
+  run:
+    - libgnutls
+    - libnettle
+    - libz
+
 outputs:
-  - name: curl
+  - name: curl-bin
     version: {{ version }}
     requirements:
       build:
