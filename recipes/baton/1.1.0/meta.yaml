@@ -18,8 +18,27 @@ source:
   fn: baton-{{ version }}.tar.gz
   sha256: {{ sha256 }}
 
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - autoconf
+    - automake
+    - libtool
+    - make
+    - perl
+    - pkg-config
+  host:
+    - irods-dev ==4.1.12
+    - libjansson-dev
+    - libssl-dev
+  run:
+    - {{ pin_subpackage("libbaton", exact=True) }}
+    - irods-plugins ==4.1.12
+    - libjansson
+    - libssl
+
 outputs:
-  - name: baton
+  - name: baton-bin
     version: {{ version }}
     requirements:
       build:
