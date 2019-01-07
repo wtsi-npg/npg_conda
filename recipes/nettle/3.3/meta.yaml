@@ -11,15 +11,27 @@ about:
   summary: A low-level cryptographic library
 
 build:
-  number: 2
+  number: 3
 
 source:
   url: https://ftp.gnu.org/gnu/nettle/nettle-{{ version }}.tar.gz
   fn: nettle-{{ version }}.tar.gz
   sha256: {{ sha256 }}
 
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - libtool
+    - m4
+    - make
+    - pkg-config
+  host:
+    - libgmp-dev >=6.0
+  run:
+    - libgmp >=6.0
+
 outputs:
-  - name: nettle
+  - name: nettle-bin
     requirements:
       build:
         - {{ compiler("c") }}

@@ -5,6 +5,7 @@ set -ex
 n="$CPU_COUNT"
 
 ./configure --prefix="$PREFIX" \
+            --libdir="$PREFIX/lib" \
             --with-include-path="$PREFIX/include" \
             --with-lib-path="$PREFIX/lib"
 
