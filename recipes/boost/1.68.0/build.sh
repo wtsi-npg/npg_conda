@@ -18,7 +18,7 @@ done
 
 [ $nullglob_enabled ] || shopt -u nullglob
 
-./bootstrap.sh --prefix="$PREFIX" --with-toolset=gcc --without-python
+./bootstrap.sh --prefix="$PREFIX" --with-toolset=gcc --without-libraries=python
 
 # The cxxflags and linkflags options are not well documented. They do
 # not appear in `./b2 --help` and are only mentioned in the HTML docs
