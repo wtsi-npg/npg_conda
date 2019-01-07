@@ -21,8 +21,12 @@ source:
 requirements:
   build:
     - {{ compiler("c") }}
+    - m4
+    - make
+  host:
+    - libz-dev
   run:
-    - {{ pin_subpackage("libgmp-dev", exact=True) }}
+    - libz
 
 outputs:
   - name: libgmp
