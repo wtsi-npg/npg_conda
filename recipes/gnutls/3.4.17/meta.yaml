@@ -19,8 +19,23 @@ source:
     fn: gnutls-{{ version }}.tar.xz
     sha256: {{ sha256 }}
 
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - libtool
+    - make
+    - pkg-config
+  host:
+    - libgmp-dev
+    - libnettle-dev
+    - libz-dev
+  run:
+    - libgmp
+    - libnettle
+    - libz
+
 outputs:
-  - name: gnutls
+  - name: gnutls-bin
     version: {{ version }}
     requirements:
       build:
