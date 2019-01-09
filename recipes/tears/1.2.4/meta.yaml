@@ -20,6 +20,7 @@ requirements:
   build:
     - {{ compiler("c") }}
     - autoconf
+    - automake
     - make
     - perl
   host:
