@@ -2,7 +2,7 @@
 {% set sha256 = "0d28932e363e80b4519b04a512df899189c612a4c097130219d6e0ebbfde2a34" %}
 
 package:
-  name: libmaus2
+  name: libmaus2-pkg
   version: "{{ version }}"
 
 about:
@@ -17,6 +17,23 @@ source:
   url: https://github.com/gt1/libmaus2/archive/{{ version }}-release-20171116172420.tar.gz
   fn: libmaus2-{{ version }}.tar.gz
   sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - {{ compiler("cxx") }}
+    - make
+    - pkg-config
+  host:
+    - irods-dev
+    - libgnutls-dev
+    - libnettle-dev
+    - libstaden-read-dev
+    - libz-dev
+  run:
+    - libgnutls
+    - libnettle
+    - libstaden-read
+    - libz
 
 outputs:
   - name: libmaus2
