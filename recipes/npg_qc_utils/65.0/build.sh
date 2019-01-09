@@ -4,8 +4,6 @@ set -ex
 
 n="$CPU_COUNT"
 
-pushd npg_qc_utils
-
 pushd fastq_summ
 mkdir -p build
 make -j $n CC="$GCC" \
@@ -40,4 +38,3 @@ make -j $n  CC="$GCC" \
 make install installdir="$PREFIX/bin"
 popd
 
-popd
