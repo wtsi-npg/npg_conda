@@ -28,7 +28,7 @@ requirements:
     - libhts-dev =={{ htslib_version }}
     - libz-dev
   run:
-    - libhts
+    - libhts =={{ htslib_version }}
     - libz
 
 outputs:
@@ -45,7 +45,7 @@ outputs:
         - libhts-dev =={{ htslib_version }}
         - libz-dev
       run:
-        - libhts
+        - libhts =={{ htslib_version }}
         - libz
     files:
       - bin/ace2sam
@@ -69,3 +69,7 @@ outputs:
     files:
       - include/samtools/*.h
       - lib/libbam.a
+    test:
+      commands:
+        - test -f ${PREFIX}/include/samtools/sam.h
+        - test -f ${PREFIX}/lib/libbam.a
