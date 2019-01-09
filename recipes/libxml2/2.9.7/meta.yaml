@@ -2,7 +2,7 @@
 {% set sha256 = "f63c5e7d30362ed28b38bfa1ac6313f9a80230720b7fb6c80575eeab3ff5900c" %}
 
 package:
-  name: libxml2
+  name: libxml2-pkg
   version: "{{ version }}"
 
 about:
@@ -17,6 +17,17 @@ source:
   url: ftp://xmlsoft.org/libxml2/libxml2-{{ version }}.tar.gz
   fn: libxml2-{{ version }}.tar.gz
   sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - make
+  host:
+    - liblzma-dev
+    - libz-dev
+  run:
+    - liblzma
+    - libz
 
 outputs:
   - name: libxml2-bin

@@ -2,7 +2,7 @@
 {% set sha256 = "526ecd0abaf4a7789041622c3950c0e7f2c4c8835471515fd77eec684a355460" %}
 
 package:
-  name: libxslt
+  name: libxslt-pkg
   version: "{{ version }}"
 
 about:
@@ -12,11 +12,24 @@ about:
 
 build:
   number: 1
-  
+
 source:
   url: ftp://xmlsoft.org/libxslt/libxslt-{{ version }}.tar.gz
   fn: libxslt-{{ version }}.tar.gz
   sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - make
+  host:
+    - liblzma-dev
+    - libxml2-dev
+    - libz-dev
+  run:
+    - liblzma
+    - libxml2
+    - libz
 
 outputs:
   - name: libxslt-bin
