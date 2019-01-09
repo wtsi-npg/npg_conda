@@ -2,7 +2,7 @@
 {% set sha256 = "574623a4901a9969080ab4a2df9437026c8a87150dfd5c235e28c94b212964a7" %}
 
 package:
-  name: libpng
+  name: libpng-pkg
   version: "{{ version }}"
 
 about:
@@ -17,6 +17,17 @@ source:
 
 build:
   number: 1
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - libtool
+    - make
+    - pkg-config
+  host:
+    - libz-dev
+  run:
+    - libz
 
 outputs:
   - name: libpng
@@ -50,4 +61,3 @@ outputs:
     test:
       commands:
         - test -f ${PREFIX}/include/png.h
-
