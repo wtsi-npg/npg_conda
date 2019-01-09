@@ -69,10 +69,13 @@ outputs:
         - libz
     files:
       - lib/libxslt.*
+      - lib/libexslt.*
     test:
       commands:
         - test -f ${PREFIX}/lib/libxslt.a
         - test -h ${PREFIX}/lib/libxslt.so
+        - test -f ${PREFIX}/lib/libexslt.a
+        - test -h ${PREFIX}/lib/libexslt.so
 
   - name: libxslt-dev
     version: {{ version }}
