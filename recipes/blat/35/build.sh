@@ -5,6 +5,8 @@ set -ex
 n="$CPU_COUNT"
 
 mkdir -p "$SRC_DIR/bin"
+
+export XINC="-I$PREFIX/include"
 make -j $n MACHTYPE=X86_64 BINDIR="$SRC_DIR/bin" \
      CC="$GCC" CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
 
