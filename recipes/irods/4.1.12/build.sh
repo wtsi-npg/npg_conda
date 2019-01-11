@@ -93,8 +93,8 @@ if [ -f /etc/redhat-release ]; then
 
     cd build
 
-    unrpm_data irods-icommands-4.1.12-64bit-centos5.rpm
-    unrpm_data irods-dev-4.1.12-64bit-centos5.rpm
+    unrpm_data irods-icommands-4.1.12-64bit-centos[0-9].rpm
+    unrpm_data irods-dev-4.1.12-64bit-centos[0-9].rpm
 fi
 
 # Fix all the absolute symlinks pointing to /usr/include
