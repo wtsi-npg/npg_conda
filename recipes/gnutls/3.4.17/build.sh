@@ -9,9 +9,10 @@ n="$CPU_COUNT"
             --with-libz-prefix="$PREFIX" \
             --without-idn \
             --without-p11-kit \
-            --without-tpm
+            --without-tpm \
+            --disable-doc
 
-make -j $n prefix="$PREFIX" CC="$GCC" \
+make -j $n prefix="$PREFIX" CC="$GCC" LD="$LD" \
      CPPFLAGS="-I$PREFIX/include" \
      LDFLAGS="-Wl,-rpath-link,$PREFIX/lib -Wl,--disable-new-dtags"
 make install prefix="$PREFIX"
