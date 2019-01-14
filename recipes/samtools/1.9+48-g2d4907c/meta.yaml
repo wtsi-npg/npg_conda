@@ -1,0 +1,30 @@
+{% set version = "1.9+48_g2d4907c" %}
+{% set htslib_version = "1.9+66_gbcf9bff" %}
+
+package:
+  name: samtools
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/samtools/samtools
+  license: MIT
+  summary: C library for high-throughput sequencing data formats.
+
+build:
+  number: 0
+
+source:
+  git_url: https://github.com/samtools/samtools.git
+  git_rev: 2d4907cf9a34ccf7cde60143158b39e1cb40ac0c
+
+requirements:
+  build:
+    - gcc_npg >=7.3
+    - htslib =={{ htslib_version }}
+
+  run:
+    - htslib =={{ htslib_version }}
+
+test:
+  commands:
+    - echo '@HD VN:1.0 SO:coordinate' | samtools view
