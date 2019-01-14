@@ -17,6 +17,8 @@ source:
   - git_url: https://github.com/statgen/verifyBamID.git
     git_rev: v{{ version }}
     folder: verifybamid
+    patches:
+      - verifybamid.patch
   - git_url: https://github.com/statgen/libStatGen.git
     git_rev: v{{ libstatgen_version }}
     folder: libStatGen

@@ -4,6 +4,8 @@ set -ex
 
 n="$CPU_COUNT"
 
+export USER_INCLUDES="-I$PREFIX/include"
+
 cd libStatGen
 make -j $n CC="$GCC" CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
 
