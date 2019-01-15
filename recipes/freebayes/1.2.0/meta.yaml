@@ -21,6 +21,7 @@ source:
     - SeqLib_bwa_Makefile.patch
     - SeqLib_fermi-lite_Makefile.patch
     - vcflib_Makefile.patch
+    - vcflib_smithwaterman_Makefile.patch
     - vcflib_tabixpp_Makefile.patch
     - vcflib_tabixpp_htslib_Makefile.patch
 
