@@ -11,7 +11,7 @@ about:
   summary: "goleft is a collection of bioinformatics tools distributed under MIT license in a single static binary."
 
 build:
-  number: 0
+  number: 1
   binary_relocation: false
 
 source:
@@ -20,7 +20,7 @@ source:
 
 requirements:
   run:
-    - samtools
+    - samtools-bin
 
 test:
   commands:
