@@ -1,4 +1,5 @@
 {% set version = "0.11.1" %}
+{% set min_hts_version = "1.3.1" %}
 
 package:
   name: bambi
@@ -10,11 +11,13 @@ about:
   summary: "A set of programs to manipulate SAM/BAM/CRAM files, using HTSLIB."
 
 build:
-  number: 3
+  number: 4
 
 source:
   git_url: https://github.com/wtsi-npg/bambi.git
   git_rev: 0.11.1
+  patches:
+    - ax_with_htslib.patch
 
 requirements:
   build:
@@ -26,12 +29,12 @@ requirements:
     - pkg-config
   host:
     - libgd-dev
-    - libhts-dev
+    - libhts-dev >={{ min_hts_version }}
     - libxml2-dev
     - libz-dev
   run:
     - libgd
-    - libhts
+    - libhts >={{ min_hts_version }}
     - libxml2
     - libz
 
