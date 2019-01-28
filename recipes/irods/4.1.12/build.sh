@@ -24,17 +24,22 @@ unrpm_data() {
 }
 
 install_gcc_ubuntu() {
-    sudo apt-get install -y g++ g++-4.8 gcc gcc-4.8
+    GCC_VERSION=
+    grep precise /etc/lsb-release && GCC_VERSION="4.6"
+    grep xenial  /etc/lsb-release && GCC_VERSION="4.8"
+    grep bionic  /etc/lsb-release && GCC_VERSION="4.8"
 
-    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 100
-    sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 100
-    sudo update-alternatives --set gcc /usr/bin/gcc-4.8
-    sudo update-alternatives --set g++ /usr/bin/g++-4.8
+    sudo apt-get install -y "g++-$GCC_VERSION" "gcc-$GCC_VERSION"
+
+    sudo update-alternatives --install /usr/bin/gcc gcc "/usr/bin/gcc-$GCC_VERSION" 100
+    sudo update-alternatives --install /usr/bin/g++ g++ "/usr/bin/g++-$GCC_VERSION" 100
+    sudo update-alternatives --set gcc "/usr/bin/gcc-$GCC_VERSION"
+    sudo update-alternatives --set g++ "/usr/bin/g++-$GCC_VERSION"
 }
 
 install_deps_ubuntu() {
     sudo apt-get install -y autoconf automake help2man make \
-         libtool-bin pkg-config texinfo
+         libtool pkg-config texinfo
 
     sudo apt-get install -y libjson-perl python-dev
 
