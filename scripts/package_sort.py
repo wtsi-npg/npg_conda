@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright © 2018 Genome Research Ltd. All rights reserved.
+# Copyright © 2018, 2019 Genome Research Ltd. All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -164,6 +164,11 @@ def load_recipes(dir):
         else:
             dikt[key] = [value]
 
+    # This dict maps a (package name, version Specifier) to the recipe
+    # file that defined it. It is used to determine which recipe to
+    # use to build a package.
+    pkg_recipes = {}
+
     # This dict contains lists of Versions of package.
     #
     # Key: package name
@@ -199,6 +204,8 @@ def load_recipes(dir):
         add_listval(pkg_versions, pkg_name, pkg_version)
         log.debug("package name: %s %s", pkg_name, pkg_version)
 
+        pkg_recipes[(pkg_name, pkg_version)] = recipe_file
+
         pkg_reqs = []
         base_reqs = recipe.get("requirements", {})
         pkg_reqs += base_reqs.get("host", [])
@@ -222,7 +229,7 @@ def load_recipes(dir):
                 add_listval(pkg_requirements, (pkg_name, pkg_version),
                             (req, spec))
 
-    return pkg_versions, pkg_requirements, pkg_outputs
+    return pkg_recipes, pkg_versions, pkg_requirements, pkg_outputs
 
 
 def build_dependency_graph(graph, root_node,
@@ -308,7 +315,7 @@ parser.add_argument("recipes",
                     type=str, nargs="?", default=".")
 
 parser.add_argument("-p", "--package", type=str,
-                    help="Report dependentss (i.e. descendants) of the"
+                    help="Report dependents (i.e. descendants) of the"
                     "specified package")
 parser.add_argument("-v", "--version", type=str,
                     help="Report dependents (i.e. descendants) of the"
@@ -332,7 +339,7 @@ log.basicConfig(level=level)
 
 base = args.recipes
 
-pkg_versions, pkg_requirements, pkg_outputs = load_recipes(base)
+pkg_recipes, pkg_versions, pkg_requirements, pkg_outputs = load_recipes(base)
 
 root_node="root"
 graph = nx.DiGraph(directed=True)
@@ -350,4 +357,5 @@ if args.package and args.version:
 else:
     for node in nx.topological_sort(graph):
         if node is not root_node:
-            print(node[0], node[1])
+            recipe = pkg_recipes[node]
+            print(node[0], node[1], os.path.dirname(recipe))
