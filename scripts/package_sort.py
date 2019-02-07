@@ -27,6 +27,7 @@ import networkx as nx
 import argparse
 import functools
 import os
+import subprocess
 import sys
 import yaml
 
@@ -76,8 +77,36 @@ def find_recipe_files(dir):
     recipe_files = []
     for dir, _, files in os.walk(base):
         for file in files:
-            if file == 'meta.yaml':
+            if file == "meta.yaml":
                 recipe_files.append(os.path.join(dir, file))
+    return recipe_files
+
+
+def find_changed_recipe_files(dir, branch="master"):
+    """
+    Return the paths of Conda recipe meta.yaml files where something in
+    the recipe directory has changed relative to another git branch.
+
+    :param dir str: The directory to search.
+
+    :param branch str: The git branch to compare with.
+
+    :returns: Paths of recipe files.
+
+    :rtype: list str
+    """
+    proc = subprocess.Popen(["git", "diff", "--name-only",
+                             "--diff-filter=d", branch, dir],
+                            stdout=subprocess.PIPE)
+    files = [line.rstrip().decode("utf-8") for line in proc.stdout]
+    dirs = list(set([os.path.dirname(f) for f in files]))
+    dirs.sort()
+
+    recipe_files = []
+    for dir in dirs:
+        recipe = os.path.join(dir, "meta.yaml")
+        if (os.path.isfile(recipe)):
+            recipe_files.append(recipe)
     return recipe_files
 
 
@@ -153,8 +182,7 @@ def find_package_version(req_pkg, pkg_index, spec=None):
     return list(spec.filter(candidates)) if spec else candidates
 
 
-def load_recipes(dir):
-    recipe_files = find_recipe_files(base)
+def load_recipes(recipe_files):
     template_env = make_template_env(recipe_files)
 
     # Append to a dict list value
@@ -277,49 +305,69 @@ def build_dependency_graph(graph, root_node,
                                       "%s %s of candidates %s",
                                       parent_pkg, v, pkg_versions[parent_pkg])
                         else:
-                            log.warn("Can't find required package %s", req_pkg)
+                            log.warning("Can't find required package %s",
+                                        req_pkg)
             else:
                 log.debug("%s has no requirements", ptup)
                 graph.add_edge(ptup, root_node)
     return graph
 
 
+def is_root_node(node):
+    return node == "root"
+
+
+def print_node(node, pkg_recipes):
+    if not is_root_node(node):
+        recipe = pkg_recipes[node]
+        print(node[0], node[1], os.path.dirname(recipe))
+
 
 description = """
 Reads Conda package recipe meta.yaml files under the specified
 directory (recursively) and reports package dependency information.
 
-If no package is specified, a directed, acyclic graph of the
-inter-package dependencies is calculated, and a topological sort of
-that graph is printed to STDOUT. The utility of this is that it
-describes an order in which to build packages whereby a later package
-will only depend on previously built packages, never on package yet to
-be built. This feature is essential because conda-build is no longer
-capable of recursive from-source builds [1].
+If no package is specified (with --package <package name>), a
+directed, acyclic graph of the inter-package dependencies is
+calculated, and a topological sort of that graph is printed to
+STDOUT. This information describes an order in which to build packages
+whereby a later package will only depend on previously built packages,
+never on package yet to be built. This feature is essential because
+conda-build is no longer capable of recursive from-source builds [1].
 
-If a package and version are specified, a directed, acyclic graph of
-the inter-package dependencies of its ancestors is calculated, and a
+If a package and version are specified (with --package <package name>
+and --version <version>), a directed, acyclic graph of the
+inter-package dependencies of its ancestors is calculated, and a
 topological sort of that graph is printed to STDOUT. This describes
 the sub-graph of packages that must be built prior to the specified
 package version.
+
+If the --changes <Git branch> option is used, only recipes that have
+been changed and their ancestors will be reported, omitting
+duplicates.
 
 1. https://github.com/conda/conda-build/issues/2467
 
 """
 
 
-parser = argparse.ArgumentParser(description=description)
+parser = argparse.ArgumentParser(
+    description=description,
+    formatter_class=argparse.RawDescriptionHelpFormatter)
 
 parser.add_argument("recipes",
                     help="Recipes directory, defaults to current directory",
                     type=str, nargs="?", default=".")
 
 parser.add_argument("-p", "--package", type=str,
-                    help="Report dependents (i.e. descendants) of the"
+                    help="Report dependents (i.e. descendants) of the "
                     "specified package")
 parser.add_argument("-v", "--version", type=str,
-                    help="Report dependents (i.e. descendants) of the"
+                    help="Report dependents (i.e. descendants) of the "
                     "specified package version")
+parser.add_argument("-c", "--changes", type=str, default="master",
+                    help="Report only on recipes that have changed "
+                    "relative to another branch (defaults to 'master'")
 
 parser.add_argument("--debug",
                     help="Enable DEBUG level logging to STDERR",
@@ -338,24 +386,42 @@ elif args.verbose:
 log.basicConfig(level=level)
 
 base = args.recipes
+recipe_files = find_recipe_files(base)
 
-pkg_recipes, pkg_versions, pkg_requirements, pkg_outputs = load_recipes(base)
+pkg_recipes, pkg_versions, pkg_requirements, pkg_outputs = \
+    load_recipes(recipe_files)
 
 root_node="root"
 graph = nx.DiGraph(directed=True)
 graph = build_dependency_graph(graph, root_node,
                                pkg_versions, pkg_requirements, pkg_outputs)
+
 if args.package and args.version:
+    # Print a subgraph for a specific package and version
     pv = (args.package, parse(args.version))
     if pv in graph:
         for node in nx.topological_sort(
                 nx.subgraph(graph, nx.ancestors(graph, pv))):
-            print(node[0], node[1])
+            print_node(node, pkg_recipes)
     else:
         raise ValueError("Package {} version {} is not present "
                          "in the graph".format(pv[0], pv[1]))
+elif (args.changes):
+    # Print a unified list of all changed recipes and their ancestors
+    changed_recipes = find_changed_recipe_files(base, args.changes)
+    cpkg_recipes, cpkg_versions, cpkg_requirements, cpkg_outputs = \
+        load_recipes(changed_recipes)
+    printed = {}
+    for cpkg, cversions in cpkg_versions.items():
+        for cversion in cversions:
+            pv = (cpkg, cversion)
+            if pv in graph:
+                for node in nx.topological_sort(
+                        nx.subgraph(graph, nx.ancestors(graph, pv))):
+                    if not node in printed:
+                        print_node(node, pkg_recipes)
+                        printed[node] = True
 else:
+    # Print everything
     for node in nx.topological_sort(graph):
-        if node is not root_node:
-            recipe = pkg_recipes[node]
-            print(node[0], node[1], os.path.dirname(recipe))
+        print_node(node, pkg_recipes)
