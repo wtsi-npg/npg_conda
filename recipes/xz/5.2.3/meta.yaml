@@ -18,6 +18,11 @@ source:
   fn: xz-{{ version }}.tar.bz2
   sha256: {{ sha256 }}
 
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - make
+
 outputs:
   - name: xz
     version: {{ version }}

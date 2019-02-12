@@ -21,6 +21,11 @@ source:
     - Makefile.patch
     - Makefile-libbz2_so.patch
 
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - make
+  
 outputs:
   - name: bzip2
     version: {{ version }}

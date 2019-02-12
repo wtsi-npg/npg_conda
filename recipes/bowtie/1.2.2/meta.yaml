@@ -19,6 +19,7 @@ source:
 requirements:
   build:
     - gcc # Needs g++ 4.8
+    - make
   host:
     - tbb-devel
     - libz-dev
