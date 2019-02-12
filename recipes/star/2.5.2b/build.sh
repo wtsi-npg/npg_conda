@@ -10,8 +10,9 @@ n="$CPU_COUNT"
 
 pushd source
 make -j $n STAR STARlong \
-    CPPFLAGS="-I$SRC_DIR/source/htslib -I$PREFIX/include -DSAMTOOLS=1" \
-    LDFLAGSextra="-L$SRC_DIR/source/htslib -L$PREFIX/lib"
+     CC="$GCC" AR="$AR" \
+     CPPFLAGS="-I$SRC_DIR/source/htslib -I$PREFIX/include -DSAMTOOLS=1" \
+     LDFLAGSextra="-L$SRC_DIR/source/htslib -L$PREFIX/lib"
 
 mkdir -p "$PREFIX/bin"
 cp STAR "$PREFIX/bin"

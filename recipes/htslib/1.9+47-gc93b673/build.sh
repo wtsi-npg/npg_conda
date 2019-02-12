@@ -10,11 +10,13 @@ cp aclocal.m4 aclocal.m4.tmp
 autoreconf
 cp aclocal.m4.tmp aclocal.m4
 
-./configure --prefix="$PREFIX" \
-            --enable-libcurl \
-            --enable-plugins \
-            CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
-make -j $n
+CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib" \
+        ./configure --prefix="$PREFIX" \
+        --enable-libcurl \
+        --enable-plugins
+
+make -j $n AR="$AR" CC="$GCC" \
+     CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
 make install prefix="$PREFIX"
 popd
 
