@@ -244,18 +244,23 @@ def load_recipes(recipe_files):
         for output in outputs:
             output_name = output["name"]
             pkg_outputs[output_name] = pkg_name
-
             output_reqs = output.get("requirements", {})
+
             pkg_reqs += output_reqs.get("host", [])
             pkg_reqs += output_reqs.get("run", [])
 
+        pkg_reqs = list(set(pkg_reqs))
+        # Jinja2 macros appear as 'None' - filter any of these out
+        pkg_reqs = [x for x in pkg_reqs if x != "None"]
+
+        log.debug("Requirements for %s are: %s", pkg_name, pkg_reqs)
+
         for pkg_req in pkg_reqs:
             req, spec = parse_requirement(pkg_req)
-            if req is not 'None':
-                log.debug("%s version: %s requires %s version: %s",
-                          pkg_name, pkg_version, req, spec)
-                add_listval(pkg_requirements, (pkg_name, pkg_version),
-                            (req, spec))
+            log.debug("%s version: %s requires %s version: %s",
+                      pkg_name, pkg_version, req, spec)
+            add_listval(pkg_requirements, (pkg_name, pkg_version),
+                        (req, spec))
 
     return pkg_recipes, pkg_versions, pkg_requirements, pkg_outputs
 
@@ -365,7 +370,7 @@ parser.add_argument("-p", "--package", type=str,
 parser.add_argument("-v", "--version", type=str,
                     help="Report dependents (i.e. descendants) of the "
                     "specified package version")
-parser.add_argument("-c", "--changes", type=str, default="master",
+parser.add_argument("-c", "--changes", type=str,
                     help="Report only on recipes that have changed "
                     "relative to another branch (defaults to 'master'")
 
