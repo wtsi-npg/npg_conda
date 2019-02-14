@@ -93,7 +93,7 @@ outputs:
     version: {{ version }}
     requirements:
       run:
-        {{ pin_subpackage("libbaton", exact=True) }}
+        - {{ pin_subpackage("libbaton", exact=True) }}
     files:
       - include/baton
       - lib/pkgconfig/baton.pc
