@@ -21,8 +21,7 @@ source:
 requirements:
   build:
     - {{ compiler("c") }}
-  run:
-    - {{ pin_subpackage('libz-dev', exact=True) }}
+    - make
 
 outputs:
   - name: libz

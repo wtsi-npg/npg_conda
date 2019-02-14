@@ -4,7 +4,8 @@ set -ex
 
 n="$CPU_COUNT"
 
-make -j $n CC="$GCC" CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
+make -j $n AR="$AR" CC="$GCC" \
+     CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
 
 mkdir -p "$PREFIX/bin"
 cp bwa "$PREFIX/bin/"

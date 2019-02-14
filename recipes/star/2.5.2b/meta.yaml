@@ -21,6 +21,7 @@ source:
 requirements:
   build:
     - {{ compiler("cxx") }}
+    - make 
   host:
     - libz-dev
   run:

@@ -4,8 +4,8 @@ set -ex
 
 n="$CPU_COUNT"
 
-# bootstrap fails because it has the gcc target name hard-coded as
-# 'gcc' and doesn't respect Conda's "$GCC" environment variable:
+# bootstrap fails because it has the 'gcc' executable name hard-coded
+# and doesn't respect Conda's "$GCC" environment variable:
 
 shopt -u | grep -q nullglob && nullglob_enabled=0
 [ $nullglob_enabled ] || shopt -s nullglob

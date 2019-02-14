@@ -22,6 +22,7 @@ source:
 requirements:
   build:
     - {{ compiler("c") }}
+    - make
   host:
     - libz-dev
   run:

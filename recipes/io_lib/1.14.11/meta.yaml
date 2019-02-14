@@ -22,6 +22,7 @@ requirements:
   build:
     - {{ compiler("c") }}
     - autoconf
+    - make
   host:
     - irods-dev >=4.1.12
     - libbz2-dev

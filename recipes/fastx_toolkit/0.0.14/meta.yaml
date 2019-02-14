@@ -24,6 +24,12 @@ source:
     folder: gtextutils
     sha256: {{ gtextutils_sha256 }}
 
+requirements:
+  build:
+    - {{ compiler("cxx") }}
+    - make
+    - pkg-config
+
 outputs:
   - name: fastx_toolkit
     version: {{ version }}
@@ -31,6 +37,7 @@ outputs:
       build:
         - {{ compiler("cxx") }}
         - make
+        - pkg-config
     files:
       - bin/fast*
 

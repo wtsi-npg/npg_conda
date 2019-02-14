@@ -21,4 +21,5 @@ requirements:
   build:
     - {{ compiler("cxx") }}
     - cmake
+    - make
 

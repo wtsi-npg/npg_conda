@@ -22,6 +22,7 @@ requirements:
   build:
     - {{ compiler("c") }}
     - libtool
+    - make
     - pkg-config
   host:
     - libpng-dev
@@ -37,6 +38,7 @@ outputs:
       build:
         - {{ compiler("c") }}
         - libtool
+        - make
         - pkg-config
       host:
         - libpng-dev
@@ -58,6 +60,7 @@ outputs:
       build:
         - {{ compiler("c") }}
         - libtool
+        - make
         - pkg-config
       host:
         - libpng-dev

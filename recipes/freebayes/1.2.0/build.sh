@@ -2,7 +2,7 @@
 
 set -ex
 
-make -j 1 CC="$GCC" CXX="$CXX" LD="$LD" \
+make -j 1 AR="$AR" CC="$GCC" CXX="$CXX" LD="$LD" \
      CXXFLAGS="-I$PREFIX/include" \
      CPPFLAGS="-I$PREFIX/include" \
      LDFLAGS="-L$PREFIX/lib"
