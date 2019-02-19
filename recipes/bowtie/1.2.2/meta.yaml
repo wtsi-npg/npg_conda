@@ -18,7 +18,7 @@ source:
 
 requirements:
   build:
-    - gcc # Needs g++ 4.8
+    - {{ compiler("cxx") }}
     - make
   host:
     - tbb-devel
