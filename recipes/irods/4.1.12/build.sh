@@ -23,6 +23,14 @@ unrpm_data() {
     rm -r ./tmp
 }
 
+running_in_docker() {
+    if [ -f /.dockerenv ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 install_gcc_ubuntu() {
     GCC_VERSION=
     grep precise /etc/lsb-release && GCC_VERSION="4.6"
@@ -74,9 +82,13 @@ export TERM=dumb
 git submodule init && git submodule update
 
 if [ -f /etc/lsb-release ]; then
-    install_gcc_ubuntu
-    install_deps_ubuntu
-
+    if running_in_docker ; then
+        echo "Running in Docker ... skipping package installation"
+    else
+        install_gcc_ubuntu
+        install_deps_ubuntu
+    fi
+    
     ./packaging/build.sh --verbose icat postgres
     ./packaging/build.sh --verbose icommands
 
@@ -90,8 +102,12 @@ if [ -f /etc/lsb-release ]; then
 fi
 
 if [ -f /etc/redhat-release ]; then
-    install_gcc_rhel
-    install_deps_rhel
+    if running_in_docker ; then
+        echo "Running in Docker ... skipping package installation"
+    else
+        install_gcc_rhel
+        install_deps_rhel
+    fi
 
     ./packaging/build.sh --verbose icat postgres
     ./packaging/build.sh --verbose icommands
