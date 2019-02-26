@@ -21,6 +21,7 @@ source:
 requirements:
   build:
     - {{ compiler("c") }}
+    - make
   host:
     - libhts-dev
   run:
