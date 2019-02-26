@@ -132,23 +132,24 @@ for line in sys.stdin.readlines():
         log.info('Build script: "%s"', build_script)
     else:
         log.debug('Build script: "%s"', build_script)
-
-    try:
-        subprocess.check_output(
-            ['docker', 'run',
-             '--mount',
-             'source={},target={},type=bind'.format(args.recipes_dir,
-                                                    args.recipes_mount),
-             '--mount',
-             'source={},target={},type=bind'.format(args.artefacts_dir,
-                                                    args.artefacts_mount),
-             '-i', '-e', 'CONDA_USER_ID=1000',
-             build_image,
-             '/bin/sh', '-c', build_script], stderr=subprocess.STDOUT)
-    except subprocess.CalledProcessError as e:
-        fail = True
-        for line in e.output.decode("utf-8").split("\n"):
-            log.error(line)
+        try:
+            output = subprocess.check_output(
+                ['docker', 'run',
+                 '--mount',
+                 'source={},target={},type=bind'.format(args.recipes_dir,
+                                                        args.recipes_mount),
+                 '--mount',
+                 'source={},target={},type=bind'.format(args.artefacts_dir,
+                                                        args.artefacts_mount),
+                 '-i', '-e', 'CONDA_USER_ID=1000',
+                 build_image,
+                 '/bin/sh', '-c', build_script], stderr=subprocess.STDOUT)
+            for line in output.decode("utf-8").split("\n"):
+                log.debug(line)
+        except subprocess.CalledProcessError as e:
+            fail = True
+            for line in e.output.decode("utf-8").split("\n"):
+                log.error(line)
 
 if fail:
     exit(1)
