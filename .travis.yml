@@ -1,0 +1,37 @@
+
+dist: xenial
+language: python
+python: 3.7
+
+services: docker
+
+env:
+  - >
+    IRODS_IMAGE=wsinpg/conda-irods-12.04:0.2
+    CONDA_IMAGE=wsinpg/conda-12.04:0.2
+    COMPARE_BRANCH=origin/devel
+
+before_install:
+  - docker --version
+  # We should rarely need to pull the iRODS build image, so we don't
+  # do it preemptively here
+  - docker pull $CONDA_IMAGE
+
+install:
+  - pip install jinja2 networkx packaging pyaml setuptools
+  # Ensure we have a complete repository to compare diffs with other
+  # branches
+  - git config remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
+  - git fetch
+
+script:
+  - mkdir -p $TRAVIS_BUILD_DIR/conda-artefacts
+  - while sleep 300; do echo $SECONDS sec elapsed, still building ... ; done &
+  - >
+    ./scripts/package_sort.py --changes $COMPARE_BRANCH | ./scripts/build.py
+    --recipes-dir $TRAVIS_BUILD_DIR
+    --artefacts-dir $TRAVIS_BUILD_DIR/conda-artefacts
+    --irods-build-image $IRODS_IMAGE
+    --conda-build-image $CONDA_IMAGE --verbose
+  - kill %1
+  - ls -l $TRAVIS_BUILD_DIR/conda-artefacts/linux-64

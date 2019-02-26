@@ -7,7 +7,7 @@ package:
 
 about:
   home: http://zlib.net/
-  license: zlib
+  license: Other
   summary: A Massively Spiffy Yet Delicately Unobtrusive Compression Library.
 
 build:

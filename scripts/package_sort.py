@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 #
 # Copyright © 2018, 2019 Genome Research Ltd. All rights reserved.
 #
@@ -95,10 +95,14 @@ def find_changed_recipe_files(dir, branch="master"):
 
     :rtype: list str
     """
-    proc = subprocess.Popen(["git", "diff", "--name-only",
-                             "--diff-filter=d", branch, dir],
-                            stdout=subprocess.PIPE)
-    files = [line.rstrip().decode("utf-8") for line in proc.stdout]
+    try:
+        out = subprocess.check_output(["git", "diff", "--name-only",
+                                       "--diff-filter=d", branch, dir])
+    except subprocess.CalledProcessError as e:
+        log.error(e.output)
+        raise e
+
+    files = [line.rstrip() for line in out.decode("utf-8").split("\n")]
     dirs = list(set([os.path.dirname(f) for f in files]))
     dirs.sort()
 
@@ -107,6 +111,8 @@ def find_changed_recipe_files(dir, branch="master"):
         recipe = os.path.join(dir, "meta.yaml")
         if (os.path.isfile(recipe)):
             recipe_files.append(recipe)
+
+    log.info("Recipes changed relative to %s: %s", branch, recipe_files)
     return recipe_files
 
 
@@ -412,20 +418,15 @@ if args.package and args.version:
         raise ValueError("Package {} version {} is not present "
                          "in the graph".format(pv[0], pv[1]))
 elif (args.changes):
-    # Print a unified list of all changed recipes and their ancestors
+    # Print a unified list of all changed recipes
     changed_recipes = find_changed_recipe_files(base, args.changes)
     cpkg_recipes, cpkg_versions, cpkg_requirements, cpkg_outputs = \
         load_recipes(changed_recipes)
-    printed = {}
     for cpkg, cversions in cpkg_versions.items():
         for cversion in cversions:
             pv = (cpkg, cversion)
             if pv in graph:
-                for node in nx.topological_sort(
-                        nx.subgraph(graph, nx.ancestors(graph, pv))):
-                    if not node in printed:
-                        print_node(node, pkg_recipes)
-                        printed[node] = True
+                print_node(pv, pkg_recipes)
 else:
     # Print everything
     for node in nx.topological_sort(graph):
