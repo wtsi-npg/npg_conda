@@ -20,8 +20,17 @@ source:
   fn: hdf5-{{ version }}.tar.gz
   sha256: {{ sha256 }}
 
+requirements:
+  build:
+    - {{ compiler("cxx") }}
+    - make
+  host:
+    - libz-dev
+  run:
+    - libz
+
 outputs:
-  - name: hdf5
+  - name: hdf5-bin
     version: {{ version }}
     requirements:
       build:
