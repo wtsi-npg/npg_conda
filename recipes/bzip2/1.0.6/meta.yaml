@@ -27,7 +27,7 @@ requirements:
     - make
   
 outputs:
-  - name: bzip2
+  - name: bzip2-bin
     version: {{ version }}
     requirements:
       build:
