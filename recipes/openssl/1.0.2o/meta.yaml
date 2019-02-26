@@ -11,15 +11,26 @@ about:
   summary: "Cryptography and SSL/TLS Toolkit."
 
 build:
-  number: 1
+  number: 2
 
 source:
   - url: https://www.openssl.org/source/openssl-{{ version }}.tar.gz
     fn: openssl-{{ version }}.tar.gz
     sha256: {{ sha256 }}
 
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - libtool
+    - make
+    - pkg-config
+  host:
+    - libz-dev
+  run:
+    - libz
+
 outputs:
-  - name: openssl
+  - name: openssl-bin
     version: {{ version }}
     requirements:
       build:
@@ -38,7 +49,7 @@ outputs:
       - etc/ssl/man/man1
     test:
       commands:
-        - openssl s_client -CApath /etc/ssl/certs/ -connect www.sanger.ac.uk:443
+        - openssl help
 
   - name: libssl
     version: {{ version }}
