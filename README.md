@@ -8,7 +8,7 @@ Our recipes differ from those provided by
 needs:
 
 * Build artefacts are separated into sub-packages. For a typical
-  package writen in C and named `example`, these would be:
+  package written in C and named `example`, these would be:
 
   * `example-bin` containing executables and their documentation, such
     as manpages.
@@ -46,7 +46,8 @@ recipes by omitting support for them.
 Building from source requires Conda (we use
 [Miniconda](https://docs.conda.io/en/latest/miniconda.html)), with the
 [conda-build](https://github.com/conda/conda-build) and
-[conda-verify](https://github.com/conda/conda-verify) installed.
+[conda-verify](https://github.com/conda/conda-verify) packages
+installed.
 
 A complete from-source build can be achieved using the
 `./scripts/package_sort.py` script which inspects the recipes,
@@ -62,3 +63,6 @@ they are built in the correct order:
 The list of recipe paths may be passed directly to `conda-build`:
 
     ./scripts/package_sort.py recipes | awk '{print $3}' | xargs conda-build 
+
+which will build everything using just the Anaconda defaults channel
+and the local channel for dependencies.
