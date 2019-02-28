@@ -84,6 +84,9 @@ parser.add_argument("--conda-build-image",
                     help="Docker image used to build packages, "
                     "defaults to {}".format(DEFAULT_BUILD_IMAGE),
                     type=str, nargs="?", default=DEFAULT_BUILD_IMAGE)
+parser.add_argument("--remove-container",
+                    help="Remove the Docker container after each build",
+                    action="store_true")
 
 parser.add_argument("--dry-run",
                     help="Log the recipes that would be built at INFO level, "
@@ -128,22 +131,30 @@ for line in sys.stdin.readlines():
                                            CONDA_CHANNEL,
                                            args.recipes_mount,
                                            path)
+    run_cmd = ['docker', 'run']
+    mount_args = ['--mount',
+                  'source={},target={},type=bind'.format(args.recipes_dir,
+                                                         args.recipes_mount),
+                  '--mount',
+                  'source={},target={},type=bind'.format(args.artefacts_dir,
+                                                         args.artefacts_mount)]
+    env_args = ['-e', 'CONDA_USER_ID=1000']
+    other_args = ['-i']
+    script_args = ['/bin/sh', '-c', build_script]
+
+    if args.remove_container:
+        other_args.append('--rm')
+
+    cmd = run_cmd + mount_args + env_args + other_args + [build_image] \
+        + script_args
+
     if args.dry_run:
-        log.info('Build script: "%s"', build_script)
+        log.info('Docker command: "%s"', cmd)
     else:
         log.debug('Build script: "%s"', build_script)
+
         try:
-            output = subprocess.check_output(
-                ['docker', 'run',
-                 '--mount',
-                 'source={},target={},type=bind'.format(args.recipes_dir,
-                                                        args.recipes_mount),
-                 '--mount',
-                 'source={},target={},type=bind'.format(args.artefacts_dir,
-                                                        args.artefacts_mount),
-                 '-i', '-e', 'CONDA_USER_ID=1000',
-                 build_image,
-                 '/bin/sh', '-c', build_script], stderr=subprocess.STDOUT)
+            output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
             for line in output.decode("utf-8").split("\n"):
                 log.debug(line)
         except subprocess.CalledProcessError as e:
