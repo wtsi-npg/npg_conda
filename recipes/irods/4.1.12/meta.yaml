@@ -10,15 +10,26 @@ about:
   summary: "Open Source Data Management Software."
 
 build:
-  number: 2
+  number: 3
 
 source:
   git_url: https://github.com/irods/irods.git
   git_rev: 4-1-stable
 
+requirements:
+  host:
+    - libssl-dev
+  run:
+    - libssl
+
 outputs:
   - name: irods-plugins
     version: {{ version }}
+    requirements:
+      host:
+        - libssl-dev
+      run:
+        - libssl
     files:
       - lib/irods/plugins
 
@@ -44,6 +55,7 @@ outputs:
     requirements:
       run:
         - {{ pin_subpackage("irods-plugins", exact=True) }}
+        - libssl
     files:
       - bin/iadmin
       - bin/ibun

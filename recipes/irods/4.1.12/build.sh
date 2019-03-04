@@ -88,7 +88,9 @@ if [ -f /etc/lsb-release ]; then
         install_gcc_ubuntu
         install_deps_ubuntu
     fi
-    
+
+    export CCFLAGS="-I$PREFIX/include"
+    export LDRFLAGS="-L$PREFIX/lib"
     ./packaging/build.sh --verbose icat postgres
     ./packaging/build.sh --verbose icommands
 
@@ -109,6 +111,8 @@ if [ -f /etc/redhat-release ]; then
         install_deps_rhel
     fi
 
+    export CCFLAGS="$PREFIX/include"
+    export LDRFLAGS="$PREFIX/lib"
     ./packaging/build.sh --verbose icat postgres
     ./packaging/build.sh --verbose icommands
 
