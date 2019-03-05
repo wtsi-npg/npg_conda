@@ -1,5 +1,5 @@
 
-CFLAGS: >
+CFLAGS: >-
   -O2
   -fPIC
   -ffunction-sections

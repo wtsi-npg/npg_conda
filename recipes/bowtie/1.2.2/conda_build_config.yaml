@@ -1,6 +1,6 @@
 
 # Set -std=c++03 (see https://github.com/BenLangmead/bowtie/issues/76)
-CXXFLAGS: >
+CXXFLAGS: >-
   -O2
   -fPIC
   -ffunction-sections
