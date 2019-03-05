@@ -1,6 +1,5 @@
 
-# Set -std=c++03 (see https://github.com/BenLangmead/bowtie/issues/76)
-CXXFLAGS: >
+CFLAGS: >
   -O2
   -fPIC
   -ffunction-sections
@@ -10,4 +9,3 @@ CXXFLAGS: >
   -march=x86-64
   -mtune=generic
   -pipe
-  -std=c++03
