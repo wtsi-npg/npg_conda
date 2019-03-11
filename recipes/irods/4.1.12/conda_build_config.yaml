@@ -1,6 +1,5 @@
 
 CFLAGS: >-
-  -O2
   -fPIC
   -ffunction-sections
   -ftree-vectorize
