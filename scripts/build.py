@@ -25,6 +25,7 @@ import sys
 import subprocess
 import time
 
+import rfc3987
 
 def docker_pull(image):
     subprocess.check_output(['docker', 'pull', image])
@@ -36,10 +37,8 @@ DEFAULT_RECIPES_MOUNT="/home/conda/recipes"
 DEFAULT_ARTEFACTS_DIR=os.path.expandvars("$HOME/conda-artefacts")
 DEFAULT_ARTEFACTS_MOUNT="/opt/conda/conda-bld"
 
-IRODS_BUILD_IMAGE="wsinpg/conda-irods-12.04:0.2"
-DEFAULT_BUILD_IMAGE="wsinpg/conda-12.04:0.2"
-
-CONDA_CHANNEL="https://dnap.cog.sanger.ac.uk/npg/conda/devel/"
+IRODS_BUILD_IMAGE="wsinpg/ub-12.04-conda-irods:0.3"
+DEFAULT_BUILD_IMAGE="wsinpg/ub-12.04-conda:0.3"
 
 description = """
 
@@ -76,6 +75,12 @@ parser.add_argument("--artefacts-mount",
                     "defaults to {}".format(DEFAULT_ARTEFACTS_MOUNT),
                     type=str, nargs="?", default=DEFAULT_ARTEFACTS_MOUNT)
 
+parser.add_argument("--build-channel",
+                    help="The Conda channel from which to get dependencies "
+                    "when not doing a full, local from-source build, "
+                    "defaults to none (forcing a local build)",
+                    type=str, nargs="?", default=None)
+
 parser.add_argument("--irods-build-image",
                     help="The Docker image used to build iRODS, "
                     "defaults to {}".format(IRODS_BUILD_IMAGE),
@@ -108,6 +113,13 @@ elif args.verbose or args.dry_run:
     level = log.INFO
 log.basicConfig(level=level)
 
+if args.build_channel:
+    try:
+        rfc3987.parse(args.build_channel, rule='URI')
+    except ValueError as e:
+        log.error("Invalid --build-channel URL '%s'", args.build_channel)
+        exit(1)
+
 docker_pull(args.conda_build_image)
 
 fail = False
@@ -124,13 +136,17 @@ for line in sys.stdin.readlines():
         docker_pull(args.irods_build_image)
 
     build_script = \
-        'export CONDA_BLD_PATH="{}" ; ' \
-        'conda config --set auto_update_conda False ; ' \
-        'conda config --add channels {} ; ' \
-        'cd "{}" && conda build {}'.format(args.artefacts_mount,
-                                           CONDA_CHANNEL,
-                                           args.recipes_mount,
-                                           path)
+        'export CONDA_BLD_PATH="{}" ; '.format(args.artefacts_mount)
+    build_script += \
+        'conda config --set auto_update_conda False ; '
+
+    if args.build_channel:
+        build_script += \
+            'conda config --add channels {} ; '.format(args.build_channel)
+
+    build_script += \
+        'cd "{}" && conda build {}'.format(args.recipes_mount, path)
+
     run_cmd = ['docker', 'run']
     mount_args = ['--mount',
                   'source={},target={},type=bind'.format(args.recipes_dir,

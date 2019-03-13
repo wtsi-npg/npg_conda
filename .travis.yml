@@ -7,8 +7,9 @@ services: docker
 
 env:
   - >
-    IRODS_IMAGE=wsinpg/conda-irods-12.04:0.2
-    CONDA_IMAGE=wsinpg/conda-12.04:0.2
+    IRODS_IMAGE=wsinpg/ub-12.04-conda-irods-4.1:0.3
+    CONDA_IMAGE=wsinpg/ub-12.04-conda:0.3
+    CONDA_CHANNEL=https://dnap.cog.sanger.ac.uk/npg/conda/devel/generic
     COMPARE_BRANCH=origin/devel
 
 before_install:
@@ -18,7 +19,7 @@ before_install:
   - docker pull $CONDA_IMAGE
 
 install:
-  - pip install jinja2 networkx packaging pyaml setuptools
+  - pip install jinja2 networkx packaging pyaml rfc3987 setuptools
   # Ensure we have a complete repository to compare diffs with other
   # branches
   - git config remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
@@ -32,6 +33,8 @@ script:
     --recipes-dir $TRAVIS_BUILD_DIR
     --artefacts-dir $TRAVIS_BUILD_DIR/conda-artefacts
     --irods-build-image $IRODS_IMAGE
-    --conda-build-image $CONDA_IMAGE --verbose
+    --conda-build-image $CONDA_IMAGE
+    --build-channel $CONDA_CHANNEL
+    --verbose
   - kill %1
   - ls -l $TRAVIS_BUILD_DIR/conda-artefacts/linux-64
