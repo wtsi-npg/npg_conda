@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -e
+set -ex
 
 n=`expr $CPU_COUNT / 4 \| 1`
 
@@ -10,15 +10,18 @@ cp aclocal.m4 aclocal.m4.tmp
 autoreconf
 cp aclocal.m4.tmp aclocal.m4
 
-./configure --prefix="$PREFIX" \
-            --enable-libcurl \
-            --enable-plugins \
-            CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
-make -j $n
+CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib" \
+        ./configure --prefix="$PREFIX" \
+        --enable-libcurl \
+        --enable-libdeflate \
+        --enable-plugins \
+
+make -j $n CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
 make install prefix="$PREFIX"
 popd
 
 pushd plugins
-make install prefix="$PREFIX" IRODS_HOME="$PREFIX" \
-     CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
+make -j $n CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib" \
+     IRODS_HOME="$PREFIX"
+make install prefix="$PREFIX"
 popd

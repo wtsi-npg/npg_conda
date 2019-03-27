@@ -12,7 +12,7 @@ about:
   summary: C library for high-throughput sequencing data formats.
 
 build:
-  number: 0
+  number: 1
   string: plugins_{{ plugins_rev }}_{{ PKG_BUILDNUM }}
 
 source:
@@ -30,12 +30,13 @@ requirements:
   build:
     - libbzip2
     - libcurl
+    - libdeflate
     - gcc_npg >=7.3
     - irods-dev >=4.1.12 # for plugins
     - liblzma
     - openssl
     - zlib
-
+    
 outputs:
   - name: htsbin
     version: {{ version }}
@@ -44,6 +45,7 @@ outputs:
         - htslib =={{ version }}
         - libbzip2
         - libcurl
+        - libdeflate
         - liblzma
         - openssl
         - zlib
@@ -60,6 +62,7 @@ outputs:
       run:
         - libbzip2
         - libcurl
+        - libdeflate
         - liblzma
         - openssl
         - zlib
