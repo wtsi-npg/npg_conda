@@ -21,7 +21,7 @@ build:
 
 requirements:
   build:
-    - gcc_npg >=7.3
+    - gcc_npg <5.0
 
 outputs:
   - name: libdeflate
