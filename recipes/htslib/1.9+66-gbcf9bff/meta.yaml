@@ -36,7 +36,7 @@ requirements:
     - liblzma
     - openssl
     - zlib
-    
+
 outputs:
   - name: htsbin
     version: {{ version }}
