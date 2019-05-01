@@ -1,0 +1,17 @@
+{% set version = "1.0.0" %}
+
+package:
+  name: bar
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/wtsi-npg/npg_conda.git
+  license: GPL3
+  summary: "Bar dummy package"
+
+build:
+  number: 0
+
+test:
+  commands:
+    - bar
