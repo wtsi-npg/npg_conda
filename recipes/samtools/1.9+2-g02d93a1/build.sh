@@ -6,12 +6,12 @@ n="$CPU_COUNT"
 
 autoreconf
 
-CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib" \
-        ./configure --prefix="$PREFIX" \
-        --with-htslib=system \
-        --without-curses
+./configure --prefix="$PREFIX" \
+            --with-htslib=system \
+            --without-curses \
+            CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
 
-make -j $n AR="$AR" CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
+make -j $n AR="$AR"
 make install prefix="$PREFIX"
 
 mkdir p "$PREFIX/include/samtools"

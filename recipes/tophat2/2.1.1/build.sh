@@ -9,7 +9,5 @@ n=1
             --with-boost="$PREFIX" \
             CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
 
-make -j $n CC="$GCC" \
-     INCLUDES="-I. -I$PREFIX/include" LIBPATH="-L$PREFIX/lib" \
-     CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
+make -j "$n" CC="$GCC" INCLUDES="-I. -I$PREFIX/include" LIBPATH="-L$PREFIX/lib"
 make install prefix="$PREFIX"

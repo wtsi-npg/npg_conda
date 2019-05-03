@@ -13,7 +13,8 @@ n="$CPU_COUNT"
             --without-tiff \
             --without-webp \
             --without-xpm \
-            --with-zlib
+            --with-zlib \
+            CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX"
 
-make -j $n CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX"
+make -j "$n"
 make install prefix="$PREFIX"

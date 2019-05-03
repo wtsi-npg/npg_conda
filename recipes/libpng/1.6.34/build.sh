@@ -8,5 +8,5 @@ n="$CPU_COUNT"
             CPPFLAGS="-I$PREFIX/include" \
             LDFLAGS="-L$PREFIX/lib"
 
-make -j $n CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
+make -j "$n"
 make install prefix="$PREFIX"

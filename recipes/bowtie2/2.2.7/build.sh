@@ -4,7 +4,8 @@ set -ex
 
 n="$CPU_COUNT"
 
-make -j $n prefix="$PREFIX" CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
+make -j "$n" prefix="$PREFIX" \
+     CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
 
 # There is no install target in the Makefile
 mkdir -p "$PREFIX/bin"
