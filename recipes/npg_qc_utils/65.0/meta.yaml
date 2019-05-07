@@ -1,4 +1,5 @@
 {% set version = "65.0" %}
+{% set htslib_version = "1.9+66_gbcf9bff" %}
 
 package:
   name: npg_qc_utils
@@ -21,11 +22,11 @@ requirements:
     - {{ compiler("c") }}
     - make
   host:
-    - libhts-dev
+    - libhts-dev =={{ htslib_version }}
     - samtools-dev
     - libz-dev
   run:
-    - libhts
+    - libhts =={{ htslib_version }}
     - libz
 
 test:
