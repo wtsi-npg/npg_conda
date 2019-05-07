@@ -1,0 +1,19 @@
+*** Makefile    2018-09-19 11:30:16.323723930 +0000
+--- Makefile.1  2018-09-19 11:29:44.126713296 +0000
+***************
+*** 41,47 ****
+  
+  bwa:bwt_gen/libbwtgen.a $(OBJS) main.c main.h
+                d=`date`;\
+!               $(CC) $(CFLAGS) -DBLDDATE="$$d" -c main.c -o main.o ;\
+                $(CC) $(CFLAGS) $(DFLAGS) $(OBJS) main.o -o $@ $(LIBS)
+  
+  depend:
+--- 41,47 ----
+  
+  bwa:bwt_gen/libbwtgen.a $(OBJS) main.c main.h
+                d=`date`;\
+!               $(CC) $(CFLAGS) -DBLDDATE="$$d" $(INCLUDES) -c main.c -o main.o ;\
+                $(CC) $(CFLAGS) $(DFLAGS) $(OBJS) main.o -o $@ $(LIBS)
+  
+  depend:
