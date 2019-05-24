@@ -4,12 +4,6 @@ set -e
 
 n=`expr $CPU_COUNT / 4 \| 1`
 
-pushd samtools
-./configure --prefix="$PREFIX" --without-curses
-make -j $n CFLAGS="-fPIC"
-ln -s . include
-popd
-
 pushd npg_qc_utils
 
 pushd norm_fit
