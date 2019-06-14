@@ -1,5 +1,6 @@
 {% set version = "1.8" %}
 {% set sha256 = "4acbfd691f137742e0be63d09f516434f0faf617a5c60f466140e0677915fced" %}
+{% set htslib_version = "1.9+66_gbcf9bff" %}
 
 package:
   name: bcftools
@@ -11,8 +12,8 @@ about:
   summary: C library for high-throughput sequencing data formats.
 
 build:
-  number: 0
-  
+  number: 1
+
 source:
   url: https://github.com/samtools/bcftools/releases/download/{{ version }}/bcftools-{{ version }}.tar.bz2
   fn: bcftools-{{ version }}.tar.bz2
@@ -21,7 +22,7 @@ source:
 requirements:
   build:
     - gcc_npg >=7.3
-    - htslib =={{ version }}
+    - htslib =={{ htslib_version }}
 
   run:
-    - htslib =={{ version }}
+    - htslib =={{ htslib_version }}
