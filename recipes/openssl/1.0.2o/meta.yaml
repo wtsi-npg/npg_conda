@@ -2,7 +2,7 @@
 {% set sha256 = "ec3f5c9714ba0fd45cb4e087301eb1336c317e0d20b575a125050470e8089e4d" %}
 
 package:
-  name: openssl
+  name: openssl-pkg
   version: "{{ version }}"
 
 about:
@@ -11,7 +11,7 @@ about:
   summary: "Cryptography and SSL/TLS Toolkit."
 
 build:
-  number: 2
+  number: 3
 
 source:
   - url: https://www.openssl.org/source/openssl-{{ version }}.tar.gz
@@ -30,7 +30,7 @@ requirements:
     - libz
 
 outputs:
-  - name: openssl-bin
+  - name: openssl
     version: {{ version }}
     requirements:
       build:

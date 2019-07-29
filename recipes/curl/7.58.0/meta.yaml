@@ -2,7 +2,7 @@
 {% set sha256 = "1cb081f97807c01e3ed747b6e1c9fee7a01cb10048f1cd0b5f56cfe0209de731" %}
 
 package:
-  name: curl
+  name: curl-pkg
   version: "{{ version }}"
 
 about:
@@ -11,7 +11,7 @@ about:
   summary: Command line tool and library for transferring data with URLs.
 
 build:
-  number: 2
+  number: 3
 
 source:
   - url: http://curl.haxx.se/download/curl-{{ version }}.tar.bz2
@@ -31,7 +31,7 @@ requirements:
     - libz
 
 outputs:
-  - name: curl-bin
+  - name: curl
     version: {{ version }}
     requirements:
       build:

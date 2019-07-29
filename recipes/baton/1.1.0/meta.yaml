@@ -2,7 +2,7 @@
 {% set sha256 = "1b8f5711eb04dd2c6f2c423e441054b327138719299864827a6148f127508c5e" %}
 
 package:
-  name: baton
+  name: baton-pkg
   version: "{{ version }}"
 
 about:
@@ -11,7 +11,7 @@ about:
   summary: Client programs and API for use with iRODS (Integrated Rule-Oriented Data System).
 
 build:
-  number: 2
+  number: 3
 
 source:
   url: https://github.com/wtsi-npg/baton/releases/download/{{ version }}/baton-{{ version }}.tar.gz
@@ -38,7 +38,7 @@ requirements:
     - libssl
 
 outputs:
-  - name: baton-bin
+  - name: baton
     version: {{ version }}
     requirements:
       build:

@@ -3,7 +3,7 @@
 {% set sha256 = "9c5ce1e33d2463fb1a42dd04daacbc22104e57676e2204e3d66b1ef54b88ebf2" %}
 
 package:
-  name: hdf5
+  name: hdf5-pkg
   version: "{{ version }}"
 
 about:
@@ -12,7 +12,7 @@ about:
   summary: A data model, library, and file format for storing and managing data.
 
 build:
-  number: 2
+  number: 3
   string: threadsafe_{{ PKG_BUILDNUM }}
 
 source:
@@ -30,7 +30,7 @@ requirements:
     - libz
 
 outputs:
-  - name: hdf5-bin
+  - name: hdf5
     version: {{ version }}
     requirements:
       build:

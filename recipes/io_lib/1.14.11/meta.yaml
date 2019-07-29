@@ -2,7 +2,7 @@
 {% set sha256 = "a172cb66416794fdd9c1fc443f722f7e3439b52c99510b9a60f828392b9989e4" %}
 
 package:
-  name: io_lib
+  name: io_lib-pkg
   version: "{{ version }}"
 
 about:
@@ -11,7 +11,7 @@ about:
   summary: DNA sequence assembly, editing and analysis tools.
 
 build:
-  number: 2
+  number: 3
 
 source:
   url: https://github.com/jkbonfield/io_lib/releases/download/io_lib-1-14-11/io_lib-{{ version }}.tar.gz
@@ -36,7 +36,7 @@ requirements:
     - libz
 
 outputs:
-  - name: io_lib-bin
+  - name: io_lib
     version: {{ version }}
     requirements:
       build:

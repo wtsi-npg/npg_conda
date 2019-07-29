@@ -2,7 +2,7 @@
 {% set sha256 = "46942627d5d0ca11720fec18d81fc38f7ef837ea4197c1f630e71ce0d470b11e" %}
 
 package:
-  name: nettle
+  name: nettle-pkg
   version: "{{ version }}"
 
 about:
@@ -11,7 +11,7 @@ about:
   summary: A low-level cryptographic library
 
 build:
-  number: 3
+  number: 4
 
 source:
   url: https://ftp.gnu.org/gnu/nettle/nettle-{{ version }}.tar.gz
@@ -31,7 +31,7 @@ requirements:
     - libgmp >=6.0
 
 outputs:
-  - name: nettle-bin
+  - name: nettle
     requirements:
       build:
         - {{ compiler("c") }}

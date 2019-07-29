@@ -10,7 +10,7 @@ needs:
 * Build artefacts are separated into sub-packages. For a typical
   package written in C and named `example`, these would be:
 
-  * `example-bin` containing executables and their documentation, such
+  * `example` containing executables and their documentation, such
     as manpages.
 
   * `libexample` containing the example libraries (static and shared).
@@ -66,3 +66,21 @@ The list of recipe paths may be passed directly to `conda-build`:
 
 which will build everything using just the Anaconda defaults channel
 and the local channel for dependencies.
+
+
+### Naming new recipes ###
+
+The rules are:
+
+1. The package containing the executables should be named after the
+commonly used name for the software (e.g. bwa, minimap2, curl)
+
+2. If 1. is not possible e.g. because the executables are in
+sub-package, the Conda meta-package is renamed [package name]-pkg and
+the executables sub-package keeps the common name
+(e.g. curl-pkg,curl,libcurl,libcurl-dev)
+
+3. If 2. is not possible because e.g. the common name for the software
+is a library name and the software also provides executables then the
+executables package is renamed [package]-bin
+(e.g. libml2-pkg,libxml2-bin,libxml2,libxml2-dev)

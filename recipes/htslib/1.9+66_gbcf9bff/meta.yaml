@@ -3,7 +3,7 @@
 {% set htslib_rev = "bcf9bff178f81c9c1cf3a052aeb6cbe32fe5fdcc" %}
 
 package:
-  name: "htslib"
+  name: htslib-pkg
   version: "{{ version }}"
 
 about:
@@ -12,7 +12,7 @@ about:
   summary: C library for high-throughput sequencing data formats.
 
 build:
-  number: 1
+  number: 2
   string: plugins_{{ plugins_rev }}_{{ PKG_BUILDNUM }}
 
 source:
@@ -22,9 +22,6 @@ source:
   - git_url: https://github.com/samtools/htslib-plugins.git
     git_rev: {{ plugins_rev }}
     folder: plugins
-
-features:
-  - irods
 
 requirements:
   build:
@@ -48,7 +45,7 @@ requirements:
     - libz
 
 outputs:
-  - name: htslib-bin
+  - name: htslib
     version: {{ version }}
     requirements:
       build:

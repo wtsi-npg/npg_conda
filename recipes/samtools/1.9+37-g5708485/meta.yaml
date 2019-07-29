@@ -2,7 +2,7 @@
 {% set htslib_version = "1.9+47_gc93b673" %}
 
 package:
-  name: samtools
+  name: samtools-pkg
   version: "{{ version }}"
 
 about:
@@ -11,7 +11,7 @@ about:
   summary: C library for high-throughput sequencing data formats.
 
 build:
-  number: 1
+  number: 2
 
 source:
   git_url: https://github.com/samtools/samtools.git
@@ -32,7 +32,7 @@ requirements:
     - libz
 
 outputs:
-  - name: samtools-bin
+  - name: samtools
     version: {{ version }}
     requirements:
       build:
