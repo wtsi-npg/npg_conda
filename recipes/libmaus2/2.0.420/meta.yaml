@@ -48,12 +48,12 @@ outputs:
         - irods-dev
         - libgnutls-dev
         - libnettle-dev
-        - libstaden-read-dev
+        - libstaden-read-dev =={{ io_lib_version }}
         - libz-dev
       run:
         - libgnutls
         - libnettle
-        - libstaden-read
+        - libstaden-read =={{ io_lib_version }}
         - libz
     files:
       - lib/libmaus*.*
