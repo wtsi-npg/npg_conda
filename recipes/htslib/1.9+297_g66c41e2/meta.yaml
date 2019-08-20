@@ -1,0 +1,122 @@
+{% set version = "1.9+297_g66c41e2" %}
+{% set plugins_rev = "201712" %}
+{% set htslib_rev = "66c41e2c5c563d1a3a7d61883a3012655122e1cb" %}
+
+package:
+  name: htslib-pkg
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/samtools/htslib
+  license: MIT
+  summary: C library for high-throughput sequencing data formats.
+
+build:
+  number: 1
+  string: plugins_{{ plugins_rev }}_{{ PKG_BUILDNUM }}
+
+source:
+  - git_url: https://github.com/samtools/htslib.git
+    git_rev: {{ htslib_rev }}
+    folder: htslib
+  - git_url: https://github.com/samtools/htslib-plugins.git
+    git_rev: {{ plugins_rev }}
+    folder: plugins
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - autoconf
+    - automake
+    - make
+    - perl
+  host:
+    - irods-dev >=4.1.12
+    - libbz2-dev
+    - libcurl-dev
+    - liblzma-dev
+    - libssl-dev
+    - libz-dev
+  run:
+    - libbz2
+    - libcurl
+    - liblzma
+    - libssl
+    - libz
+
+outputs:
+  - name: htslib
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - autoconf
+        - automake
+        - make
+        - perl
+      host:
+        - irods-dev >=4.1.12
+        - libbz2-dev
+        - libcurl-dev
+        - liblzma-dev
+        - libssl-dev
+        - libz-dev
+      run:
+        - {{ pin_subpackage("libhts", exact=True) }}
+        - libbz2
+        - libcurl
+        - liblzma
+        - libssl
+        - libz
+    files:
+      - bin/bgzip
+      - bin/htsfile
+      - bin/tabix
+      - share/man/man1/htsfile.1
+      - share/man/man1/tabix.1
+
+  - name: libhts
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - autoconf
+        - automake
+        - make
+        - perl
+      host:
+        - irods-dev >=4.1.12
+        - libbz2-dev
+        - libcurl-dev
+        - liblzma-dev
+        - libssl-dev
+        - libz-dev
+      run:
+        - libbz2
+        - libcurl
+        - liblzma
+        - libssl
+        - libz
+    files:
+      - libexec/htslib
+      - lib/libhts*
+    test:
+      commands:
+        - test -f ${PREFIX}/lib/libhts.a
+        - test -h ${PREFIX}/lib/libhts.so
+        - test -f ${PREFIX}/libexec/htslib/hfile_irods.so
+        - test -f ${PREFIX}/libexec/htslib/hfile_libcurl.so
+
+  - name: libhts-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libhts", exact=True) }}
+    files:
+      - include/htslib
+      - share/man/man5/faidx.5
+      - share/man/man5/sam.5
+      - share/man/man5/vcf.5
+    test:
+      commands:
+        - test -f ${PREFIX}/include/htslib/sam.h
