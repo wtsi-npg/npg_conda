@@ -12,7 +12,7 @@ about:
   summary: C library for high-throughput sequencing data formats.
 
 build:
-  number: 1
+  number: 2
   string: plugins_{{ plugins_rev }}_{{ PKG_BUILDNUM }}
 
 source:
@@ -34,12 +34,14 @@ requirements:
     - irods-dev >=4.1.12
     - libbz2-dev
     - libcurl-dev
+    - libdeflate-dev
     - liblzma-dev
     - libssl-dev
     - libz-dev
   run:
     - libbz2
     - libcurl
+    - libdeflate
     - liblzma
     - libssl
     - libz
@@ -58,6 +60,7 @@ outputs:
         - irods-dev >=4.1.12
         - libbz2-dev
         - libcurl-dev
+        - libdeflate-dev
         - liblzma-dev
         - libssl-dev
         - libz-dev
@@ -65,6 +68,7 @@ outputs:
         - {{ pin_subpackage("libhts", exact=True) }}
         - libbz2
         - libcurl
+        - libdeflate
         - liblzma
         - libssl
         - libz
@@ -88,21 +92,22 @@ outputs:
         - irods-dev >=4.1.12
         - libbz2-dev
         - libcurl-dev
+        - libdeflate-dev
         - liblzma-dev
         - libssl-dev
         - libz-dev
       run:
         - libbz2
         - libcurl
+        - libdeflate
         - liblzma
         - libssl
         - libz
     files:
       - libexec/htslib
-      - lib/libhts*
+      - lib/libhts.so*
     test:
       commands:
-        - test -f ${PREFIX}/lib/libhts.a
         - test -h ${PREFIX}/lib/libhts.so
         - test -f ${PREFIX}/libexec/htslib/hfile_irods.so
         - test -f ${PREFIX}/libexec/htslib/hfile_libcurl.so
@@ -114,9 +119,11 @@ outputs:
         - {{ pin_subpackage("libhts", exact=True) }}
     files:
       - include/htslib
+      - lib/libhts.a
       - share/man/man5/faidx.5
       - share/man/man5/sam.5
       - share/man/man5/vcf.5
     test:
       commands:
+        - test -f ${PREFIX}/lib/libhts.a
         - test -f ${PREFIX}/include/htslib/sam.h
