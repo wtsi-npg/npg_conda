@@ -170,13 +170,22 @@ for line in sys.stdin.readlines():
         log.debug('Build script: "%s"', build_script)
 
         try:
-            output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-            for line in output.decode("utf-8").split("\n"):
-                log.debug(line)
+            enc = sys.getfilesystemencoding()
+
+            # Combine STDOUT and STDERR
+            output = subprocess.run(cmd, check=True,
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT)
+            log.debug("########## BEGIN process STDOUT/STDERR ##########")
+            for outline in output.stdout.decode(enc).split("\n"):
+                log.debug(outline)
+            log.debug("########## END process STDOUT/STDERR ##########")
         except subprocess.CalledProcessError as e:
             fail = True
-            for line in e.output.decode("utf-8").split("\n"):
-                log.error(line)
+            log.error("########## BEGIN process STDOUT/STDERR ##########")
+            for errline in e.stdout.decode(enc).split("\n"):
+                log.error(errline)
+            log.error("########## END process STDOUT/STDERR ##########")
 
 if fail:
     exit(1)
