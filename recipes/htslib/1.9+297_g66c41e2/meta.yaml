@@ -1,5 +1,4 @@
 {% set version = "1.9+297_g66c41e2" %}
-{% set plugins_rev = "201712" %}
 {% set htslib_rev = "66c41e2c5c563d1a3a7d61883a3012655122e1cb" %}
 
 package:
@@ -12,16 +11,12 @@ about:
   summary: C library for high-throughput sequencing data formats.
 
 build:
-  number: 2
-  string: plugins_{{ plugins_rev }}_{{ PKG_BUILDNUM }}
+  number: 3
 
 source:
   - git_url: https://github.com/samtools/htslib.git
     git_rev: {{ htslib_rev }}
     folder: htslib
-  - git_url: https://github.com/samtools/htslib-plugins.git
-    git_rev: {{ plugins_rev }}
-    folder: plugins
 
 requirements:
   build:
@@ -31,7 +26,6 @@ requirements:
     - make
     - perl
   host:
-    - irods-dev >=4.1.12
     - libbz2-dev
     - libcurl-dev
     - libdeflate-dev
@@ -57,7 +51,6 @@ outputs:
         - make
         - perl
       host:
-        - irods-dev >=4.1.12
         - libbz2-dev
         - libcurl-dev
         - libdeflate-dev
@@ -89,7 +82,6 @@ outputs:
         - make
         - perl
       host:
-        - irods-dev >=4.1.12
         - libbz2-dev
         - libcurl-dev
         - libdeflate-dev
@@ -109,7 +101,6 @@ outputs:
     test:
       commands:
         - test -h ${PREFIX}/lib/libhts.so
-        - test -f ${PREFIX}/libexec/htslib/hfile_irods.so
         - test -f ${PREFIX}/libexec/htslib/hfile_libcurl.so
 
   - name: libhts-dev
