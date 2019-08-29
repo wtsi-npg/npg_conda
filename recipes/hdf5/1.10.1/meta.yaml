@@ -12,7 +12,7 @@ about:
   summary: A data model, library, and file format for storing and managing data.
 
 build:
-  number: 3
+  number: 4
   string: threadsafe_{{ PKG_BUILDNUM }}
 
 source:
@@ -30,6 +30,14 @@ requirements:
     - libz
 
 outputs:
+  - name: hdf5-all
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libhdf5", exact=True) }}
+        - {{ pin_subpackage("libhdf5-dev", exact=True) }}
+        - {{ pin_subpackage("hdf5", exact=True) }}
+
   - name: hdf5
     version: {{ version }}
     requirements:
@@ -74,10 +82,9 @@ outputs:
       run:
         - libz
     files:
-      - lib/libhdf*
+      - lib/libhdf5.so*
     test:
       commands:
-        - test -f ${PREFIX}/lib/libhdf5.a
         - test -h ${PREFIX}/lib/libhdf5.so
 
   - name: libhdf5-dev
@@ -86,9 +93,11 @@ outputs:
       run:
         - {{ pin_subpackage("libhdf5", exact=True) }}
     files:
+      - lib/libhdf5.a
       - include/H5*
       - include/hdf5*
       - share/hdf5_examples
     test:
       commands:
+        - test -f ${PREFIX}/lib/libhdf5.a
         - test -f ${PREFIX}/include/hdf5.h
