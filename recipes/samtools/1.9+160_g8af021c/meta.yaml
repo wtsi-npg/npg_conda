@@ -1,5 +1,5 @@
-{% set version = "1.9+154_gc661e69" %}
-{% set htslib_version = "1.9+297_g66c41e2" %}
+{% set version = "1.9+160_g8af021c" %}
+{% set htslib_version = "1.9+317_gc31dedd" %}
 
 package:
   name: samtools-pkg
@@ -15,7 +15,7 @@ build:
 
 source:
   git_url: https://github.com/dkj/samtools.git
-  git_rev: c661e698b92cf0b15e04675490187dfdb7e4f8df
+  git_rev: 8af021c833c876cd4e261ed0f7dfdc740654a81f
 
 requirements:
   build:
