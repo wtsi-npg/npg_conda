@@ -295,29 +295,25 @@ def build_dependency_graph(graph, root_node,
                                                      spec=spec))
                         rtup = (req_pkg, v)
                         graph.add_edge(rtup, ptup)
-
                         log.debug("Need to build package "
                                   "%s %s of candidates %s",
                                   req_pkg, v, pkg_versions[req_pkg])
                     # Is the required package one of the sub-packages
                     # of the packages we are building?
+                    elif req_pkg in pkg_outputs:
+                        # Require the parent package rather than
+                        # the sub-package
+                        parent_pkg = pkg_outputs[req_pkg]
+                        v = max(find_package_version(parent_pkg, pkg_versions,
+                                                     spec=spec))
+                        rtup = (parent_pkg, v)
+                        graph.add_edge(rtup, ptup)
+                        log.debug("Need to build (containing) package "
+                                  "%s %s of candidates %s",
+                                  parent_pkg, v, pkg_versions[parent_pkg])
                     else:
-                        if req_pkg in pkg_outputs:
-                            # Require the parent package rather than
-                            # the sub-package
-                            parent_pkg = pkg_outputs[req_pkg]
-                            v = max(find_package_version(parent_pkg,
-                                                         pkg_versions,
-                                                         spec=spec))
-                            rtup = (parent_pkg, v)
-                            graph.add_edge(rtup, ptup)
-
-                            log.debug("Need to build (containing) package "
-                                      "%s %s of candidates %s",
-                                      parent_pkg, v, pkg_versions[parent_pkg])
-                        else:
-                            log.warning("Can't find required package %s",
-                                        req_pkg)
+                        log.warning("Can't find required package %s", req_pkg)
+                        graph.add_edge(ptup, root_node)
             else:
                 log.debug("%s has no requirements", ptup)
                 graph.add_edge(ptup, root_node)
