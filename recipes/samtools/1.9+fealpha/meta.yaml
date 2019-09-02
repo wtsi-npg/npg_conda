@@ -1,4 +1,4 @@
-{% set version = "1.9+160_g8af021c" %}
+{% set version = "1.9+fealpha_160_g8af021c" %}
 {% set htslib_version = "1.9+317_gc31dedd" %}
 
 package:
