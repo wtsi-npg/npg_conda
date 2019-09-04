@@ -1,0 +1,31 @@
+diff --git a/Makefile b/Makefile
+index b86eda9..1aec8d6 100644
+--- a/Makefile
++++ b/Makefile
+@@ -33,7 +33,7 @@ EXE=		bwa-mem2
+ ARCH_FLAGS=	-msse4.1
+ SWA_FLAGS=	-DDEB=0 -DRDT=0 -DMAXI=0 -DNEW=1 -DSORT_PAIRS=0
+ MEM_FLAGS=	-DPAIRED_END=1 -DMAINY=0 -DSAIS=1
+-CPPFLAGS=	-DENABLE_PREFETCH $(MEM_FLAGS) $(SWA_FLAGS) 
++CPPFLAGS+=	-DENABLE_PREFETCH $(MEM_FLAGS) $(SWA_FLAGS) 
+ LIBS=		-lpthread -lm -lz ##-lnuma
+ OBJS=		src/fastmap.o src/bwtindex.o src/main.o src/utils.o src/kthread.o \
+ 			src/kstring.o src/ksw.o src/bntseq.o src/bwamem.o src/profiling.o src/bandedSWA.o \
+@@ -62,7 +62,7 @@ else ifeq ($(arch),native)
+ 	ARCH_FLAGS=-march=native
+ endif
+ 
+-CXXFLAGS=	-g -O3 -fpermissive $(ARCH_FLAGS) #-Wall ##-xSSE2
++CXXFLAGS+=	-g -O3 -fpermissive $(ARCH_FLAGS) #-Wall ##-xSSE2
+ 
+ .PHONY:all clean depend multi
+ .SUFFIXES:.cpp .o
+@@ -79,7 +79,7 @@ multi:
+ 	$(CXX) -Wall -O3 src/runsimd.cpp -o bwa-mem2
+ 
+ $(EXE):$(OBJS)
+-	$(CXX) $(CXXFLAGS) $(OBJS) -o $@ $(LIBS)
++	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(OBJS) -o $@ $(LIBS)
+ 
+ clean:
+ 	rm -fr src/*.o $(EXE) bwa-mem2.sse41 bwa-mem2.avx2 bwa-mem2.avx512bw
