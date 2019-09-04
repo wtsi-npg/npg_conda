@@ -1,0 +1,32 @@
+{% set version = "1.0.0-161-g02b2fb2" %}
+{% set bwa_mem2_rev = "f4f5000c750d4bcaf5079ebf9664b194f2c9d7cf" %}
+
+package:
+  name: bwa-mem2
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/bwa-mem2/bwa-mem2
+  license: GPL3
+  summary: Burrows-Wheeler Aligner for short-read alignment.
+
+build:
+  number: 1
+
+source:
+  - git_url: https://github.com/bwa-mem2/bwa-mem2.git
+    git_rev: bwa_mem2_rev
+
+    patches:
+      - version_flags.patch
+
+requirements:
+  build:
+    - zlib
+
+  run:
+    - zlib
+
+test:
+  commands:
+    - test -x ${PREFIX}/bin/bwa-mem2

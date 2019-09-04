@@ -1,0 +1,35 @@
+diff --git a/Makefile b/Makefile
+index 9f51af0..af60e2f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -35,7 +35,7 @@ EXE=		bwa-mem2
+ ARCH_FLAGS=	-msse4.1
+ SWA_FLAGS=	-DDEB=0 -DRDT=0 -DMAXI=0 -DNEW=1 -DSORT_PAIRS=0
+ MEM_FLAGS=	-DPAIRED_END=1 -DMAINY=0 -DSAIS=1
+-CPPFLAGS=	-DENABLE_PREFETCH $(MEM_FLAGS) $(SWA_FLAGS) 
++CPPFLAGS+=	-DENABLE_PREFETCH $(MEM_FLAGS) $(SWA_FLAGS) 
+ LIBS=		-lpthread -lm -lz ##-lnuma
+ OBJS=		src/fastmap.o src/bwtindex.o src/main.o src/utils.o src/kthread.o \
+ 			src/kstring.o src/ksw.o src/bntseq.o src/bwamem.o src/profiling.o src/bandedSWA.o \
+@@ -64,7 +64,7 @@ else ifeq ($(arch),native)
+ 	ARCH_FLAGS=-march=native
+ endif
+ 
+-CXXFLAGS=	-g -O3 -fpermissive $(ARCH_FLAGS) #-Wall ##-xSSE2
++CXXFLAGS+=	-g -O3 -fpermissive $(ARCH_FLAGS) #-Wall ##-xSSE2
+ 
+ .PHONY:all clean depend multi
+ .SUFFIXES:.cpp .o
+diff --git a/src/main.cpp b/src/main.cpp
+index 31e5cb4..a26766e 100644
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -34,7 +34,7 @@ Authors: Vasimuddin Md <vasimuddin.md@intel.com>; Sanchit Misra <sanchit.misra@i
+ #include "main.h"
+ 
+ #ifndef PACKAGE_VERSION
+-#define PACKAGE_VERSION "2.0pre1"
++#define PACKAGE_VERSION "2.0pre2_npg"
+ #endif
+ 
+ 
