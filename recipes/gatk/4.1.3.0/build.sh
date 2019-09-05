@@ -6,7 +6,6 @@ PACKAGE_HOME=$PREFIX/share/$PKG_NAME-$PKG_VERSION-$PKG_BUILDNUM
 mkdir -p $PREFIX/bin
 mkdir -p $PACKAGE_HOME
 
-sed -i.bak 's#!/usr/bin/env python#!/opt/anaconda1anaconda2anaconda3/bin/python#' gatk
 chmod +x gatk
 cp gatk ${PACKAGE_HOME}/gatk
 cp gatk-*-local.jar $PACKAGE_HOME
