@@ -1,10 +1,14 @@
 #!/bin/sh
 
-set -e
+set -ex
 
-n=`expr $CPU_COUNT / 4 \| 1`
+n="$CPU_COUNT"
 
-./configure --prefix="$PREFIX" --with-libmaus2="$PREFIX" LDFLAGS="-L$PREFIX/lib -L$PREFIX/lib/irods/externals" LIBS="-lirods_client_api -lrt"
+./configure --prefix="$PREFIX" \
+            --with-libmaus2="$PREFIX" \
+            LDFLAGS="-L$PREFIX/lib -L$PREFIX/lib/irods/externals" \
+            LIBS="-lirods_client_api -lrt"
 
-make -j $n
+make -j $n CPPFLAGS="-I$PREFIX/include" \
+     LDFLAGS="-L$PREFIX/lib -L$PREFIX/lib/irods/externals"
 make install prefix="$PREFIX"

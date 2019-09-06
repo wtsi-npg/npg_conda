@@ -2,7 +2,7 @@
 {% set sha256 = "1cb081f97807c01e3ed747b6e1c9fee7a01cb10048f1cd0b5f56cfe0209de731" %}
 
 package:
-  name: curl
+  name: curl-pkg
   version: "{{ version }}"
 
 about:
@@ -11,7 +11,7 @@ about:
   summary: Command line tool and library for transferring data with URLs.
 
 build:
-  number: 1
+  number: 3
 
 source:
   - url: http://curl.haxx.se/download/curl-{{ version }}.tar.bz2
@@ -19,16 +19,33 @@ source:
 
 requirements:
   build:
-    - gcc_npg >=7.3
-    - gnutls
-    - zlib
+    - {{ compiler("c") }}
+    - make
+  host:
+    - libgnutls-dev
+    - libnettle-dev
+    - libz-dev
+  run:
+    - libgnutls
+    - libnettle
+    - libz
 
 outputs:
   - name: curl
     version: {{ version }}
     requirements:
+      build:
+        - {{ compiler("c") }}
+        - make
+      host:
+        - libgnutls-dev
+        - libnettle-dev
+        - libz-dev
       run:
-        - libcurl =={{ version}}
+        - {{ pin_subpackage("libcurl", exact=True) }}
+        - libgnutls
+        - libnettle
+        - libz
     files:
       - bin/curl
       - bin/curl-config
@@ -41,16 +58,34 @@ outputs:
   - name: libcurl
     version: {{ version }}
     requirements:
+      build:
+        - {{ compiler("c") }}
+        - make
+      host:
+        - libgnutls-dev
+        - libnettle-dev
+        - libz-dev
       run:
-        - gnutls
-        - zlib
+        - libgnutls
+        - libnettle
+        - libz
+    files:
+      - lib/libcurl.a
+      - lib/libcurl.so*
+    test:
+      commands:
+        - test -f ${PREFIX}/lib/libcurl.a
+        - test -h ${PREFIX}/lib/libcurl.so
+
+  - name: libcurl-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libcurl", exact=True) }}
     files:
       - include/curl
-      - lib/libcurl*
       - lib/pkgconfig/libcurl.pc
       - share/man/man4/libcurl*
     test:
       commands:
         - test -f ${PREFIX}/include/curl/curl.h
-        - test -f ${PREFIX}/lib/libcurl.a
-        - test -h ${PREFIX}/lib/libcurl.so

@@ -2,16 +2,16 @@
 {% set sha256 = "46942627d5d0ca11720fec18d81fc38f7ef837ea4197c1f630e71ce0d470b11e" %}
 
 package:
-  name: nettle
+  name: nettle-pkg
   version: "{{ version }}"
 
 about:
   home: https://www.lysator.liu.se/~nisse/nettle/
-  license: GPL2 
+  license: GPL2
   summary: A low-level cryptographic library
 
 build:
-  number: 1
+  number: 4
 
 source:
   url: https://ftp.gnu.org/gnu/nettle/nettle-{{ version }}.tar.gz
@@ -20,13 +20,72 @@ source:
 
 requirements:
   build:
-    - gcc_npg >=7.3
-    - gmplib >=5.0
+    - {{ compiler("c") }}
+    - libtool
+    - m4
+    - make
+    - pkg-config
+  host:
+    - libgmp-dev >=6.0
+  run:
+    - libgmp >=6.0
 
-test:
-  commands:
-    - test -f ${PREFIX}/include/nettle/sha1.h
-    - test -f ${PREFIX}/lib/libnettle.a
-    - test -h ${PREFIX}/lib/libnettle.so
-    - test -f ${PREFIX}/lib/libhogweed.a
-    - test -h ${PREFIX}/lib/libhogweed.so
+outputs:
+  - name: nettle
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - libtool
+        - m4
+        - make
+        - pkg-config
+      host:
+        - libgmp-dev >=6.0
+      run:
+        - {{ pin_subpackage("libnettle", exact=True) }}
+        - libgmp >=6.0
+    files:
+      - bin/nettle-hash
+      - bin/nettle-lfib-stream
+      - bin/nettle-pbkdf2
+      - bin/pkcs1-conv
+      - bin/sexp-conv
+    test:
+      commands:
+        - nettle-hash --help
+
+  - name: libnettle
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - libtool
+        - m4
+        - make
+        - pkg-config
+      host:
+        - libgmp-dev >=6.0
+      run:
+        - libgmp >=6.0
+    files:
+      - lib/libhogweed.*
+      - lib/libnettle.*
+    test:
+      commands:
+        - test -f ${PREFIX}/lib/libnettle.a
+        - test -h ${PREFIX}/lib/libnettle.so
+        - test -f ${PREFIX}/lib/libhogweed.a
+        - test -h ${PREFIX}/lib/libhogweed.so
+
+  - name: libnettle-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libnettle", exact=True) }}
+    files:
+      - include/nettle
+      - lib/pkgconfig/hogweed.pc
+      - lib/pkgconfig/nettle.pc
+    test:
+      commands:
+        - test -f ${PREFIX}/include/nettle/sha1.h

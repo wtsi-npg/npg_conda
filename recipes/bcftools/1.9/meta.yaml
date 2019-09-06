@@ -1,5 +1,5 @@
 {% set version = "1.9" %}
-{% set maxversion = "1.10" %}
+{% set htslib_version = "1.9" %}
 {% set sha256 = "6f36d0e6f16ec4acf88649fb1565d443acf0ba40f25a9afd87f14d14d13070c8" %}
 
 package:
@@ -12,8 +12,8 @@ about:
   summary: VCF commands and BCF calling.
 
 build:
-  number: 0
-  
+  number: 2
+
 source:
   url: https://github.com/samtools/bcftools/releases/download/{{ version }}/bcftools-{{ version }}.tar.bz2
   fn: bcftools-{{ version }}.tar.bz2
@@ -21,11 +21,14 @@ source:
 
 requirements:
   build:
-    - gcc_npg >=7.3
-    - htslib >={{ version }},<{{ maxversion }}
-
+    - {{ compiler("c") }}
+    - make
+  host:
+    - libhts-dev =={{ htslib_version }}
+    - libz-dev
   run:
-    - htslib >={{ version }},<{{ maxversion }}
+    - libhts =={{ htslib_version }}
+    - libz
 
 test:
   commands:

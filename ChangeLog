@@ -1,0 +1,5 @@
+
+ensure that libmaus2 and scramble are built with a particular version of libstaden-read. These versions need to match
+because "biobambam [...] won't work with modern io_lib's until it is updated to use the resized structure elements"
+(see https://github.com/samtools/samtools/issues/980). So currently (5Aug2019) biobambam2 2.0.79 requires
+libmaus2 2.0.420 which requires libstaden-read 1.14.9.

@@ -15,15 +15,15 @@ build:
 source:
   - git_url: https://github.com/wtsi-npg/npg_qc_utils.git
     git_rev: {{ version }}
-    folder: npg_qc_utils
 
 requirements:
   build:
-    - gcc_npg >=7.3
-    - zlib
-
+    - {{ compiler("c") }}
+    - make
+  host:
+    - libz-dev
   run:
-    - zlib
+    - libz
 
 test:
   commands:

@@ -19,11 +19,12 @@ source:
 
 requirements:
   build:
-    - gcc_npg >=7.3
-    - htslib >=1.7
-
+    - {{ compiler("c") }}
+    - make
+  host:
+    - libhts-dev
   run:
-    - htslib >=1.7
+    - libhts
 
 test:
   commands:

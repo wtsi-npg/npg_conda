@@ -1,12 +1,11 @@
 #!/bin/sh
 
-set -e
+set -ex
 
-export CXXFLAGS="-I$PREFIX/include"
-export LDFLAGS="-L$PREFIX/lib"
-export CPPFLAGS="-I$PREFIX/include"
-
-make -j 1
+make -j 1 AR="$AR" CC="$GCC" CXX="$CXX" LD="$LD" \
+     CXXFLAGS="-I$PREFIX/include" \
+     CPPFLAGS="-I$PREFIX/include" \
+     LDFLAGS="-L$PREFIX/lib"
 
 mkdir -p "$PREFIX/bin"
-cp bin/freebayes bin/bamleftalign $PREFIX/bin/
+cp bin/freebayes bin/bamleftalign "$PREFIX/bin/"

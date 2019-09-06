@@ -11,7 +11,7 @@ about:
   summary: Spliced read mapper for RNA-Seq.
 
 build:
-  number: 0
+  number: 1
   
 source:
   url: http://ccb.jhu.edu/software/tophat/downloads/tophat-{{ version }}.tar.gz
@@ -20,15 +20,19 @@ source:
 
 requirements:
   build:
-    - boost
-    - gcc_npg >=5.5,<7.0.0
-    - zlib
-
+    - {{ compiler("c") }}
+    - {{ compiler("cxx") }}
+    - make
+  host:
+    - libboost-dev
+    - libz-dev
   run:
-    - boost
-    - libgcc_npg >=5.5
-    - zlib
+    - libboost
+    - libz
+    - python <3.0
 
 test:
+  requires:
+    - python <3.0
   commands:
     - tophat2 --version
