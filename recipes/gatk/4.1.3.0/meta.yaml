@@ -11,11 +11,13 @@ about:
   summary: "Genome Analysis Toolkit (GATK4)"
 
 build:
-  number: 0
+  number: 1
   
 source:
   url: https://github.com/broadinstitute/gatk/releases/download/{{ version }}/gatk-{{ version }}.zip
   sha256: {{ sha256 }}
+  patches:
+   - gatk.patch
 
 requirements:
   run:

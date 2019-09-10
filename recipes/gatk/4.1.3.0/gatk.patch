@@ -1,0 +1,20 @@
+--- gatk	2019-09-05 21:45:39.314033509 +0000
++++ gatk-hacked	2019-09-06 13:26:23.299041927 +0000
+@@ -1,4 +1,7 @@
+-#!/usr/bin/env python
++#!/opt/anaconda1anaconda2anaconda3/bin/python
++#
++# WARNING! This is not the standard "gatk" Python script it has been altered to use a java
++# executable from the expected install location given a conda install of gatk.
+ #
+ # Launcher script for GATK tools. Delegates to java -jar, spark-submit, or gcloud as appropriate,
+ # and sets many important Spark and htsjdk properties before launch.
+@@ -205,7 +208,7 @@
+ 
+ 
+ def formatLocalJarCommand(localJar):
+-    return ["java"] + PACKAGED_LOCAL_JAR_OPTIONS + [ "-jar", localJar]
++    return [os.path.dirname(os.path.dirname(script)) + "/bin/java"] + PACKAGED_LOCAL_JAR_OPTIONS + [ "-jar", localJar]
+ 
+ def getGatkWrapperScript(throwIfNotFound=True):
+     if not os.path.exists(GATK_RUN_SCRIPT):
