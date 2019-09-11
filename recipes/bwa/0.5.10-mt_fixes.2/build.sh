@@ -1,10 +1,11 @@
 #!/bin/sh
 
-set -e
+set -ex
 
-n=`expr $CPU_COUNT / 4 \| 1`
+n="$CPU_COUNT"
 
-make -j $n CFLAGS="-g -Wall -O2 --std=gnu89" \
+make -j "$n" AR="$AR" CC="$GCC" \
+     CFLAGS="-g -Wall -O2 --std=gnu89" \
      INCLUDES="-I. -I.. -I$PREFIX/include" \
      LIBS="-L$PREFIX/lib -lm -lz -lpthread -Lbwt_gen -lbwtgen"
 

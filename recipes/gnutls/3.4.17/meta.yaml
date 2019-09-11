@@ -3,7 +3,7 @@
 {% set sha256 = "9b50e8a670d5e950425d96935c7ddd415eb6f8079615a36df425f09a3143172e" %}
 
 package:
-  name: gnutls
+  name: gnutls-pkg
   version: "{{ version }}"
 
 about:
@@ -12,7 +12,7 @@ about:
   summary: "The GnuTLS Transport Layer Security Library."
 
 build:
-  number: 0
+  number: 2
 
 source:
   - url: https://www.gnupg.org/ftp/gcrypt/gnutls/v{{ short_version }}/gnutls-{{ version }}.tar.xz
@@ -21,17 +21,84 @@ source:
 
 requirements:
   build:
-    - gcc_npg >=7.3
-    - gmplib
-    - nettle
-    - zlib
-
+    - {{ compiler("c") }}
+    - libtool
+    - make
+    - pkg-config
+  host:
+    - libgmp-dev
+    - libnettle-dev
+    - libz-dev
   run:
-    - libgcc_npg
-    - gmplib
-    - nettle
-    - zlib
+    - libgmp
+    - libnettle
+    - libz
 
-test:
-  commands:
-    - gnutls-cli -h
+outputs:
+  - name: gnutls
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - libtool
+        - make
+        - pkg-config
+      host:
+        - libgmp-dev
+        - libnettle-dev
+        - libz-dev
+      run:
+        - {{ pin_subpackage("libgnutls", exact=True) }}
+        - libgmp
+        - libnettle
+        - libz
+    files:
+      - bin/certtool
+      - bin/gnutls-cli
+      - bin/gnutls-cli-debug
+      - bin/gnutls-serv
+      - bin/ocsptool
+      - bin/psktool
+      - bin/srptool
+      - share/info
+      - share/man/man1
+    test:
+      commands:
+        - gnutls-cli -h
+
+  - name: libgnutls
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - libtool
+        - make
+        - pkg-config
+      host:
+        - libgmp-dev
+        - libnettle-dev
+        - libz-dev
+      run:
+        - libgmp
+        - libnettle
+        - libz 
+    files:
+      - lib/libgnutls.*
+      - lib/libgnutlsxx.*
+      - share/locale
+    tests:
+      commands:
+        - test -h ${PREFIX}/lib/libgnutls.so
+
+  - name: libgnutls-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libgnutls", exact=True) }}
+    files:
+      - include/gnutls
+      - lib/pkgconfig/gnutls.pc
+      - man/man3
+    tests:
+      commands:
+        - test -f ${PREFIX}/include/gnutls/gnutls.h

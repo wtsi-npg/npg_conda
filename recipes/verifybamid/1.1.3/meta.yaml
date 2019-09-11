@@ -7,32 +7,35 @@ package:
 
 about:
   home: http://genome.sph.umich.edu
-  license: Various
-  summary: Verify identity and purity of sequence data.
+  license: Other
+  summary: "Verify identity and purity of sequence data."
 
 build:
-  number: 0
-
-  rpaths:
-    - lib64
-    - lib
+  number: 1
 
 source:
   - git_url: https://github.com/statgen/verifyBamID.git
     git_rev: v{{ version }}
     folder: verifybamid
+    patches:
+      - verifybamid.patch
   - git_url: https://github.com/statgen/libStatGen.git
     git_rev: v{{ libstatgen_version }}
-    folder: libstatgen
+    folder: libStatGen
+    patches:
+      - libStatGen.patch
 
 requirements:
   build:
-    - gcc_npg <7.0
-    - zlib
-
+    - {{ compiler("c") }}
+    - {{ compiler("cxx") }}
+    - make
+  host:
+    - libssl-dev
+    - libz-dev
   run:
-    - libgcc_npg <7.0
-    - zlib
+    - libssl
+    - libz
 
 test:
   commands:

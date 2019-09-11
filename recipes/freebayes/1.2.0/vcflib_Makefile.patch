@@ -1,0 +1,11 @@
+--- vcflib/Makefile	2018-10-12 08:22:31.942384685 +0100
++++ vcflib/Makefile.1	2018-10-12 08:22:25.410359972 +0100
+@@ -136,7 +136,7 @@
+ 
+ GIT_VERSION := $(shell git describe --abbrev=4 --dirty --always)
+ 
+-CXX = g++
++CXX ?= g++
+ CXXFLAGS = -O3 -D_FILE_OFFSET_BITS=64 -std=c++0x 
+ #CXXFLAGS = -O2
+ #CXXFLAGS = -pedantic -Wall -Wshadow -Wpointer-arith -Wcast-qual

@@ -1,39 +1,40 @@
 #!/bin/sh
 
-set -e
+set -ex
 
-n=`expr $CPU_COUNT / 4 \| 1`
-
-pushd samtools
-./configure --prefix="$PREFIX" --without-curses
-make -j $n CFLAGS="-fPIC"
-ln -s . include
-popd
-
-pushd npg_qc_utils
+n="$CPU_COUNT"
 
 pushd fastq_summ
 mkdir -p build
-make -j $n INCLUDES="-I. -I$SRC_DIR/samtools -I$PREFIX/include" SAMTOOLSLIBPATH="-L$SRC_DIR/samtools -L$PREFIX/lib" LIBS="-lz -lm"
+make -j $n CC="$GCC" \
+     INCLUDES="-I. -I$PREFIX/include/samtools -I$PREFIX/include" \
+     SAMTOOLSLIBPATH="-L$PREFIX/lib" \
+     LIBS="-lz -lm"
 make install installdir="$PREFIX/bin/"
 popd
 
 pushd fastqcheck
 mkdir -p build
-make -j $n INCLUDES="-I. -I$SRC_DIR/samtools -I$PREFIX/include" SAMTOOLSLIBPATH="-L$SRC_DIR/samtools -L$PREFIX/lib" LIBS="-lz -lm"
+make -j $n CC="$GCC" \
+     INCLUDES="-I. -I$PREFIX/include/samtools -I$PREFIX/include" \
+     SAMTOOLSLIBPATH="-L$PREFIX/lib" \
+     LIBS="-lz -lm"
 make install installdir="$PREFIX/bin/"
 popd
 
 pushd norm_fit
 mkdir -p build
-make -j $n INCLUDES="-I. -I$PREFIX/include" LIBPATH="-L$PREFIX/lib"
+make -j $n CC="$GCC" \
+     INCLUDES="-I.-I$PREFIX/include/samtools -I$PREFIX/include" \
+     LIBPATH="-L$PREFIX/lib"
 cp ./build/norm_fit "$PREFIX/bin/"
 popd
 
 pushd gt_utils
 mkdir -p build
-make -j $n CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
+make -j $n  CC="$GCC" \
+     CPPFLAGS="-I$PREFIX/include" \
+     LDFLAGS="-L$PREFIX/lib"
 make install installdir="$PREFIX/bin"
 popd
 
-popd

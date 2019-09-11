@@ -1,0 +1,32 @@
+{% set version = "67.0" %}
+
+package:
+  name: npg_qc_utils
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/wtsi-npg/npg_qc_utils
+  license: GPLv3
+  summary: "C programs extracted from npg_qc."
+
+build:
+  number: 0
+
+source:
+  - git_url: https://github.com/wtsi-npg/npg_qc_utils.git
+    git_rev: {{ version }}
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - make
+  host:
+    - libz-dev
+  run:
+    - libz
+
+test:
+  commands:
+    - ${PREFIX}/bin/find_gt_match -h
+    - ${PREFIX}/bin/gt_pack -h
+    - test -e ${PREFIX}/bin/norm_fit

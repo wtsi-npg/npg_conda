@@ -1,10 +1,11 @@
 #!/bin/sh
 
-set -e
+set -ex
 
-n=`expr $CPU_COUNT / 4 \| 1`
+n="$CPU_COUNT"
 
-make -j $n prefix="$PREFIX" CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
+make -j "$n" prefix="$PREFIX" \
+     CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
 
 # There is no install target in the Makefile
 mkdir -p "$PREFIX/bin"

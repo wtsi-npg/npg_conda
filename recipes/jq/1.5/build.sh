@@ -1,10 +1,10 @@
 #!/bin/sh
 
-set -e
+set -ex
 
-n=`expr $CPU_COUNT / 4 \| 1`
+n="$CPU_COUNT"
 
 ./configure --prefix="$PREFIX" --disable-maintainer-mode
 
-make -j $n LDFLAGS=-all-static
+make -j "$n" LDFLAGS=-all-static
 make install prefix="$PREFIX"

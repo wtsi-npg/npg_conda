@@ -1,8 +1,8 @@
 #!/bin/sh
 
-set -e
+set -ex
 
-n=`expr $CPU_COUNT / 4 \| 1`
+n="$CPU_COUNT"
 
 ./config --prefix="$PREFIX" \
          --libdir=lib \
@@ -11,5 +11,6 @@ n=`expr $CPU_COUNT / 4 \| 1`
          --with-zlib-lib="$PREFIX/lib" \
          shared zlib-dynamic
 
-make -j $n
+make -j $n CC="$GCC" \
+     LDFLAGS="-Wl,-rpath-link,$PREFIX/lib -Wl,--disable-new-dtags"
 make install prefix="$PREFIX"

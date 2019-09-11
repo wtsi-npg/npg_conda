@@ -2,7 +2,7 @@
 {% set sha256 = "a66111c9b4a04e818e9e2a37d7ae8d4aae0939a100a36b0ffb52c706a09074b5" %}
 
 package:
-  name: libgd
+  name: libgd-pkg
   version: "{{ version }}"
 
 about:
@@ -16,20 +16,73 @@ source:
   sha256: {{ sha256 }}
 
 build:
-  number: 0
+  number: 1
 
 requirements:
   build:
-    - gcc_npg >=7.3
-    - libpng
-    - zlib
-
+    - {{ compiler("c") }}
+    - libtool
+    - make
+    - pkg-config
+  host:
+    - libpng-dev
+    - libz-dev
   run:
     - libpng
-    - zlib
+    - libz
 
-test:
-  commands:
-    - test -f ${PREFIX}/include/gd.h
-    - test -f ${PREFIX}/lib/libgd.a
-    - test -h ${PREFIX}/lib/libgd.so
+outputs:
+  - name: libgd-bin
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - libtool
+        - make
+        - pkg-config
+      host:
+        - libpng-dev
+        - libz-dev
+      run:
+        - {{ pin_subpackage("libgd", exact=True) }}
+        - libpng
+        - libz
+    files:
+      - bin/*gd*
+      - bin/*png*
+    test:
+      commands:
+        - test -x ${PREFIX}/bin/gdtopng
+
+  - name: libgd
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - libtool
+        - make
+        - pkg-config
+      host:
+        - libpng-dev
+        - libz-dev
+      run:
+        - libpng
+        - libz
+    files:
+      - lib/libgd.*
+    test:
+      commands:
+        - test -f ${PREFIX}/lib/libgd.a
+        - test -h ${PREFIX}/lib/libgd.so
+
+  - name: libgd-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libgd", exact=True) }}
+    files:
+      - include
+      - lib/pkgconfig/gdlib.pc
+    test:
+      commands:
+        - test -f ${PREFIX}/include/gd.h
