@@ -1,29 +1,31 @@
 {% set version = "0.5.10_mt_fixes.2" %}
 
 package:
-  name: bwa-aligner
+  name: bwa
   version: "{{ version }}"
 
 about:
   home: https://github.com/lh3/bwa
-  license: GPLv3
+  license: GPL3
   summary: Burrows-Wheeler Aligner for short-read alignment.
 
 build:
-  number: 0
+  number: 1
 
 source:
-  - git_url: https://github.com/wtsi-npg/bwa.git
-    git_rev: b8267d812d44036f5858baf3353fa5f4ceca06f8
-    patches:
-      - Makefile.patch
+  git_url: https://github.com/wtsi-npg/bwa.git
+  git_rev: b8267d812d44036f5858baf3353fa5f4ceca06f8
+  patches:
+    - Makefile.patch
 
 requirements:
   build:
-    - zlib
-
+    - {{ compiler("c") }}
+    - make
+  host:
+    - libz-dev
   run:
-    - zlib
+    - libz
 
 test:
   commands:

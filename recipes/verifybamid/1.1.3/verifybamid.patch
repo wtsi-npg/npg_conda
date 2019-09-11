@@ -1,0 +1,13 @@
+diff --git src/Makefile src/Makefile
+index 017bcc2..a2a5df5 100644
+--- src/Makefile
++++ src/Makefile
+@@ -26,7 +26,7 @@ HDRONLY =
+ USER_COMPILE_VARS = 
+ 
+ # Specify any additional includes you need.
+-USER_INCLUDES = -I.
++USER_INCLUDES ?= -I.
+ 
+ # Specify any additional warnings you need to enable.
+ # Example: 

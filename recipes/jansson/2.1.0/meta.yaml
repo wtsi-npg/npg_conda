@@ -2,7 +2,7 @@
 {% set sha256 = "b0a899f90ade82e42da0ecabc8af1fa296d69691e7c0786c4994fb79d4833ebb" %}
 
 package:
-  name: jansson
+  name: libjansson-pkg
   version: "{{ version }}"
 
 about:
@@ -15,12 +15,44 @@ source:
   fn: jansson-{{ version }}.tar.gz
   sha256: {{ sha256 }}
 
+build:
+  number: 1
+
 requirements:
   build:
-    - gcc_npg >=7.3
+    - {{ compiler("c") }}
+    - autoconf
+    - automake
+    - libtool
+    - make
+    - perl
 
-test:
-  commands:
-    - test -f ${PREFIX}/include/jansson.h
-    - test -f ${PREFIX}/lib/libjansson.a
-    - test -h ${PREFIX}/lib/libjansson.so
+outputs:
+  - name: libjansson
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - autoconf
+        - automake
+        - libtool
+        - make
+        - perl
+    files:
+      - lib/libjansson.*
+    test:
+      commands:
+        - test -f ${PREFIX}/lib/libjansson.a
+        - test -h ${PREFIX}/lib/libjansson.so
+
+  - name: libjansson-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libjansson", exact=True) }}
+    files:
+      - include/jansson*.h
+      - lib/pkgconfig/jansson.pc
+    test:
+      commands:
+        - test -f ${PREFIX}/include/jansson.h

@@ -1,11 +1,14 @@
 #!/bin/sh
 
-set -e
+set -ex
 
-n=`expr $CPU_COUNT / 4 \| 1`
+n="$CPU_COUNT"
 
 autoreconf -fi
-./configure --prefix=$PREFIX
+./configure --prefix="$PREFIX" \
+            CPPFLAGS="-I$PREFIX/include" \
+            LDFLAGS="-Wl,--disable-new-dtags -L$PREFIX/lib"
 
-make -j $n
-make install prefix=$PREFIX
+make -j "$n"
+make install prefix="$PREFIX"
+

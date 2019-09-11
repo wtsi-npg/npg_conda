@@ -2,7 +2,7 @@
 {% set sha256 = "d70a9ccd8bdf47e302d96c69fecd54925f45d9c7b966bb4ef5f56b770960afa7" %}
 
 package:
-  name: bzip2
+  name: bzip2-pkg
   version: "{{ version }}"
 
 about:
@@ -11,25 +11,30 @@ about:
   summary: Data compressor.
 
 build:
-  number: 2
-  
+  number: 4
+
 source:
   url: http://http.debian.net/debian/pool/main/b/bzip2/bzip2_{{ version }}.orig.tar.bz2
   fn: bzip2-{{ version }}.tar.gz
   sha256: {{ sha256 }}
   patches:
     - Makefile.patch
+    - Makefile-libbz2_so.patch
 
 requirements:
   build:
-    - gcc_npg >=7.3.0
-
+    - {{ compiler("c") }}
+    - make
+  
 outputs:
   - name: bzip2
     version: {{ version }}
     requirements:
+      build:
+        - {{ compiler("c") }}
+        - make
       run:
-        - libbzip2 =={{ version }}
+        - {{ pin_subpackage('libbz2', exact=True) }}
     files:
       - bin/bunzip2
       - bin/bzcat
@@ -48,13 +53,25 @@ outputs:
         - bzip2 --help
         - bunzip2 --help
 
-  - name: libbzip2
+  - name: libbz2
     version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+    files:
+      - lib/libbz2.*
+    test:
+      commands:
+        - test -f ${PREFIX}/lib/libbz2.a
+        - test -h ${PREFIX}/lib/libbz2.so.1.0
+
+  - name: libbz2-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage('libbz2', exact=True) }}
     files:
       - include
-      - lib
     test:
       commands:
         - test -f ${PREFIX}/include/bzlib.h
-        - test -f ${PREFIX}/lib/libbz2.a
-        - test -h ${PREFIX}/lib/libbz2.so.1.0

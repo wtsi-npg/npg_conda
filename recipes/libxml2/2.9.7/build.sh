@@ -1,10 +1,11 @@
 #!/bin/sh
 
-set -e
+set -ex
 
-n=`expr $CPU_COUNT / 4 \| 1`
+n="$CPU_COUNT"
 
-./configure prefix="$PREFIX" --without-python
+CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib" \
+        ./configure prefix="$PREFIX" --without-python
 
-make -j $n
+make -j $n CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
 make install

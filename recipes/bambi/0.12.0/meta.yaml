@@ -1,7 +1,6 @@
 {% set version = "0.12.0" %}
 {% set htslib_version = "1.9+66_gbcf9bff" %}
 
-
 package:
   name: bambi
   version: "{{ version }}"
@@ -20,15 +19,22 @@ source:
 
 requirements:
   build:
-    - gcc_npg >=7.3
-    - htslib =={{ htslib_version }}
-    - libgd
-    - libxml2
-
+    - {{ compiler("c") }}
+    - autoconf
+    - automake
+    - make
+    - perl
+    - pkg-config
+  host:
+    - libgd-dev
+    - libhts-dev =={{ htslib_version }}
+    - libxml2-dev
+    - libz-dev
   run:
-    - htslib =={{ htslib_version }}
     - libgd
+    - libhts =={{ htslib_version }}
     - libxml2
+    - libz
 
 test:
   commands:

@@ -1,5 +1,6 @@
 {% set version = "2.0.79" %}
 {% set sha256 = "1ff1a8afd8fb9f738c4d293e75fb22202db465936f627ea74bc7eff80a4a1e61" %}
+{% set libmaus2_version = "2.0.420" %}
 
 package:
   name: biobambam2
@@ -11,11 +12,7 @@ about:
   summary: Tools for early stage alignment file processing.
 
 build:
-  number: 0
-
-  rpaths:
-    - lib64
-    - lib
+  number: 2
 
 source:
   url: https://github.com/gt1/biobambam2/archive/{{ version }}-release-20171006114010.tar.gz
@@ -24,15 +21,20 @@ source:
 
 requirements:
   build:
-    - gcc_npg >=7.3
+    - {{ compiler("cxx") }}
+    - make
+    - pkg-config
+  host:
     - irods-dev
-    - libmaus2
-    - zlib
-
+    - libgnutls-dev
+    - libmaus2-dev =={{ libmaus2_version }}
+    - libnettle-dev
+    - libz-dev
   run:
-    - libgcc_npg >=7.3
-    - libmaus2
-    - zlib
+    - libgnutls
+    - libmaus2 =={{ libmaus2_version }}
+    - libnettle
+    - libz
 
 test:
   commands:
