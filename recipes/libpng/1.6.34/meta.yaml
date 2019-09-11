@@ -1,0 +1,63 @@
+{% set version = "1.6.34" %}
+{% set sha256 = "574623a4901a9969080ab4a2df9437026c8a87150dfd5c235e28c94b212964a7" %}
+
+package:
+  name: libpng-pkg
+  version: "{{ version }}"
+
+about:
+  home: http://libpng.org/pub/png/libpng.html
+  license: libpng
+  summary: "The official PNG reference library."
+
+source:
+  url: https://download.sourceforge.net/libpng/libpng-{{ version }}.tar.gz
+  fn: libpng-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+build:
+  number: 1
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - libtool
+    - make
+    - pkg-config
+  host:
+    - libz-dev
+  run:
+    - libz
+
+outputs:
+  - name: libpng
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - libtool
+        - make
+        - pkg-config
+      host:
+        - libz-dev
+      run:
+        - libz
+    files:
+      - lib/libpng*.*
+    test:
+      commands:
+        - test -h ${PREFIX}/lib/libpng.a
+        - test -h ${PREFIX}/lib/libpng.so
+
+  - name: libpng-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libpng", exact=True) }}
+    files:
+      - include
+      - lib/pkgconfig/libpng*.pc
+      - share/man
+    test:
+      commands:
+        - test -f ${PREFIX}/include/png.h

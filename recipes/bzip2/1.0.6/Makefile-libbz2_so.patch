@@ -1,0 +1,25 @@
+*** Makefile-libbz2_so	2010-09-11 00:07:52.000000000 +0100
+--- Makefile-libbz2_so.patch	2018-09-05 14:36:07.365334104 +0100
+***************
+*** 22,30 ****
+  
+  
+  SHELL=/bin/sh
+! CC=gcc
+  BIGFILES=-D_FILE_OFFSET_BITS=64
+! CFLAGS=-fpic -fPIC -Wall -Winline -O2 -g $(BIGFILES)
+  
+  OBJS= blocksort.o  \
+        huffman.o    \
+--- 22,32 ----
+  
+  
+  SHELL=/bin/sh
+! CC?=gcc
+  BIGFILES=-D_FILE_OFFSET_BITS=64
+! CFLAGS?=-fpic -fPIC -Wall -Winline -O2 -g $(BIGFILES)
+! 
+! PREFIX="$PREFIX"
+  
+  OBJS= blocksort.o  \
+        huffman.o    \

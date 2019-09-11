@@ -11,7 +11,7 @@ about:
   summary: "A C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms."
 
 build:
-  number: 0
+  number: 1
 
 source:
   url: https://bitbucket.org/eigen/eigen/get/{{ version }}.tar.bz2
@@ -19,5 +19,7 @@ source:
 
 requirements:
   build:
+    - {{ compiler("cxx") }}
     - cmake
-    - gcc_npg >=7.3
+    - make
+

@@ -2,7 +2,7 @@
 {% set sha256 = "526ecd0abaf4a7789041622c3950c0e7f2c4c8835471515fd77eec684a355460" %}
 
 package:
-  name: libxslt
+  name: libxslt-pkg
   version: "{{ version }}"
 
 about:
@@ -11,8 +11,8 @@ about:
   summary: "XSLT C library developed for the GNOME project."
 
 build:
-  number: 0
-  
+  number: 1
+
 source:
   url: ftp://xmlsoft.org/libxslt/libxslt-{{ version }}.tar.gz
   fn: libxslt-{{ version }}.tar.gz
@@ -20,18 +20,74 @@ source:
 
 requirements:
   build:
-    - gcc_npg >=7.3
-    - libxml2 >={{ version }}
-    - zlib
-
+    - {{ compiler("c") }}
+    - make
+    - pkg-config
+  host:
+    - liblzma-dev
+    - libxml2-dev
+    - libz-dev
   run:
-    - libxml2 >={{ version }}
     - liblzma
-    - zlib
-    
-test:
-  commands:
-    - xsltproc --version
-    - test -f ${PREFIX}/include/libxslt/xslt.h
-    - test -f ${PREFIX}/lib/libxslt.a
-    - test -h ${PREFIX}/lib/libxslt.so
+    - libxml2
+    - libz
+
+outputs:
+  - name: libxslt-bin
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - make
+        - pkg-config
+      host:
+        - liblzma-dev
+        - libxml2-dev
+        - libz-dev
+      run:
+        - {{ pin_subpackage("libxslt", exact=True) }}
+        - liblzma
+        - libxml2
+        - libz
+    files:
+      - bin/xsltproc
+    test:
+      commands:
+        - xsltproc --version
+
+  - name: libxslt
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - make
+        - pkg-config
+      host:
+        - liblzma-dev
+        - libxml2-dev
+        - libz-dev
+      run:
+        - liblzma
+        - libxml2
+        - libz
+    files:
+      - lib/libxslt.*
+      - lib/libexslt.*
+    test:
+      commands:
+        - test -f ${PREFIX}/lib/libxslt.a
+        - test -h ${PREFIX}/lib/libxslt.so
+        - test -f ${PREFIX}/lib/libexslt.a
+        - test -h ${PREFIX}/lib/libexslt.so
+
+  - name: libxslt-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libxslt", exact=True) }}
+    files:
+      - bin/xslt-config
+      - include/libxslt
+    test:
+      commands:
+        - test -f ${PREFIX}/include/libxslt/xslt.h

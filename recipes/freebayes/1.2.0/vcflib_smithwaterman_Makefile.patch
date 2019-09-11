@@ -1,0 +1,16 @@
+index 37bfc67..465b7e7 100644
+--- vcflib/smithwaterman/Makefile
++++ vcflib/smithwaterman/Makefile
+@@ -25,10 +25,10 @@ all: $(EXE) sw.o
+ .PHONY: all
+ 
+ libsw.a: smithwaterman.o BandedSmithWaterman.o SmithWatermanGotoh.o LeftAlign.o Repeats.o IndelAllele.o disorder.o
+-	ar rs $@ smithwaterman.o d SmithWatermanGotoh.o disorder.o BandedSmithWaterman.o LeftAlign.o Repeats.o IndelAllele.o
++	$(AR) rs $@ smithwaterman.o d SmithWatermanGotoh.o disorder.o BandedSmithWaterman.o LeftAlign.o Repeats.o IndelAllele.o
+ 
+ sw.o:  BandedSmithWaterman.o SmithWatermanGotoh.o LeftAlign.o Repeats.o IndelAllele.o disorder.o
+-	ld -r $^ -o sw.o -L.
++	$(LD) -r $^ -o sw.o -L.
+        #$(CXX) $(CFLAGS) -c -o smithwaterman.cpp $(OBJECTS_NO_MAIN) -I.
+ 
+ ### @$(CXX) $(LDFLAGS) $(CFLAGS) -o $@ $^ -I.

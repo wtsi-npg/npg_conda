@@ -1,10 +1,15 @@
 #!/bin/sh
 
-set -e
+set -ex
 
-n=`expr $CPU_COUNT / 4 \| 1`
+n="$CPU_COUNT"
 
-./configure --prefix="$PREFIX" --with-irods="$PREFIX" CPPFLAGS="-I$PREFIX/include/irods" LDFLAGS="-L$PREFIX/lib -L$PREFIX/lib/irods/externals"
+export LD_LIBRARY_PATH="$PREFIX/lib"
+
+./configure --prefix="$PREFIX" \
+            --with-irods="$PREFIX" \
+            CPPFLAGS="-I$PREFIX/include -I$PREFIX/include/irods" \
+            LDFLAGS="-L$PREFIX/lib -L$PREFIX/lib/irods/externals"
 
 make -j $n
 make install prefix="$PREFIX"

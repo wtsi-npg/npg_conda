@@ -1,8 +1,8 @@
 #!/bin/sh
 
-set -e
+set -ex
 
-n=`expr $CPU_COUNT / 4 \| 1`
+n="$CPU_COUNT"
 
 ./configure --prefix="$PREFIX" \
             --without-fontconfig \
@@ -12,7 +12,9 @@ n=`expr $CPU_COUNT / 4 \| 1`
             --with-png \
             --without-tiff \
             --without-webp \
-            --without-xpm
+            --without-xpm \
+            --with-zlib \
+            CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX"
 
-make -j $n
+make -j "$n"
 make install prefix="$PREFIX"

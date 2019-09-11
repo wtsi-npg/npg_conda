@@ -2,7 +2,7 @@
 {% set sha256 = "244838e1f1d14f7e2fa7681b857b3a8566b74215f28133f14a8f5e59241b682c" %}
 
 package:
-  name: pcre
+  name: pcre-pkg
   version: "{{ version }}"
 
 about:
@@ -11,7 +11,7 @@ about:
   summary: "Perl Compatible Regular Expressions."
 
 build:
-  number: 2
+  number: 4
 
 source:
   url: https://ftp.pcre.org/pub/pcre/pcre-{{ version }}.tar.gz
@@ -20,19 +20,73 @@ source:
 
 requirements:
   build:
-    - libbzip2
-    - gcc_npg >=7.3
-    - liblzma
-    - zlib
-
+    - {{ compiler("c") }}
+    - {{ compiler("cxx") }}
+    - make
+  host:
+    - libbz2-dev
+    - liblzma-dev
+    - libz-dev
   run:
-    - libbzip2
-    - libgcc_npg >=7.3
+    - libbz2
     - liblzma
-    - zlib
+    - libz
 
-test:
-  commands:
-    - test -f ${PREFIX}/include/pcre.h
-    - test -f ${PREFIX}/lib/libpcre.a
-    - test -h ${PREFIX}/lib/libpcre.so
+outputs:
+  - name: pcre
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - {{ compiler("cxx") }}
+        - make
+      host:
+        - libbz2-dev
+        - liblzma-dev
+        - libz-dev
+      run:
+        - {{ pin_subpackage("libpcre", exact=True) }}
+        - libbz2
+        - liblzma
+        - libz
+    files:
+      - bin/pcregrep
+      - bin/pcretest
+    test:
+      commands:
+        - pcregrep --help
+
+  - name: libpcre
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - {{ compiler("cxx") }}
+        - make
+      host:
+        - libbz2-dev
+        - liblzma-dev
+        - libz-dev
+      run:
+        - libbz2
+        - liblzma
+        - libz
+    files:
+      - lib/libpcre*.*
+    test:
+      commands:
+        - test -f ${PREFIX}/lib/libpcre.a
+        - test -h ${PREFIX}/lib/libpcre.so
+
+  - name: libpcre-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libpcre", exact=True) }}
+    files:
+      - bin/pcre-config
+      - include/pcre*.h
+      - lib/pkgconfig/libpcre*.pc
+    test:
+      commands:
+        - test -f ${PREFIX}/include/pcre.h

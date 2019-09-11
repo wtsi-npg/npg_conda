@@ -1,0 +1,15 @@
+c_compiler_version:
+  - 5.4
+
+cxx_compiler_version:
+  - 5.4
+
+CFLAGS: >-
+  -O2
+  -fPIC
+  -ffunction-sections
+  -fstack-protector-strong
+  -ftree-vectorize
+  -march=x86-64
+  -mtune=generic
+  -pipe

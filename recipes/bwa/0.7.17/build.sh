@@ -1,10 +1,11 @@
 #!/bin/sh
 
-set -e
+set -ex
 
-n=`expr $CPU_COUNT / 4 \| 1`
+n="$CPU_COUNT"
 
-make -j $n CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
+make -j $n AR="$AR" CC="$GCC" \
+     CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
 
 mkdir -p "$PREFIX/bin"
 cp bwa "$PREFIX/bin/"

@@ -3,7 +3,7 @@
 {% set sha256 = "9c5ce1e33d2463fb1a42dd04daacbc22104e57676e2204e3d66b1ef54b88ebf2" %}
 
 package:
-  name: hdf5
+  name: hdf5-pkg
   version: "{{ version }}"
 
 about:
@@ -12,7 +12,7 @@ about:
   summary: A data model, library, and file format for storing and managing data.
 
 build:
-  number: 1
+  number: 4
   string: threadsafe_{{ PKG_BUILDNUM }}
 
 source:
@@ -22,15 +22,33 @@ source:
 
 requirements:
   build:
-    - gcc_npg >=7.3
-    - zlib
+    - {{ compiler("cxx") }}
+    - make
+  host:
+    - libz-dev
+  run:
+    - libz
 
 outputs:
-  - name: hdf5
+  - name: hdf5-all
     version: {{ version }}
     requirements:
       run:
-        - libhdf5 =={{ version }}
+        - {{ pin_subpackage("libhdf5", exact=True) }}
+        - {{ pin_subpackage("libhdf5-dev", exact=True) }}
+        - {{ pin_subpackage("hdf5", exact=True) }}
+
+  - name: hdf5
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("cxx") }}
+        - make
+      host:
+        - libz-dev
+      run:
+        - {{ pin_subpackage("libhdf5", exact=True) }}
+        - libz
     files:
       - bin/gif2h5
       - bin/h52gif
@@ -56,15 +74,30 @@ outputs:
   - name: libhdf5
     version: {{ version }}
     requirements:
+      build:
+        - {{ compiler("cxx") }}
+        - make
+      host:
+        - libz-dev
       run:
-        - zlib
+        - libz
     files:
+      - lib/libhdf5.so*
+    test:
+      commands:
+        - test -h ${PREFIX}/lib/libhdf5.so
+
+  - name: libhdf5-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libhdf5", exact=True) }}
+    files:
+      - lib/libhdf5.a
       - include/H5*
       - include/hdf5*
-      - lib/libhdf*
       - share/hdf5_examples
     test:
       commands:
-        - test -f ${PREFIX}/include/hdf5.h
         - test -f ${PREFIX}/lib/libhdf5.a
-        - test -h ${PREFIX}/lib/libhdf5.so
+        - test -f ${PREFIX}/include/hdf5.h

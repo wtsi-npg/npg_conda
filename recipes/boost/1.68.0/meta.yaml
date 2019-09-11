@@ -1,0 +1,66 @@
+{% set version = "1.68.0" %}
+{% set alt_version = "1_68_0" %}
+{% set sha256 = "7f6130bc3cf65f56a618888ce9d5ea704fa10b462be126ad053e80e553d6d8b7" %}
+
+package:
+  name: boost
+  version: "{{ version }}"
+
+about:
+  home: http://www.boost.org
+  license: Other
+  summary: "Free peer-reviewed portable C++ source libraries."
+
+build:
+  number: 1
+
+source:
+  url: https://dl.bintray.com/boostorg/release/{{ version }}/source/boost_{{ alt_version }}.tar.bz2
+  fn: boost_{{ alt_version }}.tar.bz2
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - {{ compiler("cxx") }}
+    - make
+  host:
+    - libbz2-dev
+    - liblzma-dev
+    - libz-dev
+  run:
+    - libbz2
+    - liblzma
+    - libz
+
+outputs:
+  - name: libboost
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("cxx") }}
+        - make
+      host:
+        - libbz2-dev
+        - liblzma-dev
+        - libz-dev
+      run:
+        - libbz2
+        - liblzma
+        - libz
+    files:
+      - lib/libboost*
+    test:
+      commands:
+        - test -f ${PREFIX}/lib/libboost_system.a
+        - test -h ${PREFIX}/lib/libboost_system.so
+
+  - name: libboost-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libboost", exact=True) }}
+    files:
+      - include/boost
+    test:
+      commands:
+        - test -f ${PREFIX}/include/boost/config.hpp

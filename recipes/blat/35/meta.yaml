@@ -7,11 +7,11 @@ package:
 
 about:
   home: http://genome.ucsc.edu/
-  license: Blat
+  license: Other
   summary: "Rapid mRNA/DNA and cross-species protein alignments."
 
 build:
-  number: 1
+  number: 2
 
 source:
   url: https://users.soe.ucsc.edu/~kent/src/blatSrc{{ version }}.zip
@@ -20,11 +20,14 @@ source:
 
 requirements:
   build:
-    - gcc_npg >=7.3
-    - libpng
-
+    - {{ compiler("c") }}
+    - make
+  host:
+    - libpng-dev
+    - libz-dev
   run:
     - libpng
+    - libz
 
 test:
   commands:

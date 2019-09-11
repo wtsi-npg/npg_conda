@@ -1,0 +1,10 @@
+# This is the default build config which uses -march=x86-64 to create
+# programs that are portable across all of our CPU architectures.
+# Replacing this with e.g. -march=native will use instructions that
+# may not be poratble to other types of machine. See
+# https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html#index-march-13
+
+CFLAGS: >-
+  -march=x86-64 -mtune=generic
+  -fPIC -O2
+  -ftree-vectorize -fstack-protector-strong -ffunction-sections -pipe

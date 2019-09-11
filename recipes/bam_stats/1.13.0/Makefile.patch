@@ -1,0 +1,39 @@
+diff --git c/Makefile c/Makefile
+index 5b6474f..b2592d6 100644
+--- c/Makefile
++++ c/Makefile
+@@ -2,14 +2,14 @@
+ VERSION=$(shell perl -I../lib -MPCAP -e 'print PCAP->VERSION;')
+ 
+ #Compiler
+-CC = gcc -O3 -DVERSION='"$(VERSION)"' -g
++CC ?= gcc -O3 -DVERSION='"$(PKG_VERSION)"' -g
+ 
+ #CC = gcc -O3 -DVERSION='"$(VERSION)"' -g
+ 
+ #compiler flags
+ # -g adds debug info to the executable file
+ # -Wall turns on most warnings from compiler
+-CFLAGS = -Wall
++CFLAGS ?= -Wall
+ 
+ HTSLOC?=$(HTSLIB)
+ 
+@@ -64,7 +64,7 @@ all: clean make_htslib_tmp $(BAM_STATS_TARGET) test remove_htslib_tmp
+ 	@echo  bam_stats compiled.
+ 
+ $(BAM_STATS_TARGET): $(OBJS)
+-	$(CC) $(CFLAGS) $(INCLUDES) -o $(BAM_STATS_TARGET) $(OBJS) $(LFLAGS) $(LIBS) ./bam_stats.c
++	$(CC) $(CFLAGS) $(CPPFLAGS) $(INCLUDES) -o $(BAM_STATS_TARGET) $(OBJS) $(LFLAGS) $(LDFLAGS) $(LIBS) ./bam_stats.c
+ 
+ #Unit Tests
+ test: $(BAM_STATS_TARGET)
+@@ -98,7 +98,7 @@ valgrind:
+ # the rule(a .c file) and $@: the name of the target of the rule (a .o file)
+ # (see the gnu make manual section about automatic variables)
+ .c.o:
+-	$(CC) $(CFLAGS) $(INCLUDES) -c $<  -o $@
++	$(CC) $(CFLAGS) $(INCLUDES) $(CPPFLAGS) -c $<  -o $@
+ 
+ clean:
+ 	@echo clean
