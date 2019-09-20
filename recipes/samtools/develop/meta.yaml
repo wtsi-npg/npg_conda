@@ -1,4 +1,4 @@
-{% set version = "1.9+168_gb1e2c78" %}
+{% set version = "1.9+168_gb1e2c78" %} # reset build to zero on changing
 {% set htslib_version = "1.9+353_gefa7aa6" %}
 
 package:
