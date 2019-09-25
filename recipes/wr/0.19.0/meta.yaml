@@ -7,7 +7,7 @@ package:
 
 about:
   home: https://github.com/VertebrateResequencing/wr
-  license: GPLv3
+  license: GPL3
   summary: "High performance Workflow Runner."
 
 build:
