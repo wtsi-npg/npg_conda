@@ -66,7 +66,7 @@ heirarchy convention of `recipes/[package name]/[package version]/`
 
 ## Build the recipe ##
 
-See doc/HOWTO.md for detailed build instructions.
+See README.md for detailed build instructions.
 
 ## Add the package to a channel ##
 
