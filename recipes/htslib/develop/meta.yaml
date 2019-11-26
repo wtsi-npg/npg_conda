@@ -1,5 +1,5 @@
-{% set version = "1.9+353_gefa7aa6" %} # reset build to zero on changing
-{% set htslib_rev = "efa7aa632f5f3b73362c3f94be79ca5d49d2bfe4" %}
+{% set version = "1.9+449_g9279d76" %} # reset build to zero on changing
+{% set htslib_rev = "9279d76e1186d7155ceea9db9db8c9298f6139bd" %}
 
 package:
   name: htslib-pkg
@@ -11,7 +11,7 @@ about:
   summary: C library for high-throughput sequencing data formats.
 
 build:
-  number: 3
+  number: 0
 
 source:
   - git_url: https://github.com/samtools/htslib.git
