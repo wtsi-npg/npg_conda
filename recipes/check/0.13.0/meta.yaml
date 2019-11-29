@@ -1,0 +1,40 @@
+{% set version = "0.13.0" %}
+{% set sha256 = "c4336b31447acc7e3266854f73ec188cdb15554d0edd44739631da174a569909" %}
+
+package:
+  name: check
+  version: "{{ version }}"
+
+about:
+  home: https://libcheck.github.io/check/
+  license: LGPL
+  summary: "Check is a unit testing framework for C."
+
+source:
+  url: https://github.com/libcheck/check/releases/download/{{ version }}/check-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+build:
+  number: 0
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - libtool
+    - make
+    - pkg-config
+
+files:
+  - bin/checkmk
+  - include/check.h
+  - include/check_stdint.h
+  - lib/libcheck.*
+  - lib/pkgconfig/check.pc
+  - share/doc/check/
+  - share/info/check.info
+  - share/man/man1/checkmk.1
+
+test:
+  commands:
+    - test -f ${PREFIX}/lib/libcheck.a
+    - test -h ${PREFIX}/lib/libcheck.so
