@@ -1,6 +1,6 @@
 {% set version = "1.10.2" %} # reset build to zero on changing
 {% set upstream_version = "1.10.2" %}
-{% set htslib_version = "1.10.2" %}
+{% set htslib_version = "1.10.2" %}  # Bump build version on change
 {% set sha256 = "f57301869d0055ce3b8e26d8ad880c0c1989bf25eaec8ea5db99b60e31354e2c" %}
 
 package:

@@ -1,5 +1,5 @@
 {% set version = "1.10.0" %} # reset build to zero on changing
-{% set htslib_version = "1.10.2" %}
+{% set htslib_version = "1.10.2" %} # Bump build version on change
 
 package:
   name: samtools-pkg
