@@ -67,6 +67,26 @@ The list of recipe paths may be passed directly to `conda-build`:
 which will build everything using just the Anaconda defaults channel
 and the local channel for dependencies.
 
+If there are errors Conda will report the full path to the failed
+build so that you can investigate. Common reasons for build failures
+(aside from errors in the new recipe) are
+
+* The software being packaged requiring an older or newer version of a
+  compiler, build tool or library than is available in the channels
+
+* The software being packaged having a build system that fails to
+  respect `$PREFIX` during installation
+
+* The software being packaged having undocumented dependencies
+
+A successfully built package will be dropped in the output root
+directory, the default being `<CONDA_PREFIX>/conda-bld/`. This may be
+changed in the `.condarc` file or by setting the `CONDA_BLD_PATH`
+environment variable, see
+[Conda build configuration](https://conda.io/docs/user-guide/configuration/use-condarc.html#specify-conda-build-output-root-directory-root-dir)
+section of the
+[Conda User guide](https://conda.io/docs/user-guide/index.html)
+
 
 ### Naming new recipes ###
 

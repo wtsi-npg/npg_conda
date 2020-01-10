@@ -6,12 +6,11 @@
 We use the [Miniconda](https://conda.io/miniconda.html) version of
 Conda. Your `$HOME/.condarc` file should look like this:
 
-
 ```bash
 show_channel_urls: true
 
 channels:
-  - https://dnap.cog.sanger.ac.uk/npg/conda/prod/Ubuntu/18.04/
+  - https://dnap.cog.sanger.ac.uk/npg/conda/prod/generic/linux-64/
   - defaults
 ```
 
@@ -67,42 +66,7 @@ heirarchy convention of `recipes/[package name]/[package version]/`
 
 ## Build the recipe ##
 
-The ideal build environment is a fresh virtual machine whose OS
-distribution and release number matches the Conda channel to which the
-new package will be released.
-
-Our Conda recipes typically do not declare build dependencies on
-generic tools such as `make`, `autotools`, `libtool` and
-`pkg-config`. You will need to install these using the OS package
-manager as required. Similarly, VCS such as `git` or `hg` are not
-typically declared.
-
-Building may be as simple as running
-
-```bash
-conda build ./recipes/[path to recipe]
-```
-
-If there are errors Conda will report the full path to the failed
-build so that you can investigate. Common reasons for build failures
-(aside from errors in the new recipe) are
-
-* The software being packaged requiring an older or newer version of a
-  compiler, build tool or library than is available in the channels
-
-* The software being packaged having a build system that fails to
-  respect `$PREFIX` during installation
-
-* The software being packaged having undocumented dependencies
-
-A successfully built package will be dropped in the output root
-directory, the default being `<CONDA_PREFIX>/conda-bld/`. This may be
-changed in the `.condarc` file or by setting the `CONDA_BLD_PATH`
-environment variable, see
-[Conda build configuration](https://conda.io/docs/user-guide/configuration/use-condarc.html#specify-conda-build-output-root-directory-root-dir)
-section of the
-[Conda User guide](https://conda.io/docs/user-guide/index.html)
-
+See README.md for detailed build instructions.
 
 ## Add the package to a channel ##
 
@@ -124,7 +88,7 @@ a WSI S3 account and an S3 client. The following example uses the
 
 
 ```bash
-s3cmd get -r s3://[bucket name]/npg/conda/test/Ubuntu/18.04/
+s3cmd get -r s3://[bucket name]/npg/conda/prod/generic
 
 ```
 
@@ -132,27 +96,7 @@ Now that you have a local copy, add the new package and update the
 index
 
 ```bash
-conda index ./npg/conda/prod/Ubuntu/18.04/
-```
-
-N.B. if you are creating a new channel from scratch, I have found that
-`conda index` will not create an index file for the `noarch`
-subdirectory, leading to Conda clients being unable to recognise the
-channel. The `noarch` directory must contain two files:
-
-* `repodata.json`
-* `repodata.json.bz2`
-
-The contents of these files are the uncompressed and compressed
-versions of the same empty index file
-
-```json
-{
-  "info": {
-    "subdir": "noarch"
-  },
-  "packages": {}
-}
+conda index ./npg/conda/prod/generic
 ```
 
 ### Synchronizing with the remote channel ###
@@ -160,16 +104,29 @@ versions of the same empty index file
 Once the local copy is indexed, synchronize the changes back to S3,
 ensuring that the ACLs for any new files are public. This means that
 *anyone* may freely download these files using the `https://` URL of
-the channel
+the channel.
+
+This requires an S3 client, which is best installed using Python's pip
+package manager into a Python virtualenv or Conda environment.
+
+Using s3cmd:
 
 ```bash
-s3cmd sync --acl-public ./prod/Ubuntu/18.04/ s3://[bucket name]/npg/conda/prod/Ubuntu/18.04/
+s3cmd -c ~/.s3cfg-npg sync --acl-public --exclude '*/.cache/*' \
+    ./prod/generic/ s3://[bucket name]/npg/conda/prod/generic/
 ```
 
-Our S3 implementation currently does not support Bucket Policies, so
-we have to rely on setting ACLs expictly. To give other WSI users
-permission to fully control the S3 bucket contents
+or, using aws-cli:
 
 ```bash
-s3cdm --acl-grant=full_control:[WSI user name] --recursive s3://[bucket name]/npg/
+aws s3 sync --acl public-read --exclude '*/.cache/*' \
+    ./prod/generic/ s3://[bucket name]/npg/conda/prod/generic/
+```
+
+To give other WSI users permission to fully control the S3 bucket
+contents:
+
+```bash
+s3cmd --acl-grant=full_control:[WSI user name] --recursive \
+    s3://[bucket name]/npg/
 ```
