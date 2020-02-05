@@ -1,0 +1,32 @@
+{% set version = "4.4.1" %}
+
+package:
+  name: bam_stats
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/cancerit/PCAP-core
+  license: GPLv2
+  summary: "NGS reference implementations and helper code for mapping and mapping related stats."
+
+build:
+  number: 0
+  
+source:
+  git_url: https://github.com/cancerit/PCAP-core.git
+  git_rev: {{ version }}
+  patches:
+    - Makefile.patch
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - make
+  host:
+    - libhts-dev
+  run:
+    - libhts
+
+test:
+  commands:
+    - bam_stats -h
