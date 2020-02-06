@@ -18,6 +18,10 @@ source:
   patches:
     - Makefile.patch
 
+# bam_stats uses libhts for reading bam/cram files, but
+# is currently unable to take advantage of libhts plugins,
+# which enable access to files in iRODS, s3, etc.
+
 requirements:
   build:
     - {{ compiler("c") }}
