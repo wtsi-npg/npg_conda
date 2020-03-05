@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright © 2019 Genome Research Ltd. All rights reserved.
+# Copyright © 2019, 2020 Genome Research Ltd. All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@ DEFAULT_RECIPES_MOUNT="/home/conda/recipes"
 DEFAULT_ARTEFACTS_DIR=os.path.expandvars("$HOME/conda-artefacts")
 DEFAULT_ARTEFACTS_MOUNT="/opt/conda/conda-bld"
 
-IRODS_BUILD_IMAGE="wsinpg/ub-12.04-conda-irods:0.3"
-DEFAULT_BUILD_IMAGE="wsinpg/ub-12.04-conda:0.3"
+IRODS_BUILD_IMAGE="wsinpg/ub-12.04-conda-irods:latest"
+DEFAULT_BUILD_IMAGE="wsinpg/ub-12.04-conda:latest"
 
 description = """
 
@@ -93,6 +93,15 @@ parser.add_argument("--remove-container",
                     help="Remove the Docker container after each build",
                     action="store_true")
 
+parser.add_argument("--conda-uid",
+                    help="UID for the Conda user inside the container, "
+                    "defaults to the current UID ({})".format(os.getuid()),
+                    type=int, nargs="?", default=os.getuid())
+parser.add_argument("--conda-gid",
+                    help="GID for the Conda user inside the container, "
+                    "defaults to the current GID ({})".format(os.getgid()),
+                    type=int, nargs="?", default=os.getgid())
+
 parser.add_argument("--dry-run",
                     help="Log the recipes that would be built at INFO level, "
                     "but do not build anything",
@@ -117,7 +126,7 @@ if args.build_channel:
     try:
         rfc3987.parse(args.build_channel, rule='URI')
     except ValueError as e:
-        log.error("Invalid --build-channel URL '%s'", args.build_channel)
+        log.error("Invalid --build-channel URL '{}'".format(args.build_channel))
         exit(1)
 
 docker_pull(args.conda_build_image)
@@ -138,36 +147,37 @@ for line in sys.stdin.readlines():
     build_script = \
         'export CONDA_BLD_PATH="{}" ; '.format(args.artefacts_mount)
     build_script += \
-        'conda config --set auto_update_conda False ; '
+        "conda config --set auto_update_conda False ; "
 
     if args.build_channel:
         build_script += \
-            'conda config --add channels {} ; '.format(args.build_channel)
+            "conda config --add channels {} ; ".format(args.build_channel)
 
     build_script += \
         'cd "{}" && conda build {}'.format(args.recipes_mount, path)
 
-    run_cmd = ['docker', 'run']
-    mount_args = ['--mount',
-                  'source={},target={},type=bind'.format(args.recipes_dir,
+    run_cmd = ["docker", "run"]
+    mount_args = ["--mount",
+                  "source={},target={},type=bind".format(args.recipes_dir,
                                                          args.recipes_mount),
-                  '--mount',
-                  'source={},target={},type=bind'.format(args.artefacts_dir,
+                  "--mount",
+                  "source={},target={},type=bind".format(args.artefacts_dir,
                                                          args.artefacts_mount)]
-    env_args = ['-e', 'CONDA_USER_ID=1000']
-    other_args = ['-i']
-    script_args = ['/bin/sh', '-c', build_script]
+    env_args = ["-e", "CONDA_USER_ID={}".format(args.conda_uid),
+                "-e", "CONDA_GROUP_ID={}".format(args.conda_gid)]
+    other_args = ["-i"]
+    script_args = ["/bin/sh", "-c", build_script]
 
     if args.remove_container:
-        other_args.append('--rm')
+        other_args.append("--rm")
 
     cmd = run_cmd + mount_args + env_args + other_args + [build_image] \
         + script_args
 
     if args.dry_run:
-        log.info('Docker command: "%s"', cmd)
+        log.info('Docker command: "{}"'.format(cmd))
     else:
-        log.debug('Build script: "%s"', build_script)
+        log.debug('Build script: "{}"'.format(build_script))
 
         try:
             enc = sys.getfilesystemencoding()
