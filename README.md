@@ -94,7 +94,7 @@ A complete build example:
     --recipes-dir $PWD --artefacts-dir $HOME/conda-artefacts \
     --conda-build-image wsinpg/ub-12.04-conda:latest --verbose
 
-Here the recipies directory that will be mounted by the container is
+Here the recipes directory that will be mounted by the container is
 set explicitly, as is the artefacts directory, where the built
 packages will appear (these are both mounted into the container).
 
