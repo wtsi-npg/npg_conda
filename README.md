@@ -98,7 +98,7 @@ Here the recipes directory that will be mounted by the container is
 set explicitly, as is the artefacts directory, where the built
 packages will appear (these are both mounted into the container).
 
-The artefacts directory can be used by multiple build,
+The artefacts directory can be used by multiple builds,
 sequentially. It will accumulate built packages that will be used as
 dependencies by later builds. Alternatively, you may prefer to push
 the built packages to a Conda channel and have later builds find them
