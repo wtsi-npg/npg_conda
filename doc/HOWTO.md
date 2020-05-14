@@ -10,7 +10,7 @@ Conda. Your `$HOME/.condarc` file should look like this:
 show_channel_urls: true
 
 channels:
-  - https://dnap.cog.sanger.ac.uk/npg/conda/prod/generic/linux-64/
+  - https://dnap.cog.sanger.ac.uk/npg/conda/prod/generic/
   - defaults
 ```
 
