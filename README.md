@@ -49,7 +49,29 @@ Building from source requires Conda (we use
 [conda-verify](https://github.com/conda/conda-verify) packages
 installed.
 
-A complete from-source build can be achieved using the
+Builds normally take place within the environment of a Docker
+container. The benefits are
+
+* Builds will take place in the same environment, regardless of which
+  OS they are run under.
+
+* Builds are isolated from one another because they each run in an
+  independent container.
+
+* Our default build image does not contain build tools or a compiler,
+  which reduces the chance of these being used over the Conda build
+  tools.
+
+Our build image contains Conda pre-installed and works by mounting two
+local directories, one which should contain the Conda recipes to build
+and another which will receive the built packages. The
+`scripts/build.py` script handles mounting the directories and running
+the builds. The build script requires a list of packages to be
+supplied on STDIN and it will build them in that order.
+
+This means that for a complete from-source build of all packages, they
+must be sorted so that packages that have dependencies are built after
+those they depend on. This can be achieved using the
 `./scripts/package_sort.py` script which inspects the recipes,
 calculates their dependency DAG and then outputs a list sorted so that
 they are built in the correct order:
@@ -60,12 +82,27 @@ they are built in the correct order:
     teepot 1.2.0 recipes/teepot/1.2.0
     eigen 3.3.4 recipes/eigen/3.3.4
 
-The list of recipe paths may be passed directly to `conda-build`:
+Both of these scripts have command line help and a number of options
+to configure their behaviour. Note that the online help for `build.py`
+reports default values dynamically (i.e. they are calculated for your
+current environment so that they describe accurately the values that
+will be used).
 
-    ./scripts/package_sort.py recipes | awk '{print $3}' | xargs conda-build 
+A complete build example:
 
-which will build everything using just the Anaconda defaults channel
-and the local channel for dependencies.
+    ./scripts/package_sort.py | ./scripts/build.py \
+    --recipes-dir $PWD --artefacts-dir $HOME/conda-artefacts \
+    --conda-build-image wsinpg/ub-12.04-conda:latest --verbose
+
+Here the recipes directory that will be mounted by the container is
+set explicitly, as is the artefacts directory, where the built
+packages will appear (these are both mounted into the container).
+
+The artefacts directory can be used by multiple builds,
+sequentially. It will accumulate built packages that will be used as
+dependencies by later builds. Alternatively, you may prefer to push
+the built packages to a Conda channel and have later builds find them
+there.
 
 If there are errors Conda will report the full path to the failed
 build so that you can investigate. Common reasons for build failures
