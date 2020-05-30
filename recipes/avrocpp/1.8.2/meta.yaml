@@ -1,0 +1,55 @@
+{% set version = "1.8.2" %}
+{% set hash = "c17d84613187dda3611c9c95d6f3388036a330ba" %}
+{% set name = "avrocpp" %}
+
+package:
+    name: {{ name }}
+    version: {{ version }}
+
+source:
+    fn: avro-cpp-{{ version }}.tar.gz
+    url: https://archive.apache.org/dist/avro/avro-{{ version }}/cpp/avro-cpp-{{ version }}.tar.gz
+    sha1: {{ hash }}
+
+build:
+    number: 0
+    skip: true  # [win and vc<14]
+
+requirements:
+    build:
+        - cmake
+        - make
+        - pkg-config  # [osx]
+        - {{ compiler('c') }}
+        - {{ compiler('cxx') }}
+    host:
+        - snappy
+        - xz
+        - zlib
+        - boost>=1.70.0
+        - boost-cpp>=1.70.0
+        - msinttypes  # [win]
+    run:
+        - xz
+        - snappy
+        - zlib
+        - boost>=1.70.0
+        - boost-cpp>=1.70.0
+
+test:
+    commands:
+        - test -f ${PREFIX}/lib/libavrocpp_s.a  # [unix]
+        - conda inspect objects {{ name }}      # [osx]
+        - conda inspect linkages {{ name }}     # [linux]
+
+about:
+  home: http://hadoop.apache.org/avro
+  license: Apache 2.0
+  license_family: Apache
+  license_file: LICENSE
+  summary: 'Avro is a serialization and RPC framework.'
+
+
+extra:
+  recipe-maintainers:
+    - mariusvniekerk

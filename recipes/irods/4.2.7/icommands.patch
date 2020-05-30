@@ -1,0 +1,83 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 89a38f0..69ad591 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,12 +1,13 @@
+ cmake_minimum_required(VERSION 3.5.0 FATAL_ERROR) #CPACK_DEBIAN_<COMPONENT>_PACKAGE_NAME
+ include(${CMAKE_SOURCE_DIR}/cmake/RequireOutOfSourceBuild.cmake)
++include(GNUInstallDirs)
+ 
+ find_package(IRODS 4.2.7 EXACT REQUIRED CONFIG)
+ 
+ set(CMAKE_C_COMPILER ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang)
+ set(CMAKE_CXX_COMPILER ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang++)
+ 
+-set(CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
++set(CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS}")
+ 
+ project(icommands C CXX)
+ 
+@@ -28,12 +29,12 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+ set(CMAKE_INSTALL_RPATH ${IRODS_EXTERNALS_FULLPATH_CLANG_RUNTIME}/lib)
+ set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+ 
+-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
+-set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -stdlib=libc++")
+-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
+-add_compile_options(-nostdinc++ -Wall -Wextra -Werror -Wno-unused-parameter)
+-link_libraries(c++abi)
+-include_directories(${IRODS_EXTERNALS_FULLPATH_CLANG}/include/c++/v1)
++#set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
++#set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -stdlib=libc++")
++#set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
++add_compile_options(-Wall -Wextra -Werror -Wno-unused-parameter)
++#link_libraries(c++abi)
++#include_directories(${IRODS_EXTERNALS_FULLPATH_CLANG}/include/c++/v1)
+ 
+ set(
+   IRODS_CLIENT_ICOMMANDS_EXECUTABLES
+@@ -125,7 +126,7 @@ foreach(EXECUTABLE ${IRODS_CLIENT_ICOMMANDS_EXECUTABLES})
+     TARGETS
+     ${EXECUTABLE}
+     RUNTIME
+-    DESTINATION usr/bin
++    DESTINATION ${CMAKE_INSTALL_BINDIR}
+     )
+ 
+   if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "centos")
+@@ -147,7 +148,7 @@ foreach(EXECUTABLE ${IRODS_CLIENT_ICOMMANDS_EXECUTABLES})
+   install(
+     FILES
+     ${CMAKE_BINARY_DIR}/man/${EXECUTABLE}.1.gz
+-    DESTINATION usr/share/man/man1
++    DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
+     )
+ endforeach()
+ 
+@@ -179,13 +180,13 @@ foreach(IRODS_CLIENT_ICOMMANDS_SCRIPT ${IRODS_CLIENT_ICOMMANDS_SCRIPTS})
+   install(
+     FILES
+     ${CMAKE_BINARY_DIR}/man/${IRODS_CLIENT_ICOMMANDS_SCRIPT}.1.gz
+-    DESTINATION usr/share/man/man1
++    DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
+     )
+ endforeach()
+ 
+ install(
+   DIRECTORY ${CMAKE_SOURCE_DIR}/test
+-  DESTINATION var/lib/irods/clients/icommands
++  DESTINATION ${CMAKE_INSTALL_LOCALSTATEDIR}/lib/irods/clients/icommands
+   )
+ 
+ 
+@@ -194,8 +195,8 @@ if (NOT CPACK_DEBIAN_PACKAGE_VERSION)
+ endif()
+ 
+ set(CPACK_PACKAGE_FILE_NAME "irods-icommands${IRODS_PACKAGE_FILE_NAME_SUFFIX}")
+-set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
+-set(CPACK_COMPONENT_INCLUDE_TOPLEVEL_DIRECTORY OFF)
++#set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
++#set(CPACK_COMPONENT_INCLUDE_TOPLEVEL_DIRECTORY OFF)
+ set(CPACK_COMPONENTS_GROUPING IGNORE)
+ set(CPACK_PACKAGE_VERSION ${IRODS_VERSION})
+ set(CPACK_PACKAGE_VERSION_MAJOR ${IRODS_VERSION_MAJOR})
