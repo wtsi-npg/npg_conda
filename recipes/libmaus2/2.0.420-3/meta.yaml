@@ -1,0 +1,79 @@
+{% set version = "2.0.420" %}
+{% set sha256 = "0d28932e363e80b4519b04a512df899189c612a4c097130219d6e0ebbfde2a34" %}
+{% set io_lib_version = "1.14.9" %}
+
+package:
+  name: libmaus2-pkg
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/gt1/libmaus2
+  license: Various
+  summary: Collection of data structures and algorithms.
+
+build:
+  number: 3
+
+source:
+  url: https://github.com/gt1/libmaus2/archive/{{ version }}-release-20171116172420.tar.gz
+  fn: libmaus2-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - {{ compiler("cxx") }}
+    - make
+    - pkg-config
+  host:
+    - irods-dev
+    - libgnutls-dev
+    - libnettle-dev
+    - libstaden-read-dev =={{ io_lib_version }}
+    - libz-dev
+  run:
+    - libgnutls
+    - libnettle
+    - libstaden-read =={{ io_lib_version }}
+    - libz
+    - snappy
+
+outputs:
+  - name: libmaus2
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("cxx") }}
+        - make
+        - pkg-config
+      host:
+        - irods-dev
+        - libgnutls-dev
+        - libnettle-dev
+        - libstaden-read-dev =={{ io_lib_version }}
+        - libz-dev
+      run:
+        - libgnutls
+        - libnettle
+        - libstaden-read =={{ io_lib_version }}
+        - libz
+        - snappy
+    files:
+      - lib/libmaus*.*
+      - lib/libmaus2/{{ version }}/*.so
+    test:
+      commands:
+        - test -f ${PREFIX}/lib/libmaus2.a
+        - test -h ${PREFIX}/lib/libmaus2.so
+
+  - name: libmaus2-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libmaus2", exact=True) }}
+    files:
+      - include/libmaus2
+      - lib/pkgconfig/libmaus2*.pc
+    test:
+      commands:
+        - test -f ${PREFIX}/include/libmaus2/LibMausConfig.hpp
+
