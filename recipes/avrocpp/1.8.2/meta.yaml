@@ -12,7 +12,7 @@ source:
     sha1: {{ hash }}
 
 build:
-    number: 0
+    number: 1
     skip: true  # [win and vc<14]
 
 requirements:
@@ -26,15 +26,15 @@ requirements:
         - snappy
         - xz
         - zlib
-        - boost>=1.70.0
-        - boost-cpp>=1.70.0
+        - boost=1.73.0
+        - boost-cpp=1.73.0
         - msinttypes  # [win]
     run:
         - xz
         - snappy
         - zlib
-        - boost>=1.70.0
-        - boost-cpp>=1.70.0
+        - boost=1.73.0
+        - boost-cpp=1.73.0
 
 test:
     commands:
