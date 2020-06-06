@@ -30,7 +30,7 @@ index 89a38f0..69ad591 100644
 +#set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
 +#set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -stdlib=libc++")
 +#set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
-+add_compile_options(-Wall -Wextra -Werror -Wno-unused-parameter)
++add_compile_options(-Wall -Wextra -Wno-unused-parameter)
 +#link_libraries(c++abi)
 +#include_directories(${IRODS_EXTERNALS_FULLPATH_CLANG}/include/c++/v1)
  

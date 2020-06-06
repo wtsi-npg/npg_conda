@@ -26,12 +26,14 @@ source:
 
 requirements:
   build:
-    - cmake
+    - cmake>=3.5.0
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - clang==8.0.1
     - clangxx==8.0.1
     - make
+    - gzip
+    - help2man
   host:
     - libssl-dev
     - cppzmq
@@ -44,6 +46,7 @@ requirements:
     - jansson
     - catch2
     - krb5
+    - pthread-stubs
   run:
     - libssl
     - cppzmq

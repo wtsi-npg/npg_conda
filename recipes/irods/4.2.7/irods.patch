@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index c74f74a5a..2d0a97703 100644
+index c74f74a5a..83783c8cc 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -1,6 +1,7 @@
@@ -10,7 +10,7 @@ index c74f74a5a..2d0a97703 100644
  if (NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
    set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build {Debug, Release}." FORCE)
    message(STATUS "Setting unspecified CMAKE_BUILD_TYPE to '${CMAKE_BUILD_TYPE}'. This is the correct setting for normal builds.")
-@@ -41,10 +42,11 @@ string(REPLACE ";" ", " IRODS_PACKAGE_DEPENDENCIES_STRING "${IRODS_PACKAGE_DEPEN
+@@ -41,10 +42,13 @@ string(REPLACE ";" ", " IRODS_PACKAGE_DEPENDENCIES_STRING "${IRODS_PACKAGE_DEPEN
  set(CMAKE_C_COMPILER ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang)
  set(CMAKE_CXX_COMPILER ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang++)
  
@@ -20,10 +20,12 @@ index c74f74a5a..2d0a97703 100644
  project(irods C CXX)
  
 +include(GNUInstallDirs)
++include_directories(AFTER ${CMAKE_INSTALL_PREFIX}/include)
++include_directories(${CMAKE_INSTALL_PREFIX}/lib)
  set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
  
  if (NOT CPACK_PACKAGING_INSTALL_PREFIX)
-@@ -52,15 +54,16 @@ if (NOT CPACK_PACKAGING_INSTALL_PREFIX)
+@@ -52,15 +56,16 @@ if (NOT CPACK_PACKAGING_INSTALL_PREFIX)
    message(STATUS "Setting unspecified CPACK_PACKAGING_INSTALL_PREFIX to '${CPACK_PACKAGING_INSTALL_PREFIX}'. This is the correct setting for normal builds.")
  endif()
  
@@ -47,7 +49,7 @@ index c74f74a5a..2d0a97703 100644
  
  find_package(Threads REQUIRED)
  find_package(OpenSSL REQUIRED)
-@@ -85,31 +88,33 @@ set(IRODS_COMPILE_DEFINITIONS ${IRODS_PLATFORM_STRING} _LARGEFILE_SOURCE _FILE_O
+@@ -85,31 +90,33 @@ set(IRODS_COMPILE_DEFINITIONS ${IRODS_PLATFORM_STRING} _LARGEFILE_SOURCE _FILE_O
  
  if (NOT IRODS_LINUX_DISTRIBUTION_NAME)
    execute_process(
@@ -86,7 +88,7 @@ index c74f74a5a..2d0a97703 100644
    if (NOT IRODS_LINUX_DISTRIBUTION_VERSION_CODENAME)
      execute_process(
        COMMAND "lsb_release" "-s" "-c"
-@@ -126,13 +131,13 @@ if(IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "ubuntu" OR IRODS_LINUX_DISTRIBUTION_N
+@@ -126,13 +133,13 @@ if(IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "ubuntu" OR IRODS_LINUX_DISTRIBUTION_N
  endif()
  
  if (NOT CPACK_GENERATOR)
@@ -103,7 +105,7 @@ index c74f74a5a..2d0a97703 100644
      set(CPACK_GENERATOR RPM CACHE STRING "CPack generator to use, e.g. {DEB, RPM, TGZ}." FORCE)
      message(STATUS "Setting unspecified CPACK_GENERATOR to ${CPACK_GENERATOR}. This is the correct setting for normal builds.")
    else()
-@@ -1374,8 +1379,8 @@ set_property(TARGET genOSAuth PROPERTY CXX_STANDARD ${IRODS_CXX_STANDARD})
+@@ -1374,8 +1381,8 @@ set_property(TARGET genOSAuth PROPERTY CXX_STANDARD ${IRODS_CXX_STANDARD})
  target_compile_definitions(genOSAuth PRIVATE ${IRODS_COMPILE_DEFINITIONS})
  target_compile_options(genOSAuth PRIVATE -Wno-write-strings)
  
@@ -114,7 +116,7 @@ index c74f74a5a..2d0a97703 100644
  
  add_subdirectory(plugins/api)
  add_subdirectory(plugins/auth)
-@@ -1391,8 +1396,8 @@ include(${CMAKE_SOURCE_DIR}/cmake/development_library.cmake)
+@@ -1391,8 +1398,8 @@ include(${CMAKE_SOURCE_DIR}/cmake/development_library.cmake)
  include(${CMAKE_SOURCE_DIR}/cmake/runtime_library.cmake)
  include(${CMAKE_SOURCE_DIR}/cmake/server.cmake)
  
@@ -125,7 +127,7 @@ index c74f74a5a..2d0a97703 100644
  set(CPACK_COMPONENTS_GROUPING IGNORE)
  set(CPACK_PACKAGE_VERSION ${IRODS_VERSION})
  set(CPACK_PACKAGE_VERSION_MAJOR ${IRODS_VERSION_MAJOR})
-@@ -1431,13 +1436,13 @@ set(CPACK_DEBIAN_${IRODS_PACKAGE_COMPONENT_POSTGRES_NAME_UPPERCASE}_PACKAGE_DEPE
+@@ -1431,13 +1438,13 @@ set(CPACK_DEBIAN_${IRODS_PACKAGE_COMPONENT_POSTGRES_NAME_UPPERCASE}_PACKAGE_DEPE
  set(CPACK_DEBIAN_${IRODS_PACKAGE_COMPONENT_POSTGRES_NAME_UPPERCASE}_PACKAGE_CONTROL_EXTRA "${CMAKE_SOURCE_DIR}/plugins/database/packaging/preinst;${CMAKE_SOURCE_DIR}/plugins/database/packaging/postinst;${CMAKE_SOURCE_DIR}/plugins/database/packaging/postrm;")
  
  set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_POSTGRES_NAME}_PACKAGE_NAME "irods-database-plugin-postgres")
@@ -141,7 +143,7 @@ index c74f74a5a..2d0a97703 100644
    set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_POSTGRES_NAME}_PACKAGE_REQUIRES "${IRODS_PACKAGE_DEPENDENCIES_STRING}, irods-server = ${IRODS_VERSION}, unixODBC, postgresql, psqlODBC")
  endif()
  set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_POSTGRES_NAME}_PRE_INSTALL_SCRIPT_FILE "${CMAKE_SOURCE_DIR}/plugins/database/packaging/preinst")
-@@ -1446,7 +1451,7 @@ set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_POSTGRES_NAME}_POST_UNINSTALL_SCRIPT_FIL
+@@ -1446,7 +1453,7 @@ set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_POSTGRES_NAME}_POST_UNINSTALL_SCRIPT_FIL
  
  # mysql
  set(CPACK_DEBIAN_${IRODS_PACKAGE_COMPONENT_MYSQL_NAME_UPPERCASE}_PACKAGE_NAME "irods-database-plugin-mysql")
@@ -150,7 +152,7 @@ index c74f74a5a..2d0a97703 100644
    set(CPACK_DEBIAN_${IRODS_PACKAGE_COMPONENT_MYSQL_NAME_UPPERCASE}_PACKAGE_DEPENDS "${IRODS_PACKAGE_DEPENDENCIES_STRING}, irods-server (= ${CPACK_DEBIAN_PACKAGE_VERSION}), unixodbc, mysql-client, libc6")
  else()
    set(CPACK_DEBIAN_${IRODS_PACKAGE_COMPONENT_MYSQL_NAME_UPPERCASE}_PACKAGE_DEPENDS "${IRODS_PACKAGE_DEPENDENCIES_STRING}, irods-server (= ${CPACK_DEBIAN_PACKAGE_VERSION}), unixodbc, libmyodbc, mysql-client, libc6")
-@@ -1454,13 +1459,13 @@ endif()
+@@ -1454,13 +1461,13 @@ endif()
  set(CPACK_DEBIAN_${IRODS_PACKAGE_COMPONENT_MYSQL_NAME_UPPERCASE}_PACKAGE_CONTROL_EXTRA "${CMAKE_SOURCE_DIR}/plugins/database/packaging/preinst;${CMAKE_SOURCE_DIR}/plugins/database/packaging/postinst;${CMAKE_SOURCE_DIR}/plugins/database/packaging/postrm;")
  
  set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_MYSQL_NAME}_PACKAGE_NAME "irods-database-plugin-mysql")
@@ -166,7 +168,7 @@ index c74f74a5a..2d0a97703 100644
    set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_MYSQL_NAME}_PACKAGE_REQUIRES "${IRODS_PACKAGE_DEPENDENCIES_STRING}, irods-server = ${IRODS_VERSION}, mysql-client, unixODBC, MyODBC-unixODBC")
  endif()
  set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_MYSQL_NAME}_PRE_INSTALL_SCRIPT_FILE "${CMAKE_SOURCE_DIR}/plugins/database/packaging/preinst")
-@@ -1473,7 +1478,7 @@ set(CPACK_DEBIAN_${IRODS_PACKAGE_COMPONENT_ORACLE_NAME_UPPERCASE}_PACKAGE_DEPEND
+@@ -1473,7 +1480,7 @@ set(CPACK_DEBIAN_${IRODS_PACKAGE_COMPONENT_ORACLE_NAME_UPPERCASE}_PACKAGE_DEPEND
  set(CPACK_DEBIAN_${IRODS_PACKAGE_COMPONENT_ORACLE_NAME_UPPERCASE}_PACKAGE_CONTROL_EXTRA "${CMAKE_SOURCE_DIR}/plugins/database/packaging/preinst;${CMAKE_SOURCE_DIR}/plugins/database/packaging/postinst;${CMAKE_SOURCE_DIR}/plugins/database/packaging/postrm;")
  
  set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_ORACLE_NAME}_PACKAGE_NAME "irods-database-plugin-oracle")
@@ -175,7 +177,7 @@ index c74f74a5a..2d0a97703 100644
    if (IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR STREQUAL "6")
      set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_ORACLE_NAME}_PACKAGE_REQUIRES "${IRODS_PACKAGE_DEPENDENCIES_STRING}, irods-server = ${IRODS_VERSION}, unixODBC")
    elseif (IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR STREQUAL "7")
-@@ -1481,7 +1486,7 @@ if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "centos")
+@@ -1481,7 +1488,7 @@ if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "centos")
    else()
      message(FATAL "Unsupported CentOS major version: ${IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR}")
    endif()
@@ -184,7 +186,7 @@ index c74f74a5a..2d0a97703 100644
    set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_ORACLE_NAME}_PACKAGE_REQUIRES "${IRODS_PACKAGE_DEPENDENCIES_STRING}, irods-server = ${IRODS_VERSION}, unixODBC")
  endif()
  set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_ORACLE_NAME}_PRE_INSTALL_SCRIPT_FILE "${CMAKE_SOURCE_DIR}/plugins/database/packaging/preinst")
-@@ -1538,20 +1543,20 @@ install(
+@@ -1538,20 +1545,20 @@ install(
    )
  
  
@@ -208,7 +210,7 @@ index c74f74a5a..2d0a97703 100644
    COMPONENT ${IRODS_PACKAGE_COMPONENT_DEVELOPMENT_NAME}
    RENAME IRODSConfig.cmake
    )
-@@ -1565,7 +1570,7 @@ write_basic_package_version_file(
+@@ -1565,7 +1572,7 @@ write_basic_package_version_file(
  install(
    FILES
    ${CMAKE_BINARY_DIR}/IRODSConfigVersion.cmake
@@ -370,6 +372,19 @@ index 6348522b8..354787ac3 100644
  
  namespace irods {
  namespace experimental {
+diff --git a/plugins/database/CMakeLists.txt b/plugins/database/CMakeLists.txt
+index 7efb97322..28e801138 100644
+--- a/plugins/database/CMakeLists.txt
++++ b/plugins/database/CMakeLists.txt
+@@ -50,7 +50,7 @@ foreach(PLUGIN ${IRODS_DATABASE_PLUGINS})
+ 
+   add_custom_command(
+     OUTPUT ${CMAKE_BINARY_DIR}/icatSysTables_${PLUGIN}.sql
+-    COMMAND cpp -E -P -D${PLUGIN} ${CMAKE_BINARY_DIR}/plugins/database/src/icatSysTables.sql.pp ${CMAKE_BINARY_DIR}/icatSysTables_${PLUGIN}.sql
++    COMMAND ${TOOL_PREFIX}cpp -E -P -D${PLUGIN} ${CMAKE_BINARY_DIR}/plugins/database/src/icatSysTables.sql.pp ${CMAKE_BINARY_DIR}/icatSysTables_${PLUGIN}.sql
+     MAIN_DEPENDENCY ${CMAKE_BINARY_DIR}/plugins/database/src/icatSysTables.sql.pp
+     )
+   add_custom_target(IRODS_PHONY_TARGET_icatSysTables_${PLUGIN}.sql ALL DEPENDS ${CMAKE_BINARY_DIR}/icatSysTables_${PLUGIN}.sql) # Forces execution of custom_command
 diff --git a/unit_tests/cmake/test_config/irods_connection_pool.cmake b/unit_tests/cmake/test_config/irods_connection_pool.cmake
 index 9d79f8313..982e68ee6 100644
 --- a/unit_tests/cmake/test_config/irods_connection_pool.cmake
