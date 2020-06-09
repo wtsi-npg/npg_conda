@@ -25,7 +25,7 @@ requirements:
     - make
     - pkg-config
   host:
-    - irods-dev
+    - irods-dev>=4.2
     - libgnutls-dev
     - libnettle-dev
     - libstaden-read-dev =={{ io_lib_version }}
@@ -46,7 +46,7 @@ outputs:
         - make
         - pkg-config
       host:
-        - irods-dev
+        - irods-dev>=4.2
         - libgnutls-dev
         - libnettle-dev
         - libstaden-read-dev =={{ io_lib_version }}
