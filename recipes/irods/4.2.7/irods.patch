@@ -372,6 +372,28 @@ index 6348522b8..354787ac3 100644
  
  namespace irods {
  namespace experimental {
+diff --git a/lib/core/src/irods_default_paths.cpp b/lib/core/src/irods_default_paths.cpp
+index 051658f09..ad2acc42a 100644
+--- a/lib/core/src/irods_default_paths.cpp
++++ b/lib/core/src/irods_default_paths.cpp
+@@ -18,7 +18,7 @@ namespace irods {
+         try {
+             boost::filesystem::path path{dl_info.dli_fname};
+             path = boost::filesystem::canonical(path);
+-            path.remove_filename().remove_filename().remove_filename(); // Removes filename and the two directories (usr and lib) between libirods_common.so and base of irods install
++            path.remove_filename().remove_filename(); // Removes filename and the lib directory between libirods_common.so and base of irods install
+             return path;
+         } catch(const boost::filesystem::filesystem_error& e) {
+             THROW(-1, e.what());
+@@ -42,7 +42,7 @@ namespace irods {
+     boost::filesystem::path
+     get_irods_default_plugin_directory() {
+         boost::filesystem::path path{get_irods_root_directory()};
+-        path.append("usr").append("lib").append("irods").append("plugins");
++        path.append("lib").append("irods").append("plugins");
+         return path;
+     }
+ }
 diff --git a/plugins/database/CMakeLists.txt b/plugins/database/CMakeLists.txt
 index 7efb97322..28e801138 100644
 --- a/plugins/database/CMakeLists.txt
