@@ -82,7 +82,7 @@ parser.add_argument("--build-channel","--build-channels",
                     type=str, nargs="*", default=[])
 
 parser.add_argument("--irods-build-image",
-                    help="The Docker image used to build iRODS, "
+                    help="The Docker image used to build iRODS 4.1, "
                     "defaults to {}".format(IRODS_BUILD_IMAGE),
                     type=str, nargs="?", default=IRODS_BUILD_IMAGE)
 parser.add_argument("--conda-build-image",
@@ -132,7 +132,7 @@ for line in sys.stdin.readlines():
     log.info("Working on %s %s %s", name, version, path)
 
     build_image = args.conda_build_image
-    if name == "irods":
+    if name == "irods" and version[:4]=="4.1.":
         build_image = args.irods_build_image
         log.info("Using image %s", build_image)
         docker_pull(args.irods_build_image)
