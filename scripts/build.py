@@ -79,7 +79,7 @@ parser.add_argument("--build-channel","--build-channels",
                     help="The Conda channels from which to get dependencies "
                     "when not doing a full, local from-source build, "
                     "defaults to no extra channels",
-                    type=str, nargs="*")
+                    type=str, nargs="*", default=[])
 
 parser.add_argument("--irods-build-image",
                     help="The Docker image used to build iRODS, "
