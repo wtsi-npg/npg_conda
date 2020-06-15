@@ -25,7 +25,6 @@ requirements:
     - make
     - pkg-config
   host:
-    - irods-dev>=4.2
     - libgnutls-dev
     - libmaus2-dev =={{ libmaus2_version }}
     - libnettle-dev

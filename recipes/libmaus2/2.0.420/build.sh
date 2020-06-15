@@ -8,11 +8,9 @@ n="$CPU_COUNT"
             --with-gnutls \
             --with-nettle \
             --with-io_lib \
-            --with-irods=yes \
             CPPFLAGS="-I$PREFIX/include" \
-            LDFLAGS="-L$PREFIX/lib -L$PREFIX/lib/irods/externals" \
-            LIBS="-lRodsAPIs -lrt"
+            LDFLAGS="-L$PREFIX/lib"
 
 make -j $n CPPFLAGS="-I$PREFIX/include" \
-     LDFLAGS="-Wl,-rpath-link,$PREFIX/lib -L$PREFIX/lib -L$PREFIX/lib/irods/externals"
+     LDFLAGS="-Wl,-rpath-link,$PREFIX/lib -L$PREFIX/lib"
 make install prefix="$PREFIX"

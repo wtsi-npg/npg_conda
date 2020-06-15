@@ -12,7 +12,7 @@ about:
   summary: Collection of data structures and algorithms.
 
 build:
-  number: 3
+  number: 4
 
 source:
   url: https://github.com/gt1/libmaus2/archive/{{ version }}-release-20171116172420.tar.gz
@@ -25,7 +25,6 @@ requirements:
     - make
     - pkg-config
   host:
-    - irods-dev>=4.2
     - libgnutls-dev
     - libnettle-dev
     - libstaden-read-dev =={{ io_lib_version }}
@@ -35,7 +34,6 @@ requirements:
     - libnettle
     - libstaden-read =={{ io_lib_version }}
     - libz
-    - snappy
 
 outputs:
   - name: libmaus2
@@ -46,7 +44,6 @@ outputs:
         - make
         - pkg-config
       host:
-        - irods-dev>=4.2
         - libgnutls-dev
         - libnettle-dev
         - libstaden-read-dev =={{ io_lib_version }}
@@ -56,7 +53,6 @@ outputs:
         - libnettle
         - libstaden-read =={{ io_lib_version }}
         - libz
-        - snappy
     files:
       - lib/libmaus*.*
       - lib/libmaus2/{{ version }}/*.so
