@@ -11,7 +11,7 @@ about:
   summary: "The GNU Multiple Precision Arithmetic Library."
 
 build:
-  number: 2
+  number: 3
 
 source:
   url: https://gmplib.org/download/gmp/gmp-{{ version }}.tar.xz
@@ -41,11 +41,9 @@ outputs:
       run:
         - libz
     files:
-      - lib/libgmp.a
       - lib/libgmp.so*
     test:
       commands:
-        - test -f ${PREFIX}/lib/libgmp.a
         - test -h ${PREFIX}/lib/libgmp.so
 
   - name: libgmp-dev
@@ -55,7 +53,9 @@ outputs:
         - {{ pin_subpackage("libgmp", exact=True) }}
     files:
       - include
+      - lib/libgmp.a
       - share
     test:
       commands:
         - test -f ${PREFIX}/include/gmp.h
+        - test -f ${PREFIX}/lib/libgmp.a
