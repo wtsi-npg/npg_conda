@@ -19,7 +19,7 @@ before_install:
   - docker pull $CONDA_IMAGE
 
 install:
-  - pip install jinja2 networkx packaging pyaml rfc3987 setuptools
+  - pip install jinja2 networkx packaging pyaml setuptools
   # Ensure we have a complete repository to compare diffs with other
   # branches
   - git config remote.origin.fetch +refs/heads/*:refs/remotes/origin/*

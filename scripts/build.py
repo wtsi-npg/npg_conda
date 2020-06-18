@@ -79,6 +79,7 @@ parser.add_argument("--build-channel","--build-channels",
                     "when not doing a full, local from-source build, "
                     "defaults to no extra channels",
                     type=str, nargs="*", default=[])
+
 parser.add_argument("--irods-build-image",
                     help="The Docker image used to build iRODS 4.1, "
                     "defaults to {}".format(IRODS_BUILD_IMAGE),
