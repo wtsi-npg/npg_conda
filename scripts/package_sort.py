@@ -1,6 +1,8 @@
 #!/usr/bin/env python
+#  -*- coding: utf-8 -*-
 #
-# Copyright © 2018, 2019 Genome Research Ltd. All rights reserved.
+# Copyright © 2018, 2019, 2020 Genome Research Ltd. All rights
+# reserved.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
