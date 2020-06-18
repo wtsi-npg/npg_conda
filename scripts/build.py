@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # Copyright © 2019, 2020 Genome Research Ltd. All rights reserved.
 #
@@ -23,9 +24,7 @@ import argparse
 import os
 import sys
 import subprocess
-import time
 
-import rfc3987
 
 def docker_pull(image):
     subprocess.check_output(['docker', 'pull', image])
@@ -80,7 +79,6 @@ parser.add_argument("--build-channel","--build-channels",
                     "when not doing a full, local from-source build, "
                     "defaults to no extra channels",
                     type=str, nargs="*", default=[])
-
 parser.add_argument("--irods-build-image",
                     help="The Docker image used to build iRODS 4.1, "
                     "defaults to {}".format(IRODS_BUILD_IMAGE),
@@ -142,9 +140,9 @@ for line in sys.stdin.readlines():
     build_script += \
         "conda config --set auto_update_conda False ; "
 
-    for build_channel in args.build_channel:
-        build_script += \
-            "conda config --add channels {} ; ".format(build_channel)
+    for c in args.build_channel:
+        log.info("Adding build channel {}".format(c))
+        build_script += "conda config --add channels {} ; ".format(c)
 
     build_script += \
         'cd "{}" && conda build {}'.format(args.recipes_mount, path)
@@ -172,9 +170,8 @@ for line in sys.stdin.readlines():
     else:
         log.debug('Build script: "{}"'.format(build_script))
 
+        enc = sys.getfilesystemencoding()
         try:
-            enc = sys.getfilesystemencoding()
-
             # Combine STDOUT and STDERR
             output = subprocess.run(cmd, check=True,
                                     stdout=subprocess.PIPE,
