@@ -7,8 +7,8 @@ services: docker
 
 env:
   - >
-    IRODS_IMAGE=wsinpg/ub-12.04-conda-irods-4.1:0.3
-    CONDA_IMAGE=wsinpg/ub-12.04-conda:0.3
+    IRODS_IMAGE=wsinpg/ub-12.04-conda-irods-4.1:0.9
+    CONDA_IMAGE=wsinpg/ub-12.04-conda:0.9
     CONDA_CHANNEL=https://dnap.cog.sanger.ac.uk/npg/conda/devel/generic
     COMPARE_BRANCH=origin/devel
 
