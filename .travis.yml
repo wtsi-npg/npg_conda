@@ -29,7 +29,7 @@ script:
   - mkdir -p $TRAVIS_BUILD_DIR/conda-artefacts
   - while sleep 300; do echo $SECONDS sec elapsed, still building ... ; done &
   - >
-    ./scripts/package_sort.py --changes $COMPARE_BRANCH | ./scripts/build.py
+    ./scripts/package_sort.py --changes $COMPARE_BRANCH recipes | ./scripts/build.py
     --recipes-dir $TRAVIS_BUILD_DIR
     --artefacts-dir $TRAVIS_BUILD_DIR/conda-artefacts
     --irods-build-image $IRODS_IMAGE
