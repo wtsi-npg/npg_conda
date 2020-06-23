@@ -1,0 +1,105 @@
+{% set version = "2.0.1+1da6bc5bd75b49a2f27d449afeb659cf6ec1b513" %}
+
+package:
+  name: baton-pkg
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/wtsi-npg/baton
+  license: GPL2
+  summary: Client programs and API for use with iRODS (Integrated Rule-Oriented Data System).
+
+build:
+  number: 0
+
+source:
+  - git_url: https://github.com/wtsi-npg/baton.git
+    git_rev: "1da6bc5bd75b49a2f27d449afeb659cf6ec1b513"
+    patches:
+      - selfassign.patch
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - clang
+    - clangxx
+    - autoconf
+    - automake>=1.16.2
+    - libtool
+    - make
+    - perl
+    - pkg-config
+  host:
+    - irods-dev ==4.2.7
+    - libjansson-dev
+    - libssl-dev
+    - irods-runtime==4.2.7
+  run:
+    - {{ pin_subpackage("libbaton", exact=True) }}
+    - irods-runtime ==4.2.7
+    - libjansson
+    - libssl
+
+outputs:
+  - name: baton
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - autoconf
+        - automake>=1.16.2
+        - libtool
+        - make
+        - perl
+        - pkg-config
+      host:
+        - irods-dev ==4.2.7
+        - libjansson-dev
+        - libssl-dev
+      run:
+        - {{ pin_subpackage("libbaton", exact=True) }}
+        - irods-runtime ==4.2.7
+        - libjansson
+        - libssl
+    files:
+      - bin/baton-*
+    test:
+      commands:
+        - baton-list --version
+
+  - name: libbaton
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - autoconf
+        - automake>=1.16.2
+        - libtool
+        - make
+        - perl
+        - pkg-config
+      host:
+        - irods-dev ==4.2.7
+        - libjansson-dev
+        - libssl-dev
+      run:
+        - irods-runtime ==4.2.7
+        - libjansson
+        - libssl
+    files:
+      - lib/libbaton.*
+    test:
+      commands:
+        - test -h ${PREFIX}/lib/libbaton.so
+
+  - name: libbaton-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libbaton", exact=True) }}
+    files:
+      - include/baton
+      - lib/pkgconfig/baton.pc
+    test:
+      commands:
+        - test -f ${PREFIX}/include/baton/baton.h
