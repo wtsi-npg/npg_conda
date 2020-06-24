@@ -11,7 +11,7 @@ about:
   summary: A Massively Spiffy Yet Delicately Unobtrusive Compression Library.
 
 build:
-  number: 1
+  number: 2
 
 source:
   url: https://sourceforge.mirrorservice.org/l/li/libpng/zlib/{{ version }}/zlib-{{ version }}.tar.gz
@@ -31,10 +31,9 @@ outputs:
         - {{ compiler("c") }}
         - make
     files:
-      - lib/libz.*
+      - lib/libz.so*
     test:
       commands:
-        - test -f ${PREFIX}/lib/libz.a
         - test -h ${PREFIX}/lib/libz.so
 
   - name: libz-dev
@@ -44,7 +43,9 @@ outputs:
         - {{ pin_subpackage('libz', exact=True) }}
     files:
       - include
+      - lib/libz.a
       - lib/pkgconfig/zlib.pc
     test:
       commands:
         - test -f ${PREFIX}/include/zlib.h
+        - test -f ${PREFIX}/lib/libz.a

@@ -1,0 +1,592 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c74f74a5a..83783c8cc 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,6 +1,7 @@
+ cmake_minimum_required(VERSION 3.5.0 FATAL_ERROR) #CPACK_DEBIAN_<COMPONENT>_PACKAGE_NAME
+ include(${CMAKE_SOURCE_DIR}/cmake/RequireOutOfSourceBuild.cmake)
+ 
++
+ if (NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+   set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build {Debug, Release}." FORCE)
+   message(STATUS "Setting unspecified CMAKE_BUILD_TYPE to '${CMAKE_BUILD_TYPE}'. This is the correct setting for normal builds.")
+@@ -41,10 +42,13 @@ string(REPLACE ";" ", " IRODS_PACKAGE_DEPENDENCIES_STRING "${IRODS_PACKAGE_DEPEN
+ set(CMAKE_C_COMPILER ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang)
+ set(CMAKE_CXX_COMPILER ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang++)
+ 
+-set(CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
++set(CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath-link,${CMAKE_INSTALL_PREFIX}")
+ 
+ project(irods C CXX)
+ 
++include(GNUInstallDirs)
++include_directories(AFTER ${CMAKE_INSTALL_PREFIX}/include)
++include_directories(${CMAKE_INSTALL_PREFIX}/lib)
+ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+ 
+ if (NOT CPACK_PACKAGING_INSTALL_PREFIX)
+@@ -52,15 +56,16 @@ if (NOT CPACK_PACKAGING_INSTALL_PREFIX)
+   message(STATUS "Setting unspecified CPACK_PACKAGING_INSTALL_PREFIX to '${CPACK_PACKAGING_INSTALL_PREFIX}'. This is the correct setting for normal builds.")
+ endif()
+ 
++set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+-set(CMAKE_INSTALL_RPATH ${IRODS_EXTERNALS_FULLPATH_CLANG_RUNTIME}/lib)
++set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib:${IRODS_EXTERNALS_FULLPATH_CLANG_RUNTIME}/lib)
+ 
+-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -Wl,--export-dynamic") # export-dynamic so stacktrace entries from executables have function names
+-set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -stdlib=libc++ -Wl,-z,defs")
+-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++ -Wl,-z,defs")
+-add_compile_options(-nostdinc++ -Wall -Wextra -Werror -Wno-unused-function -Wno-unused-parameter)
+-link_libraries(c++abi)
+-include_directories(${IRODS_EXTERNALS_FULLPATH_CLANG}/include/c++/v1)
++set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--export-dynamic") # export-dynamic so stacktrace entries from executables have function names
++set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,-z,defs")
++set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-z,defs")
++add_compile_options(-Wall -Wextra -Wno-unused-function -Wno-unused-parameter)
++#link_libraries(c++abi)
++#include_directories(${IRODS_EXTERNALS_FULLPATH_CLANG}/include/c++/v1)
+ 
+ find_package(Threads REQUIRED)
+ find_package(OpenSSL REQUIRED)
+@@ -85,31 +90,33 @@ set(IRODS_COMPILE_DEFINITIONS ${IRODS_PLATFORM_STRING} _LARGEFILE_SOURCE _FILE_O
+ 
+ if (NOT IRODS_LINUX_DISTRIBUTION_NAME)
+   execute_process(
+-    COMMAND "python" "-c" "from __future__ import print_function; import platform; print(platform.linux_distribution()[0].split()[0].strip().lower(), end='')"
++    COMMAND "lsb_release" "-i" "-s"
+     RESULT_VARIABLE IRODS_EXECUTE_PROCESS_RESULT_LINUX_DISTRIBUTION_NAME
+     OUTPUT_VARIABLE IRODS_LINUX_DISTRIBUTION_NAME
+     )
++  string(STRIP ${IRODS_LINUX_DISTRIBUTION_NAME} IRODS_LINUX_DISTRIBUTION_NAME)
+   if (NOT ${IRODS_EXECUTE_PROCESS_RESULT_LINUX_DISTRIBUTION_NAME} STREQUAL "0")
+     message(FATAL_ERROR "Linux platform name detection failed\n${IRODS_EXECUTE_PROCESS_RESULT_LINUX_DISTRIBUTION_NAME}")
+   endif()
+-  set(IRODS_LINUX_DISTRIBUTION_NAME ${IRODS_LINUX_DISTRIBUTION_NAME} CACHE STRING "Linux distribution name, e.g. {ubuntu, centos, ...}." FORCE)
++  set(IRODS_LINUX_DISTRIBUTION_NAME ${IRODS_LINUX_DISTRIBUTION_NAME} CACHE STRING "Linux distribution name, e.g. {Ubuntu, CentOS, ...}." FORCE)
+   message(STATUS "Setting unspecified IRODS_LINUX_DISTRIBUTION_NAME to '${IRODS_LINUX_DISTRIBUTION_NAME}'")
+ endif()
+ 
+ if (NOT IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR)
+   execute_process(
+-    COMMAND "python" "-c" "from __future__ import print_function; import platform; print(platform.linux_distribution()[1].strip().lower().split('.')[0], end='')"
++    COMMAND "lsb_release" "-r" "-s"
+     RESULT_VARIABLE IRODS_EXECUTE_PROCESS_RESULT_LINUX_DISTRIBUTION_VERSION_MAJOR
+     OUTPUT_VARIABLE IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR
+     )
++  string(STRIP ${IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR} IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR)
+   if (NOT ${IRODS_EXECUTE_PROCESS_RESULT_LINUX_DISTRIBUTION_VERSION_MAJOR} STREQUAL "0")
+     message(FATAL_ERROR "Linux platform name detection failed\n${IRODS_EXECUTE_PROCESS_RESULT_LINUX_DISTRIBUTION_VERSION_MAJOR}")
+   endif()
+-  set(IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR ${IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR} CACHE STRING "Linux distribution name, e.g. {ubuntu, centos, ...}." FORCE)
++  set(IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR ${IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR} CACHE STRING "Linux distribution name, e.g. {Ubuntu, CentOS, ...}." FORCE)
+   message(STATUS "Setting unspecified IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR to '${IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR}'")
+ endif()
+ 
+-if(IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "ubuntu" OR IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "debian")
++if(IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "Ubuntu" OR IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "Debian")
+   if (NOT IRODS_LINUX_DISTRIBUTION_VERSION_CODENAME)
+     execute_process(
+       COMMAND "lsb_release" "-s" "-c"
+@@ -126,13 +133,13 @@ if(IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "ubuntu" OR IRODS_LINUX_DISTRIBUTION_N
+ endif()
+ 
+ if (NOT CPACK_GENERATOR)
+-  if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "arch")
++	if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "Arch")
+     set(CPACK_GENERATOR TGZ CACHE STRING "CPack generator to use, e.g. {DEB, RPM, TGZ}." FORCE)
+     message(STATUS "Setting unspecified CPACK_GENERATOR to ${CPACK_GENERATOR}. This is the correct setting for normal builds.")
+-  elseif(IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "ubuntu" OR IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "debian")
++  elseif(IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "Ubuntu" OR IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "Debian")
+     set(CPACK_GENERATOR DEB CACHE STRING "CPack generator to use, e.g. {DEB, RPM, TGZ}." FORCE)
+     message(STATUS "Setting unspecified CPACK_GENERATOR to ${CPACK_GENERATOR}. This is the correct setting for normal builds.")
+-  elseif(IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "centos" OR IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "opensuse" OR IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "fedora")
++  elseif(IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "CentOS" OR IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "openSUSE project" OR IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "Fedora" OR IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "RedHatEnterpriseServer")
+     set(CPACK_GENERATOR RPM CACHE STRING "CPack generator to use, e.g. {DEB, RPM, TGZ}." FORCE)
+     message(STATUS "Setting unspecified CPACK_GENERATOR to ${CPACK_GENERATOR}. This is the correct setting for normal builds.")
+   else()
+@@ -1374,8 +1381,8 @@ set_property(TARGET genOSAuth PROPERTY CXX_STANDARD ${IRODS_CXX_STANDARD})
+ target_compile_definitions(genOSAuth PRIVATE ${IRODS_COMPILE_DEFINITIONS})
+ target_compile_options(genOSAuth PRIVATE -Wno-write-strings)
+ 
+-set(IRODS_HOME_DIRECTORY var/lib/irods)
+-set(IRODS_PLUGINS_DIRECTORY usr/lib/irods/plugins)
++set(IRODS_HOME_DIRECTORY ${CMAKE_INSTALL_LOCALSTATEDIR}/lib/irods)
++set(IRODS_PLUGINS_DIRECTORY ${CMAKE_INSTALL_LIBDIR}/irods/plugins)
+ 
+ add_subdirectory(plugins/api)
+ add_subdirectory(plugins/auth)
+@@ -1391,8 +1398,8 @@ include(${CMAKE_SOURCE_DIR}/cmake/development_library.cmake)
+ include(${CMAKE_SOURCE_DIR}/cmake/runtime_library.cmake)
+ include(${CMAKE_SOURCE_DIR}/cmake/server.cmake)
+ 
+-set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
+-set(CPACK_COMPONENT_INCLUDE_TOPLEVEL_DIRECTORY OFF)
++#set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY ON)
++#set(CPACK_COMPONENT_INCLUDE_TOPLEVEL_DIRECTORY ON)
+ set(CPACK_COMPONENTS_GROUPING IGNORE)
+ set(CPACK_PACKAGE_VERSION ${IRODS_VERSION})
+ set(CPACK_PACKAGE_VERSION_MAJOR ${IRODS_VERSION_MAJOR})
+@@ -1431,13 +1438,13 @@ set(CPACK_DEBIAN_${IRODS_PACKAGE_COMPONENT_POSTGRES_NAME_UPPERCASE}_PACKAGE_DEPE
+ set(CPACK_DEBIAN_${IRODS_PACKAGE_COMPONENT_POSTGRES_NAME_UPPERCASE}_PACKAGE_CONTROL_EXTRA "${CMAKE_SOURCE_DIR}/plugins/database/packaging/preinst;${CMAKE_SOURCE_DIR}/plugins/database/packaging/postinst;${CMAKE_SOURCE_DIR}/plugins/database/packaging/postrm;")
+ 
+ set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_POSTGRES_NAME}_PACKAGE_NAME "irods-database-plugin-postgres")
+-if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "centos")
++if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "CentOS")
+   if (IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR STREQUAL "6" OR IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR STREQUAL "7")
+     set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_POSTGRES_NAME}_PACKAGE_REQUIRES "${IRODS_PACKAGE_DEPENDENCIES_STRING}, irods-server = ${IRODS_VERSION}, unixODBC, postgresql, authd, postgresql-odbc")
+   else()
+     message(FATAL "Unsupported CentOS major version: ${IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR}")
+   endif()
+-elseif (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "opensuse")
++elseif (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "openSUSE project")
+   set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_POSTGRES_NAME}_PACKAGE_REQUIRES "${IRODS_PACKAGE_DEPENDENCIES_STRING}, irods-server = ${IRODS_VERSION}, unixODBC, postgresql, psqlODBC")
+ endif()
+ set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_POSTGRES_NAME}_PRE_INSTALL_SCRIPT_FILE "${CMAKE_SOURCE_DIR}/plugins/database/packaging/preinst")
+@@ -1446,7 +1453,7 @@ set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_POSTGRES_NAME}_POST_UNINSTALL_SCRIPT_FIL
+ 
+ # mysql
+ set(CPACK_DEBIAN_${IRODS_PACKAGE_COMPONENT_MYSQL_NAME_UPPERCASE}_PACKAGE_NAME "irods-database-plugin-mysql")
+-if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "ubuntu" AND IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR STREQUAL "16")
++if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "Ubuntu" AND IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR STREQUAL "16")
+   set(CPACK_DEBIAN_${IRODS_PACKAGE_COMPONENT_MYSQL_NAME_UPPERCASE}_PACKAGE_DEPENDS "${IRODS_PACKAGE_DEPENDENCIES_STRING}, irods-server (= ${CPACK_DEBIAN_PACKAGE_VERSION}), unixodbc, mysql-client, libc6")
+ else()
+   set(CPACK_DEBIAN_${IRODS_PACKAGE_COMPONENT_MYSQL_NAME_UPPERCASE}_PACKAGE_DEPENDS "${IRODS_PACKAGE_DEPENDENCIES_STRING}, irods-server (= ${CPACK_DEBIAN_PACKAGE_VERSION}), unixodbc, libmyodbc, mysql-client, libc6")
+@@ -1454,13 +1461,13 @@ endif()
+ set(CPACK_DEBIAN_${IRODS_PACKAGE_COMPONENT_MYSQL_NAME_UPPERCASE}_PACKAGE_CONTROL_EXTRA "${CMAKE_SOURCE_DIR}/plugins/database/packaging/preinst;${CMAKE_SOURCE_DIR}/plugins/database/packaging/postinst;${CMAKE_SOURCE_DIR}/plugins/database/packaging/postrm;")
+ 
+ set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_MYSQL_NAME}_PACKAGE_NAME "irods-database-plugin-mysql")
+-if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "centos")
++if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "CentOS")
+   if (IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR STREQUAL "6" OR IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR STREQUAL "7")
+     set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_MYSQL_NAME}_PACKAGE_REQUIRES "${IRODS_PACKAGE_DEPENDENCIES_STRING}, irods-server = ${IRODS_VERSION}, mysql, unixODBC, mysql-connector-odbc")
+   else()
+     message(FATAL "Unsupported CentOS major version: ${IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR}")
+   endif()
+-elseif (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "opensuse")
++elseif (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "openSUSE project")
+   set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_MYSQL_NAME}_PACKAGE_REQUIRES "${IRODS_PACKAGE_DEPENDENCIES_STRING}, irods-server = ${IRODS_VERSION}, mysql-client, unixODBC, MyODBC-unixODBC")
+ endif()
+ set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_MYSQL_NAME}_PRE_INSTALL_SCRIPT_FILE "${CMAKE_SOURCE_DIR}/plugins/database/packaging/preinst")
+@@ -1473,7 +1480,7 @@ set(CPACK_DEBIAN_${IRODS_PACKAGE_COMPONENT_ORACLE_NAME_UPPERCASE}_PACKAGE_DEPEND
+ set(CPACK_DEBIAN_${IRODS_PACKAGE_COMPONENT_ORACLE_NAME_UPPERCASE}_PACKAGE_CONTROL_EXTRA "${CMAKE_SOURCE_DIR}/plugins/database/packaging/preinst;${CMAKE_SOURCE_DIR}/plugins/database/packaging/postinst;${CMAKE_SOURCE_DIR}/plugins/database/packaging/postrm;")
+ 
+ set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_ORACLE_NAME}_PACKAGE_NAME "irods-database-plugin-oracle")
+-if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "centos")
++if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "CentOS")
+   if (IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR STREQUAL "6")
+     set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_ORACLE_NAME}_PACKAGE_REQUIRES "${IRODS_PACKAGE_DEPENDENCIES_STRING}, irods-server = ${IRODS_VERSION}, unixODBC")
+   elseif (IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR STREQUAL "7")
+@@ -1481,7 +1488,7 @@ if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "centos")
+   else()
+     message(FATAL "Unsupported CentOS major version: ${IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR}")
+   endif()
+-elseif (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "opensuse")
++elseif (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "openSUSE project")
+   set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_ORACLE_NAME}_PACKAGE_REQUIRES "${IRODS_PACKAGE_DEPENDENCIES_STRING}, irods-server = ${IRODS_VERSION}, unixODBC")
+ endif()
+ set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_ORACLE_NAME}_PRE_INSTALL_SCRIPT_FILE "${CMAKE_SOURCE_DIR}/plugins/database/packaging/preinst")
+@@ -1538,20 +1545,20 @@ install(
+   )
+ 
+ 
+-set(IRODS_INCLUDE_DIRS usr/include/irods)
++set(IRODS_INCLUDE_DIRS include/irods)
+ 
+ include(CMakePackageConfigHelpers)
+ configure_package_config_file(
+   ${CMAKE_SOURCE_DIR}/cmake/IRODSConfig.cmake.not_yet_installed.in
+   ${CMAKE_BINARY_DIR}/IRODSConfig.cmake.not_yet_installed # suffix prevents cmake's find_package() from using this copy of the file
+-  INSTALL_DESTINATION usr/lib/irods/cmake
++  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/irods/cmake
+   PATH_VARS IRODS_INCLUDE_DIRS
+   )
+ 
+ install(
+   FILES
+   ${CMAKE_BINARY_DIR}/IRODSConfig.cmake.not_yet_installed
+-  DESTINATION usr/lib/irods/cmake
++  DESTINATION ${CMAKE_INSTALL_LIBDIR}/irods/cmake
+   COMPONENT ${IRODS_PACKAGE_COMPONENT_DEVELOPMENT_NAME}
+   RENAME IRODSConfig.cmake
+   )
+@@ -1565,7 +1572,7 @@ write_basic_package_version_file(
+ install(
+   FILES
+   ${CMAKE_BINARY_DIR}/IRODSConfigVersion.cmake
+-  DESTINATION usr/lib/irods/cmake
++  DESTINATION ${CMAKE_INSTALL_LIBDIR}/irods/cmake
+   COMPONENT ${IRODS_PACKAGE_COMPONENT_DEVELOPMENT_NAME}
+   )
+ 
+diff --git a/cmake/development_library.cmake b/cmake/development_library.cmake
+index ac695fdfc..fe176dec0 100644
+--- a/cmake/development_library.cmake
++++ b/cmake/development_library.cmake
+@@ -5,7 +5,7 @@ install(
+   TARGETS
+     RodsAPIs
+   ARCHIVE
+-    DESTINATION usr/lib
++    DESTINATION ${CMAKE_INSTALL_LIBDIR}
+     COMPONENT ${IRODS_PACKAGE_COMPONENT_DEVELOPMENT_NAME}
+   )
+ 
+@@ -551,7 +551,7 @@ install(
+   ${IRODS_SERVER_ICAT_INCLUDE_HEADERS}
+   ${IRODS_SERVER_RE_INCLUDE_HEADERS}
+   ${IRODS_SERVER_DRIVERS_INCLUDE_HEADERS}
+-  DESTINATION usr/include/irods
++  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/irods
+   COMPONENT ${IRODS_PACKAGE_COMPONENT_DEVELOPMENT_NAME}
+   )
+ 
+@@ -566,7 +566,7 @@ install(
+ # NOTE: The trailing slash in the "DIRECTORY" argument is significant. DO NOT REMOVE IT!
+ install(
+   DIRECTORY ${CMAKE_SOURCE_DIR}/lib/filesystem/include/
+-  DESTINATION usr/include/irods
++  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/irods
+   COMPONENT ${IRODS_PACKAGE_COMPONENT_DEVELOPMENT_NAME}
+   FILES_MATCHING
+     PATTERN */filesystem.hpp
+@@ -595,7 +595,7 @@ install(
+ # NOTE: The trailing slash in the "DIRECTORY" argument is significant. DO NOT REMOVE IT!
+ install(
+   DIRECTORY ${CMAKE_SOURCE_DIR}/lib/core/include/transport/
+-  DESTINATION usr/include/irods/transport
++  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/irods/transport
+   COMPONENT ${IRODS_PACKAGE_COMPONENT_DEVELOPMENT_NAME}
+   FILES_MATCHING
+     PATTERN */transport/transport.hpp
+@@ -606,7 +606,7 @@ install(
+ install(
+   EXPORT
+   IRODSTargets
+-  DESTINATION usr/lib/irods/cmake
++  DESTINATION ${CMAKE_INSTALL_LIBDIR}/irods/cmake
+   COMPONENT ${IRODS_PACKAGE_COMPONENT_DEVELOPMENT_NAME}
+   )
+ 
+diff --git a/cmake/runtime_library.cmake b/cmake/runtime_library.cmake
+index 408c27fe0..45d60f58a 100644
+--- a/cmake/runtime_library.cmake
++++ b/cmake/runtime_library.cmake
+@@ -6,7 +6,7 @@ install(
+   irods_server
+   EXPORT IRODSTargets
+   LIBRARY
+-  DESTINATION usr/lib
++  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+   COMPONENT ${IRODS_PACKAGE_COMPONENT_RUNTIME_NAME}
+   )
+ 
+diff --git a/cmake/server.cmake b/cmake/server.cmake
+index 4a032ecd9..8efa96a0c 100644
+--- a/cmake/server.cmake
++++ b/cmake/server.cmake
+@@ -8,7 +8,7 @@ install(
+   irodsXmsgServer
+   hostname_resolves_to_local_address
+   RUNTIME
+-  DESTINATION usr/sbin
++  DESTINATION ${CMAKE_INSTALL_SBINDIR}
+   COMPONENT ${IRODS_PACKAGE_COMPONENT_SERVER_NAME}
+   )
+ 
+@@ -26,7 +26,7 @@ install(
+ 
+ install(
+   DIRECTORY
+-  DESTINATION etc/irods
++  DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/irods
+   COMPONENT ${IRODS_PACKAGE_COMPONENT_SERVER_NAME}
+   )
+ 
+@@ -60,12 +60,12 @@ install(
+ install(
+   FILES
+   ${CMAKE_SOURCE_DIR}/packaging/irods
+-  DESTINATION etc/init.d
++  DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/init.d
+   COMPONENT ${IRODS_PACKAGE_COMPONENT_SERVER_NAME}
+   PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+   )
+ 
+-set(IRODS_DOC_DIR usr/share/doc/irods)
++set(IRODS_DOC_DIR ${CMAKE_INSTALL_DOCDIR})
+ 
+ install(
+   FILES
+@@ -145,7 +145,7 @@ install(
+   TARGETS
+   irodsPamAuthCheck
+   RUNTIME
+-  DESTINATION usr/sbin
++  DESTINATION ${CMAKE_INSTALL_SBINDIR}
+   COMPONENT ${IRODS_PACKAGE_COMPONENT_SERVER_NAME}
+   PERMISSIONS SETUID OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+   )
+@@ -154,7 +154,7 @@ install(
+   TARGETS
+   genOSAuth
+   RUNTIME
+-  DESTINATION var/lib/irods/clients/bin
++  DESTINATION ${CMAKE_INSTALL_LOCALSTATEDIR}/lib/irods/clients/bin
+   COMPONENT ${IRODS_PACKAGE_COMPONENT_SERVER_NAME}
+   )
+ 
+@@ -182,9 +182,9 @@ endif()
+ 
+ 
+ set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_SERVER_NAME}_PACKAGE_NAME "irods-server")
+-if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "centos")
++if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "CentOS")
+   set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_SERVER_NAME}_PACKAGE_REQUIRES "${IRODS_PACKAGE_DEPENDENCIES_STRING}, irods-runtime = ${IRODS_VERSION}, irods-icommands = ${IRODS_VERSION}, openssl, python, python-psutil, python-requests, python-jsonschema")
+-elseif (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "opensuse")
++elseif (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "openSUSE project")
+   set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_SERVER_NAME}_PACKAGE_REQUIRES "${IRODS_PACKAGE_DEPENDENCIES_STRING}, irods-runtime = ${IRODS_VERSION}, irods-icommands = ${IRODS_VERSION}, libopenssl1_0_0, python, openssl, python-psutil, python-requests, python-jsonschema")
+ endif()
+ set(CPACK_RPM_${IRODS_PACKAGE_COMPONENT_SERVER_NAME}_PRE_INSTALL_SCRIPT_FILE "${CMAKE_SOURCE_DIR}/preinst")
+diff --git a/lib/core/include/connection_pool.hpp b/lib/core/include/connection_pool.hpp
+index aaaf4a082..d7938710e 100644
+--- a/lib/core/include/connection_pool.hpp
++++ b/lib/core/include/connection_pool.hpp
+@@ -8,6 +8,7 @@
+ #include <mutex>
+ #include <atomic>
+ #include <string>
++#include <functional>
+ 
+ namespace irods
+ {
+diff --git a/lib/core/include/dstream.hpp b/lib/core/include/dstream.hpp
+index 6348522b8..354787ac3 100644
+--- a/lib/core/include/dstream.hpp
++++ b/lib/core/include/dstream.hpp
+@@ -11,6 +11,7 @@
+ #include <stdexcept>
+ #include <algorithm>
+ #include <utility>
++#include <cstring>
+ 
+ namespace irods {
+ namespace experimental {
+diff --git a/lib/core/src/irods_default_paths.cpp b/lib/core/src/irods_default_paths.cpp
+index 051658f09..ad2acc42a 100644
+--- a/lib/core/src/irods_default_paths.cpp
++++ b/lib/core/src/irods_default_paths.cpp
+@@ -18,7 +18,7 @@ namespace irods {
+         try {
+             boost::filesystem::path path{dl_info.dli_fname};
+             path = boost::filesystem::canonical(path);
+-            path.remove_filename().remove_filename().remove_filename(); // Removes filename and the two directories (usr and lib) between libirods_common.so and base of irods install
++            path.remove_filename().remove_filename(); // Removes filename and the lib directory between libirods_common.so and base of irods install
+             return path;
+         } catch(const boost::filesystem::filesystem_error& e) {
+             THROW(-1, e.what());
+@@ -42,7 +42,7 @@ namespace irods {
+     boost::filesystem::path
+     get_irods_default_plugin_directory() {
+         boost::filesystem::path path{get_irods_root_directory()};
+-        path.append("usr").append("lib").append("irods").append("plugins");
++        path.append("lib").append("irods").append("plugins");
+         return path;
+     }
+ }
+diff --git a/plugins/database/CMakeLists.txt b/plugins/database/CMakeLists.txt
+index 7efb97322..28e801138 100644
+--- a/plugins/database/CMakeLists.txt
++++ b/plugins/database/CMakeLists.txt
+@@ -50,7 +50,7 @@ foreach(PLUGIN ${IRODS_DATABASE_PLUGINS})
+ 
+   add_custom_command(
+     OUTPUT ${CMAKE_BINARY_DIR}/icatSysTables_${PLUGIN}.sql
+-    COMMAND cpp -E -P -D${PLUGIN} ${CMAKE_BINARY_DIR}/plugins/database/src/icatSysTables.sql.pp ${CMAKE_BINARY_DIR}/icatSysTables_${PLUGIN}.sql
++    COMMAND ${TOOL_PREFIX}cpp -E -P -D${PLUGIN} ${CMAKE_BINARY_DIR}/plugins/database/src/icatSysTables.sql.pp ${CMAKE_BINARY_DIR}/icatSysTables_${PLUGIN}.sql
+     MAIN_DEPENDENCY ${CMAKE_BINARY_DIR}/plugins/database/src/icatSysTables.sql.pp
+     )
+   add_custom_target(IRODS_PHONY_TARGET_icatSysTables_${PLUGIN}.sql ALL DEPENDS ${CMAKE_BINARY_DIR}/icatSysTables_${PLUGIN}.sql) # Forces execution of custom_command
+diff --git a/unit_tests/cmake/test_config/irods_connection_pool.cmake b/unit_tests/cmake/test_config/irods_connection_pool.cmake
+index 9d79f8313..982e68ee6 100644
+--- a/unit_tests/cmake/test_config/irods_connection_pool.cmake
++++ b/unit_tests/cmake/test_config/irods_connection_pool.cmake
+@@ -14,4 +14,4 @@ set(IRODS_TEST_INCLUDE_PATH ${CMAKE_BINARY_DIR}/lib/core/include
+  
+ set(IRODS_TEST_LINK_LIBRARIES irods_common
+                               irods_client
+-                              c++abi)
++                              )
+diff --git a/unit_tests/cmake/test_config/irods_dstream.cmake b/unit_tests/cmake/test_config/irods_dstream.cmake
+index ea4610924..a21af3b31 100644
+--- a/unit_tests/cmake/test_config/irods_dstream.cmake
++++ b/unit_tests/cmake/test_config/irods_dstream.cmake
+@@ -16,4 +16,4 @@ set(IRODS_TEST_INCLUDE_PATH ${CMAKE_BINARY_DIR}/lib/core/include
+  
+ set(IRODS_TEST_LINK_LIBRARIES irods_common
+                               irods_client
+-                              c++abi)
++                              )
+diff --git a/unit_tests/cmake/test_config/irods_filesystem.cmake b/unit_tests/cmake/test_config/irods_filesystem.cmake
+index 755137edb..9e4a4da1c 100644
+--- a/unit_tests/cmake/test_config/irods_filesystem.cmake
++++ b/unit_tests/cmake/test_config/irods_filesystem.cmake
+@@ -21,4 +21,4 @@ set(IRODS_TEST_LINK_LIBRARIES irods_common
+                               irods_plugin_dependencies
+                               ${IRODS_EXTERNALS_FULLPATH_BOOST}/lib/libboost_filesystem.so
+                               ${IRODS_EXTERNALS_FULLPATH_BOOST}/lib/libboost_system.so
+-                              c++abi)
++                              )
+diff --git a/unit_tests/cmake/test_config/irods_hierarchy_parser.cmake b/unit_tests/cmake/test_config/irods_hierarchy_parser.cmake
+index e2fb9fef3..7d11624fa 100644
+--- a/unit_tests/cmake/test_config/irods_hierarchy_parser.cmake
++++ b/unit_tests/cmake/test_config/irods_hierarchy_parser.cmake
+@@ -8,5 +8,4 @@ set(IRODS_TEST_INCLUDE_PATH ${CMAKE_BINARY_DIR}/lib/core/include
+                             ${IRODS_EXTERNALS_FULLPATH_CATCH2}/include
+                             ${IRODS_EXTERNALS_FULLPATH_BOOST}/include)
+  
+-set(IRODS_TEST_LINK_LIBRARIES irods_common
+-                              c++abi)
++set(IRODS_TEST_LINK_LIBRARIES irods_common)
+diff --git a/unit_tests/cmake/test_config/irods_linked_list_iterator.cmake b/unit_tests/cmake/test_config/irods_linked_list_iterator.cmake
+index e243cb604..d71f9799a 100644
+--- a/unit_tests/cmake/test_config/irods_linked_list_iterator.cmake
++++ b/unit_tests/cmake/test_config/irods_linked_list_iterator.cmake
+@@ -15,4 +15,4 @@ set(IRODS_TEST_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/lib/api/include
+  
+ set(IRODS_TEST_LINK_LIBRARIES irods_server
+                               ${IRODS_EXTERNALS_FULLPATH_BOOST}/lib/libboost_system.so
+-                              c++abi)
++                              )
+diff --git a/unit_tests/cmake/test_config/irods_logical_paths_and_special_characters.cmake b/unit_tests/cmake/test_config/irods_logical_paths_and_special_characters.cmake
+index b7c69b889..b3b93e5f9 100644
+--- a/unit_tests/cmake/test_config/irods_logical_paths_and_special_characters.cmake
++++ b/unit_tests/cmake/test_config/irods_logical_paths_and_special_characters.cmake
+@@ -14,4 +14,4 @@ set(IRODS_TEST_INCLUDE_PATH ${CMAKE_BINARY_DIR}/lib/core/include
+  
+ set(IRODS_TEST_LINK_LIBRARIES irods_common
+                               irods_client
+-                              c++abi)
++                              )
+diff --git a/unit_tests/cmake/test_config/irods_query_builder.cmake b/unit_tests/cmake/test_config/irods_query_builder.cmake
+index f81431f80..d077ff330 100644
+--- a/unit_tests/cmake/test_config/irods_query_builder.cmake
++++ b/unit_tests/cmake/test_config/irods_query_builder.cmake
+@@ -14,4 +14,4 @@ set(IRODS_TEST_INCLUDE_PATH ${CMAKE_BINARY_DIR}/lib/core/include
+  
+ set(IRODS_TEST_LINK_LIBRARIES irods_common
+                               irods_client
+-                              c++abi)
++                              )
+diff --git a/unit_tests/src/filesystem/test_filesystem.cpp b/unit_tests/src/filesystem/test_filesystem.cpp
+index 9bc6901c9..e80b1b341 100644
+--- a/unit_tests/src/filesystem/test_filesystem.cpp
++++ b/unit_tests/src/filesystem/test_filesystem.cpp
+@@ -12,7 +12,7 @@
+ //   - https://en.cppreference.com/w/Cppreference:Copyright/GDFL
+ //
+ 
+-#include "catch.hpp"
++#include "catch2/catch.hpp"
+ 
+ #include "filesystem/filesystem.hpp"
+ #include "rodsClient.h"
+diff --git a/unit_tests/src/filesystem/test_path.cpp b/unit_tests/src/filesystem/test_path.cpp
+index 1b2f7d8a5..589db86d1 100644
+--- a/unit_tests/src/filesystem/test_path.cpp
++++ b/unit_tests/src/filesystem/test_path.cpp
+@@ -12,7 +12,7 @@
+ //   - https://en.cppreference.com/w/Cppreference:Copyright/GDFL
+ //
+ 
+-#include "catch.hpp"
++#include "catch2/catch.hpp"
+ 
+ #include "filesystem/path.hpp"
+ 
+@@ -20,6 +20,7 @@
+ #include <vector>
+ #include <utility>
+ #include <algorithm>
++#include <cstring>
+ 
+ namespace fs = irods::experimental::filesystem;
+ 
+diff --git a/unit_tests/src/irods_error_enum_matcher.hpp b/unit_tests/src/irods_error_enum_matcher.hpp
+index c24eb04c9..d2a22ecfc 100644
+--- a/unit_tests/src/irods_error_enum_matcher.hpp
++++ b/unit_tests/src/irods_error_enum_matcher.hpp
+@@ -1,4 +1,4 @@
+-#include "catch.hpp"
++#include "catch2/catch.hpp"
+ 
+ #include "rodsErrorTable.h"
+ #include <boost/format.hpp>
+diff --git a/unit_tests/src/main.cpp b/unit_tests/src/main.cpp
+index 0c7c351f4..62bf7476a 100644
+--- a/unit_tests/src/main.cpp
++++ b/unit_tests/src/main.cpp
+@@ -1,2 +1,2 @@
+ #define CATCH_CONFIG_MAIN
+-#include "catch.hpp"
++#include "catch2/catch.hpp"
+diff --git a/unit_tests/src/test_connection_pool.cpp b/unit_tests/src/test_connection_pool.cpp
+index 9b65ded65..e4ee019fe 100644
+--- a/unit_tests/src/test_connection_pool.cpp
++++ b/unit_tests/src/test_connection_pool.cpp
+@@ -1,4 +1,4 @@
+-#include "catch.hpp"
++#include "catch2/catch.hpp"
+ 
+ #include "getRodsEnv.h"
+ #include "connection_pool.hpp"
+diff --git a/unit_tests/src/test_dstream.cpp b/unit_tests/src/test_dstream.cpp
+index 99845e626..1a8d065cb 100644
+--- a/unit_tests/src/test_dstream.cpp
++++ b/unit_tests/src/test_dstream.cpp
+@@ -1,4 +1,4 @@
+-#include "catch.hpp"
++#include "catch2/catch.hpp"
+ 
+ #include "rodsClient.h"
+ #include "connection_pool.hpp"
+diff --git a/unit_tests/src/test_irods_hierarchy_parser.cpp b/unit_tests/src/test_irods_hierarchy_parser.cpp
+index 1b54727ec..5545cab02 100644
+--- a/unit_tests/src/test_irods_hierarchy_parser.cpp
++++ b/unit_tests/src/test_irods_hierarchy_parser.cpp
+@@ -1,4 +1,4 @@
+-#include "catch.hpp"
++#include "catch2/catch.hpp"
+ 
+ #include "irods_error_enum_matcher.hpp"
+ #include "irods_exception.hpp"
+diff --git a/unit_tests/src/test_irods_linked_list_iterator.cpp b/unit_tests/src/test_irods_linked_list_iterator.cpp
+index a3ada8758..9fcc3729f 100644
+--- a/unit_tests/src/test_irods_linked_list_iterator.cpp
++++ b/unit_tests/src/test_irods_linked_list_iterator.cpp
+@@ -1,4 +1,4 @@
+-#include "catch.hpp"
++#include "catch2/catch.hpp"
+ 
+ #include "irods_linked_list_iterator.hpp"
+ #include "objInfo.h"
+diff --git a/unit_tests/src/test_logical_paths_and_special_characters.cpp b/unit_tests/src/test_logical_paths_and_special_characters.cpp
+index b2a39f622..e2459b15e 100644
+--- a/unit_tests/src/test_logical_paths_and_special_characters.cpp
++++ b/unit_tests/src/test_logical_paths_and_special_characters.cpp
+@@ -1,4 +1,4 @@
+-#include "catch.hpp"
++#include "catch2/catch.hpp"
+ 
+ #include "getRodsEnv.h"
+ #include "rodsPath.h"
+diff --git a/unit_tests/src/test_query_builder.cpp b/unit_tests/src/test_query_builder.cpp
+index e1f41558d..0b2f76a04 100644
+--- a/unit_tests/src/test_query_builder.cpp
++++ b/unit_tests/src/test_query_builder.cpp
+@@ -1,4 +1,4 @@
+-#include "catch.hpp"
++#include "catch2/catch.hpp"
+ 
+ #include "getRodsEnv.h"
+ #include "rcConnect.h"

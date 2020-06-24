@@ -75,14 +75,14 @@ parser.add_argument("--artefacts-mount",
                     "defaults to {}".format(DEFAULT_ARTEFACTS_MOUNT),
                     type=str, nargs="?", default=DEFAULT_ARTEFACTS_MOUNT)
 
-parser.add_argument("--build-channel",
-                    help="The Conda channel from which to get dependencies "
+parser.add_argument("--build-channel","--build-channels",
+                    help="The Conda channels from which to get dependencies "
                     "when not doing a full, local from-source build, "
-                    "defaults to none (forcing a local build)",
-                    type=str, nargs="?", default=None)
+                    "defaults to no extra channels",
+                    type=str, nargs="*", default=[])
 
 parser.add_argument("--irods-build-image",
-                    help="The Docker image used to build iRODS, "
+                    help="The Docker image used to build iRODS 4.1, "
                     "defaults to {}".format(IRODS_BUILD_IMAGE),
                     type=str, nargs="?", default=IRODS_BUILD_IMAGE)
 parser.add_argument("--conda-build-image",
@@ -122,13 +122,6 @@ elif args.verbose or args.dry_run:
     level = log.INFO
 log.basicConfig(level=level)
 
-if args.build_channel:
-    try:
-        rfc3987.parse(args.build_channel, rule='URI')
-    except ValueError as e:
-        log.error("Invalid --build-channel URL '{}'".format(args.build_channel))
-        exit(1)
-
 docker_pull(args.conda_build_image)
 
 fail = False
@@ -139,7 +132,7 @@ for line in sys.stdin.readlines():
     log.info("Working on %s %s %s", name, version, path)
 
     build_image = args.conda_build_image
-    if name == "irods":
+    if name == "irods" and version[:4]=="4.1.":
         build_image = args.irods_build_image
         log.info("Using image %s", build_image)
         docker_pull(args.irods_build_image)
@@ -149,9 +142,9 @@ for line in sys.stdin.readlines():
     build_script += \
         "conda config --set auto_update_conda False ; "
 
-    if args.build_channel:
+    for build_channel in args.build_channel:
         build_script += \
-            "conda config --add channels {} ; ".format(args.build_channel)
+            "conda config --add channels {} ; ".format(build_channel)
 
     build_script += \
         'cd "{}" && conda build {}'.format(args.recipes_mount, path)
