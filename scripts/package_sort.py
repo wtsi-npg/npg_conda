@@ -1,6 +1,8 @@
 #!/usr/bin/env python
+#  -*- coding: utf-8 -*-
 #
-# Copyright © 2018, 2019 Genome Research Ltd. All rights reserved.
+# Copyright © 2018, 2019, 2020 Genome Research Ltd. All rights
+# reserved.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -286,6 +288,7 @@ def build_dependency_graph(graph, root_node,
                 reqs = pkg_reqs[ptup]
                 log.debug("%s requires %s", ptup, reqs)
 
+                num_reqs_located = 0
                 for (req_pkg, spec) in reqs:
                     # Is the required package one of the packages we
                     # are building?
@@ -293,8 +296,8 @@ def build_dependency_graph(graph, root_node,
                         v = max(find_package_version(req_pkg,
                                                      pkg_versions,
                                                      spec=spec))
-                        rtup = (req_pkg, v)
-                        graph.add_edge(rtup, ptup)
+                        graph.add_edge((req_pkg, v), ptup)
+                        num_reqs_located += 1
 
                         log.debug("Need to build package "
                                   "%s %s of candidates %s",
@@ -309,8 +312,8 @@ def build_dependency_graph(graph, root_node,
                             v = max(find_package_version(parent_pkg,
                                                          pkg_versions,
                                                          spec=spec))
-                            rtup = (parent_pkg, v)
-                            graph.add_edge(rtup, ptup)
+                            graph.add_edge((parent_pkg, v), ptup)
+                            num_reqs_located += 1
 
                             log.debug("Need to build (containing) package "
                                       "%s %s of candidates %s",
@@ -318,6 +321,10 @@ def build_dependency_graph(graph, root_node,
                         else:
                             log.warning("Can't find required package %s",
                                         req_pkg)
+
+                    if num_reqs_located == 0:
+                        log.debug("%s has no locatable requirements", ptup)
+                        graph.add_edge(ptup, root_node)
             else:
                 log.debug("%s has no requirements", ptup)
                 graph.add_edge(ptup, root_node)
