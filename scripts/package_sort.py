@@ -293,15 +293,19 @@ def build_dependency_graph(graph, root_node,
                     # Is the required package one of the packages we
                     # are building?
                     if req_pkg in pkg_versions:
-                        v = max(find_package_version(req_pkg,
-                                                     pkg_versions,
-                                                     spec=spec))
-                        graph.add_edge((req_pkg, v), ptup)
-                        num_reqs_located += 1
+                        v = find_package_version(req_pkg, pkg_versions,
+                                                 spec=spec)
+                        if v:
+                            m = max(v)
+                            graph.add_edge((req_pkg, m), ptup)
+                            num_reqs_located += 1
 
-                        log.debug("Need to build package "
-                                  "%s %s of candidates %s",
-                                  req_pkg, v, pkg_versions[req_pkg])
+                            log.debug("Need to build package "
+                                      "%s %s of candidates %s",
+                                      req_pkg, m, pkg_versions[req_pkg])
+                        else:
+                            log.warning("Can't find version for %s required "
+                                        "by %s", req_pkg, parent_pkg)
                     # Is the required package one of the sub-packages
                     # of the packages we are building?
                     else:
@@ -309,15 +313,19 @@ def build_dependency_graph(graph, root_node,
                             # Require the parent package rather than
                             # the sub-package
                             parent_pkg = pkg_outputs[req_pkg]
-                            v = max(find_package_version(parent_pkg,
-                                                         pkg_versions,
-                                                         spec=spec))
-                            graph.add_edge((parent_pkg, v), ptup)
-                            num_reqs_located += 1
+                            v = find_package_version(parent_pkg, pkg_versions,
+                                                     spec=spec)
+                            if v:
+                                m = max(v)
+                                graph.add_edge((parent_pkg, m), ptup)
+                                num_reqs_located += 1
 
-                            log.debug("Need to build (containing) package "
-                                      "%s %s of candidates %s",
-                                      parent_pkg, v, pkg_versions[parent_pkg])
+                                log.debug("Need to build (containing) package "
+                                          "%s %s of candidates %s",
+                                          parent_pkg, m, pkg_versions[parent_pkg])
+                            else:
+                                log.warning("Can't find version for %s "
+                                            "required by %s", req_pkg, parent_pkg)
                         else:
                             log.warning("Can't find required package %s",
                                         req_pkg)
