@@ -374,14 +374,24 @@ parser.add_argument("recipes",
                     type=str, nargs="?", default=".")
 
 parser.add_argument("-p", "--package", type=str,
-                    help="Report dependents (i.e. descendants) of the "
-                    "specified package")
+                    help="Report dependency relationships for the "
+                    "specified package. Defaults to reporting the packages "
+                    "that the specified package depends on. See --provides")
 parser.add_argument("-v", "--version", type=str,
-                    help="Report dependents (i.e. descendants) of the "
-                    "specified package version")
+                    help="Report dependency relationships of the "
+                    "specified package version. Defaults to reporting the "
+                    "packages that the specified package depends on. "
+                    "See --provides")
 parser.add_argument("-c", "--changes", type=str,
                     help="Report only on recipes that have changed "
                     "relative to another branch (defaults to 'master'")
+parser.add_argument("--provides",
+                    help="When reporting dependency relationships with "
+                    "-p|--package and -v|--version, report the packages "
+                    "to which the specified package provides for. i.e. those "
+                    "that are dependencies of the package, rather than those "
+                    "it depends on",
+                    action="store_true")
 
 parser.add_argument("--debug",
                     help="Enable DEBUG level logging to STDERR",
@@ -413,8 +423,12 @@ if args.package and args.version:
     # Print a subgraph for a specific package and version
     pv = (args.package, parse(args.version))
     if pv in graph:
-        for node in nx.topological_sort(
-                nx.subgraph(graph, nx.ancestors(graph, pv))):
+        if args.provides:
+            subgraph = nx.subgraph(graph, nx.descendants(graph, pv))
+        else:
+            subgraph = nx.subgraph(graph, nx.ancestors(graph, pv))
+
+        for node in nx.topological_sort(subgraph):
             print_node(node, pkg_recipes)
     else:
         raise ValueError("Package {} version {} is not present "
