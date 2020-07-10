@@ -19,6 +19,8 @@
 #
 # @author Keith James <kdj@sanger.ac.uk>
 
+from typing import Tuple, List, Dict, Any
+
 from packaging.version import Version, LegacyVersion, parse
 from packaging.specifiers import SpecifierSet
 
@@ -30,28 +32,23 @@ import argparse
 import functools
 import os
 import subprocess
-import sys
 import yaml
 
 
-def parse_requirement(req_str):
-    """
-    Parse a software version requirement string conforming to the Conda
-    match specification (Note: the OR operator '|' is not supported
-    currently).
+def parse_requirement(req_str: str) -> Tuple[str, SpecifierSet]:
+    """Parses a software version requirement string conforming to the Conda
+    match specification (Note: the OR operator '|' is not supported currently).
 
     e.g gcc >=4.6,<7.0
 
-    The PEP440 package name and version specifier returned may be used
-    to identify software that will fulfill the requirement described
-    by the argument.
+    The tuple of PEP440 package name and version specifier returned may be used
+    to identify software that will fulfill the requirement described by the
+    argument.
 
-    :param req_str str: The requirement Conda match specification.
+    Args:
+        req_str: The requirement Conda match specification.
 
-    :returns: The required package name, a combined required version
-    specifier.
-
-    :rtype: str, packaging.specifiers.SpecifierSet
+    Returns: Tuple[str, SpecifierSet]
     """
     parts = list(map(str.strip, req_str.split()))
     pkg_name = parts[0]
@@ -65,16 +62,14 @@ def parse_requirement(req_str):
     return pkg_name, spec_set
 
 
-def find_recipe_files(dir):
-    """
-    Return the absolute paths of Conda recipe meta.yaml files in a
-    directory, recursively.
+def find_recipe_files(dir: str) -> List[str]:
+    """Returns the absolute paths of Conda recipe meta.yaml files in a
+     directory, recursively.
 
-    :param dir str: The directory to search.
+    Args:
+        dir: The directory to search.
 
-    :returns: Paths of recipe files.
-
-    :rtype: list str
+    Returns: List[str]
     """
     recipe_files = []
     for dir, _, files in os.walk(base):
@@ -84,18 +79,15 @@ def find_recipe_files(dir):
     return recipe_files
 
 
-def find_changed_recipe_files(dir, branch="master"):
-    """
-    Return the paths of Conda recipe meta.yaml files where something in
-    the recipe directory has changed relative to another git branch.
+def find_changed_recipe_files(dir: str, branch="master") -> List[str]:
+    """Returns the paths of Conda recipe meta.yaml files where something in the
+    recipe directory has changed relative to another git branch.
 
-    :param dir str: The directory to search.
+    Args:
+        dir: The directory to search.
+        branch: The git branch to compare with.
 
-    :param branch str: The git branch to compare with.
-
-    :returns: Paths of recipe files.
-
-    :rtype: list str
+    Returns: List[str]
     """
     try:
         out = subprocess.check_output(["git", "diff", "--name-only",
@@ -111,24 +103,22 @@ def find_changed_recipe_files(dir, branch="master"):
     recipe_files = []
     for dir in dirs:
         recipe = os.path.join(dir, "meta.yaml")
-        if (os.path.isfile(recipe)):
+        if os.path.isfile(recipe):
             recipe_files.append(recipe)
 
     log.info("Recipes changed relative to %s: %s", branch, recipe_files)
     return recipe_files
 
 
-def make_template_env(recipe_files):
-    """
-    Make a new Jinjer2 template environment by loading Conda recipes
-    as templates. Add some dummy template expansion functions so that
-    we don't need the Conda itself to process the recipes.
+def make_template_env(recipe_files: List[str]) -> jj.Environment:
+    """Makes a new Jinja2 template environment by loading Conda recipes as
+    templates. Add some dummy template expansion functions so that we don't
+    need the Conda itself to process the recipes.
 
-    :param recipe_files list str: Paths of recipe files.
+    Args:
+        recipe_files: Paths of recipe files.
 
-    :returns: A Jinja2 Environment
-
-    :rtype: jinja2.Environment
+    Returns: jinja2.Environment
     """
     templates = {}
     for f in recipe_files:
@@ -149,48 +139,39 @@ def make_template_env(recipe_files):
     return template_env
 
 
-def render_recipe(recipe_file, template_env):
-    """
-    Render a Conda recipe file (which contains Jinja2 templates) into
-    a valid YAML document so that we can parse it. Return the YAML
-    document.
+def render_recipe(recipe_file: str, template_env: jj.Environment) -> str:
+    """Renders a Conda recipe file (which contains Jinja2 templates) into
+    a valid YAML document so that we can parse it. Return the YAML document.
 
-    :param recipe_file str: The recipe file path.
+    Args:
+        recipe_file: The recipe file path.
+        template_env: The Jinja2 template environment to use.
 
-    :param template_env jinja2.Environment: The Jinja2 template
-    environment to use.
-
-    :returns: YAML document.
-
-    :rtype: str
+    Returns: str
     """
     log.info("Working on %s", recipe_file)
     template = template_env.get_template(recipe_file)
     return template.render()
 
 
-def find_package_version(req_pkg, pkg_index, spec=None):
-    """
-    Return any available versions of a package within a range, or all
+def find_package_version(req_pkg: str,
+                         pkg_index: Dict[str, List[Version]],
+                         spec=None) -> List[Version]:
+    """Returns any available versions of a package within a range, or all
     versions if no range limit is supplied.
 
-    :param req_pkg str: A package name.
+    Args:
+        req_pkg: A package name.
+        pkg_index: A mapping of package name to list of available versions.
+        spec: A specifier for acceptable versions.
 
-    :param pkg_index dict: A mapping of package name to liost of
-    availble versions.
-
-    :param spec packaging.specifiers.Specifier: A specifier for
-    acceptable versions.
-
-    :returns: A list of matching versions.
-
-    :rtype: list
+    Returns: List[Version]
     """
     candidates = pkg_index[req_pkg]
     return list(spec.filter(candidates)) if spec else candidates
 
 
-def load_recipes(recipe_files):
+def load_recipes(recipe_files: List[str]):
     template_env = make_template_env(recipe_files)
 
     # Append to a dict list value
@@ -205,7 +186,7 @@ def load_recipes(recipe_files):
     # use to build a package.
     pkg_recipes = {}
 
-    # This dict contains lists of Versions of package.
+    # This dict contains lists of Versions of a package.
     #
     # Key: package name
     #
@@ -213,7 +194,7 @@ def load_recipes(recipe_files):
     pkg_versions = {}
 
     # This dict describes the dependencies of a specific package
-    # Version.  Dependencies may change from one version of a package
+    # Version. Dependencies may change from one version of a package
     # to another.
     #
     # Key: (package name, Version) tuple
@@ -273,8 +254,12 @@ def load_recipes(recipe_files):
     return pkg_recipes, pkg_versions, pkg_requirements, pkg_outputs
 
 
-def build_dependency_graph(graph, root_node,
-                           pkg_versions, pkg_reqs, pkg_outputs):
+def build_dependency_graph(graph: nx.DiGraph,
+                           root_node: Tuple[str, Version],
+                           pkg_versions: Dict[str, List[Version]],
+                           pkg_reqs: Dict[Tuple[str, Version],
+                                          List[Tuple[str, Version]]],
+                           pkg_outputs: Dict[str, str]):
     """
     Return a dependency DAG built from the data extracted from recipes
     by the load_recipes function.
@@ -293,15 +278,19 @@ def build_dependency_graph(graph, root_node,
                     # Is the required package one of the packages we
                     # are building?
                     if req_pkg in pkg_versions:
-                        v = max(find_package_version(req_pkg,
-                                                     pkg_versions,
-                                                     spec=spec))
-                        graph.add_edge((req_pkg, v), ptup)
-                        num_reqs_located += 1
+                        v = find_package_version(req_pkg, pkg_versions,
+                                                 spec=spec)
+                        if v:
+                            m = max(v)
+                            graph.add_edge((req_pkg, m), ptup)
+                            num_reqs_located += 1
 
-                        log.debug("Need to build package "
-                                  "%s %s of candidates %s",
-                                  req_pkg, v, pkg_versions[req_pkg])
+                            log.debug("Need to build package "
+                                      "%s %s of candidates %s",
+                                      req_pkg, m, pkg_versions[req_pkg])
+                        else:
+                            log.warning("Can't find version for %s required "
+                                        "by %s", req_pkg, ptup)
                     # Is the required package one of the sub-packages
                     # of the packages we are building?
                     else:
@@ -309,15 +298,21 @@ def build_dependency_graph(graph, root_node,
                             # Require the parent package rather than
                             # the sub-package
                             parent_pkg = pkg_outputs[req_pkg]
-                            v = max(find_package_version(parent_pkg,
-                                                         pkg_versions,
-                                                         spec=spec))
-                            graph.add_edge((parent_pkg, v), ptup)
-                            num_reqs_located += 1
+                            v = find_package_version(parent_pkg, pkg_versions,
+                                                     spec=spec)
+                            if v:
+                                m = max(v)
+                                graph.add_edge((parent_pkg, m), ptup)
+                                num_reqs_located += 1
 
-                            log.debug("Need to build (containing) package "
-                                      "%s %s of candidates %s",
-                                      parent_pkg, v, pkg_versions[parent_pkg])
+                                log.debug("Need to build (containing) package "
+                                          "%s %s of candidates %s",
+                                          parent_pkg, m,
+                                          pkg_versions[parent_pkg])
+                            else:
+                                log.warning("Can't find version for %s "
+                                            "required by %s", req_pkg,
+                                            parent_pkg)
                         else:
                             log.warning("Can't find required package %s",
                                         req_pkg)
@@ -331,11 +326,12 @@ def build_dependency_graph(graph, root_node,
     return graph
 
 
-def is_root_node(node):
-    return node == "root"
+def is_root_node(node: Tuple[str, Version]):
+    return node[0] == "root" and node[1] is None
 
 
-def print_node(node, pkg_recipes):
+def print_node(node: Tuple[str, Version],
+               pkg_recipes: Dict[Tuple[str, Version], str]) -> None:
     if not is_root_node(node):
         recipe = pkg_recipes[node]
         print(node[0], node[1], os.path.dirname(recipe))
@@ -378,14 +374,24 @@ parser.add_argument("recipes",
                     type=str, nargs="?", default=".")
 
 parser.add_argument("-p", "--package", type=str,
-                    help="Report dependents (i.e. descendants) of the "
-                    "specified package")
+                    help="Report dependency relationships for the "
+                    "specified package. Defaults to reporting the packages "
+                    "that the specified package depends on. See --provides")
 parser.add_argument("-v", "--version", type=str,
-                    help="Report dependents (i.e. descendants) of the "
-                    "specified package version")
+                    help="Report dependency relationships of the "
+                    "specified package version. Defaults to reporting the "
+                    "packages that the specified package depends on. "
+                    "See --provides")
 parser.add_argument("-c", "--changes", type=str,
                     help="Report only on recipes that have changed "
                     "relative to another branch (defaults to 'master'")
+parser.add_argument("--provides",
+                    help="When reporting dependency relationships with "
+                    "-p|--package and -v|--version, report the packages "
+                    "to which the specified package provides for. i.e. those "
+                    "that are dependencies of the package, rather than those "
+                    "it depends on",
+                    action="store_true")
 
 parser.add_argument("--debug",
                     help="Enable DEBUG level logging to STDERR",
@@ -409,22 +415,25 @@ recipe_files = find_recipe_files(base)
 pkg_recipes, pkg_versions, pkg_requirements, pkg_outputs = \
     load_recipes(recipe_files)
 
-root_node="root"
+root_node = ("root", None)
 graph = nx.DiGraph(directed=True)
 graph = build_dependency_graph(graph, root_node,
                                pkg_versions, pkg_requirements, pkg_outputs)
-
 if args.package and args.version:
     # Print a subgraph for a specific package and version
     pv = (args.package, parse(args.version))
     if pv in graph:
-        for node in nx.topological_sort(
-                nx.subgraph(graph, nx.ancestors(graph, pv))):
+        if args.provides:
+            subgraph = nx.subgraph(graph, nx.descendants(graph, pv))
+        else:
+            subgraph = nx.subgraph(graph, nx.ancestors(graph, pv))
+
+        for node in nx.topological_sort(subgraph):
             print_node(node, pkg_recipes)
     else:
         raise ValueError("Package {} version {} is not present "
                          "in the graph".format(pv[0], pv[1]))
-elif (args.changes):
+elif args.changes:
     # Print a unified list of all changed recipes
     changed_recipes = find_changed_recipe_files(base, args.changes)
     cpkg_recipes, cpkg_versions, cpkg_requirements, cpkg_outputs = \
