@@ -1,0 +1,56 @@
+{% set version = "1.6" %}
+{% set sha256 = "60748f3f7b22dae846bc489b22a4f1b75eab052bf403dd8e16c8279f16f5171e" %}
+
+package:
+  name: libdeflate-pkg
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/ebiggers/libdeflate
+  license: MIT
+  summary: >-
+    Heavily optimized library for DEFLATE/zlib/gzip compression and
+    decompression.
+
+source:
+  url: https://github.com/ebiggers/libdeflate/archive/v{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+build:
+  number: 0
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - make
+
+outputs:
+  - name: libdeflate
+    files:
+      - lib/libdeflate.so*
+    test:
+      commands:
+        - test -h ${PREFIX}/lib/libdeflate.so
+        - test -f $( readlink -f ${PREFIX}/lib/libdeflate.so )
+
+  - name: libdeflate-dev
+    files:
+      - include/libdeflate.h
+      - lib/libdeflate.a
+    requirements:
+      run:
+        - {{ pin_subpackage("libdeflate", exact=True) }}
+    test:
+      commands:
+        - test -f ${PREFIX}/include/libdeflate.h
+        - test -f ${PREFIX}/lib/libdeflate.a
+
+  - name: libdeflate-bin
+    files:
+      - bin/libdeflate-gzip
+      - bin/libdeflate-gunzip
+    test:
+      commands:
+        - test -f ${PREFIX}/bin/libdeflate-gzip
+        - test -f ${PREFIX}/bin/libdeflate-gunzip
+
