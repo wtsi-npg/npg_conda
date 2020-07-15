@@ -6,9 +6,7 @@ n="$CPU_COUNT"
 
 pushd htslib
 
-cp aclocal.m4 aclocal.m4.tmp
 autoreconf
-cp aclocal.m4.tmp aclocal.m4
 
 ./configure \
     --prefix="$PREFIX" \
