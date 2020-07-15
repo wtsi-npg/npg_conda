@@ -6,7 +6,8 @@ n="$CPU_COUNT"
 
 pushd htslib
 
-autoreconf
+autoheader
+autoconf
 
 ./configure \
     --prefix="$PREFIX" \
