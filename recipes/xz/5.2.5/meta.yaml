@@ -1,0 +1,90 @@
+{% set version = "5.2.5" %}
+{% set sha256 = "5117f930900b341493827d63aa910ff5e011e0b994197c3b71c08a20228a42df" %}
+
+package:
+  name: xz-pkg
+  version: "{{ version }}"
+
+about:
+  home: https://tukaani.org/xz/
+  license: Various
+  summary: XZ Utils is free general-purpose data compression software.
+
+build:
+  number: 4
+
+source:
+  url: https://tukaani.org/xz/xz-{{ version }}.tar.bz2
+  fn: xz-{{ version }}.tar.bz2
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - make
+
+outputs:
+  - name: xz
+    version: {{ version }}
+    requirements:
+      build:
+         - {{ compiler("c") }}
+         - make
+      run:
+        - {{ pin_subpackage('liblzma', exact=True) }}
+    files:
+      - bin/lzless
+      - bin/xzless
+      - bin/lzmore
+      - bin/xzmore
+      - bin/xzegrep
+      - bin/lzfgrep
+      - bin/xzgrep
+      - bin/xzfgrep
+      - bin/lzgrep
+      - bin/lzegrep
+      - bin/xzdiff
+      - bin/lzdiff
+      - bin/lzcmp
+      - bin/xzcmp
+      - bin/lzmainfo
+      - bin/xzdec
+      - bin/lzmadec
+      - bin/lzcat
+      - bin/lzma
+      - bin/xzcat
+      - bin/xz
+      - bin/unlzma
+      - bin/unxz
+      - share/man/man1
+    test:
+      commands:
+        - xz --help
+
+  - name: liblzma
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - make
+    files:
+      - lib/liblzma.so*
+      - share/locale
+    test:
+      commands:
+        - test -h ${PREFIX}/lib/liblzma.so
+
+  - name: liblzma-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage('liblzma', exact=True) }}
+    files:
+      - include
+      - share/doc
+      - lib/liblzma.a
+      - lib/pkgconfig/liblzma.pc
+    test:
+      commands:
+        - test -f ${PREFIX}/include/lzma.h
+        - test -f ${PREFIX}/lib/liblzma.a
