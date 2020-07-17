@@ -1,5 +1,5 @@
-{% set version = "1.10+42_g3c4b380" %} # reset build to zero on changing
-{% set htslib_version = "1.10.2+58_g2e36fa6" %}
+{% set version = "1.10+86_gba462f6" %} # reset build to zero on changing
+{% set htslib_version = "1.10.2+106_g9c35744" %}
 
 package:
   name: samtools-pkg
@@ -11,11 +11,11 @@ about:
   summary: C library for high-throughput sequencing data formats.
 
 build:
-  number: 0
+  number: 2
 
 source:
   git_url: https://github.com/samtools/samtools.git
-  git_rev: 3c4b38015e117bdd17c2cd6756923f6eeba76e13
+  git_rev: ba462f63e46a441258b3770879feefce82157f7a
 
 requirements:
   build:
@@ -56,6 +56,8 @@ outputs:
       - bin/wgsim
       - bin/*.pl
       - bin/*.py
+      - share/man/man1/samtools*.1
+      - share/man/man1/wgsim.1
     test:
       commands:
         - echo -e '@HD\tVN:1.0\tSO:unsorted' | samtools view
