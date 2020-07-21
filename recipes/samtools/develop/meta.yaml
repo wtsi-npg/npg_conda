@@ -1,4 +1,4 @@
-{% set version = "1.10+86_gba462f6" %} # reset build to zero on changing
+{% set version = "1.10+88_g2281338" %} # reset build to zero on changing
 {% set htslib_version = "1.10.2+109_gdcd4b73" %}
 
 package:
@@ -11,11 +11,11 @@ about:
   summary: C library for high-throughput sequencing data formats.
 
 build:
-  number: 3
+  number: 0
 
 source:
   git_url: https://github.com/samtools/samtools.git
-  git_rev: ba462f63e46a441258b3770879feefce82157f7a
+  git_rev: 228133888c08a5d10dc939d62a7a144ccd8da2b1
 
 requirements:
   build:
