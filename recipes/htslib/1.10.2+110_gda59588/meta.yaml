@@ -1,5 +1,5 @@
-{% set version = "1.10.2+109_gdcd4b73" %} # reset build to zero on changing
-{% set htslib_rev = "dcd4b7304941a8832fba2d0fc4c1e716e7a4e72c" %}
+{% set version = "1.10.2+110_gda59588" %} # reset build to zero on changing
+{% set htslib_rev = "da595880d134b29fb62f726b72bdc6302ffc9ccc" %}
 
 package:
   name: htslib-pkg
