@@ -1,0 +1,104 @@
+{% set version = "3.6.14" %}
+{% set short_version = "3.6" %}
+{% set sha256 = "5630751adec7025b8ef955af4d141d00d252a985769f51b4059e5affa3d39d63" %}
+
+package:
+  name: gnutls-pkg
+  version: "{{ version }}"
+
+about:
+  home: https://gnutls.org/
+  license: LGPL
+  summary: "The GnuTLS Transport Layer Security Library."
+
+build:
+  number: 0
+
+source:
+  - url: https://www.gnupg.org/ftp/gcrypt/gnutls/v{{ short_version }}/gnutls-{{ version }}.tar.xz
+    fn: gnutls-{{ version }}.tar.xz
+    sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - libtool
+    - make
+    - pkg-config
+  host:
+    - libgmp-dev
+    - libnettle-dev
+    - libz-dev
+  run:
+    - libgmp
+    - libnettle
+    - libz
+
+outputs:
+  - name: gnutls
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - libtool
+        - make
+        - pkg-config
+      host:
+        - libgmp-dev
+        - libnettle-dev
+        - libz-dev
+      run:
+        - {{ pin_subpackage("libgnutls", exact=True) }}
+        - libgmp
+        - libnettle
+        - libz
+    files:
+      - bin/certtool
+      - bin/gnutls-cli
+      - bin/gnutls-cli-debug
+      - bin/gnutls-serv
+      - bin/ocsptool
+      - bin/psktool
+      - bin/srptool
+      - share/info
+      - share/man/man1
+    test:
+      commands:
+        - gnutls-cli -h
+
+  - name: libgnutls
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - libtool
+        - make
+        - pkg-config
+      host:
+        - libgmp-dev
+        - libnettle-dev
+        - libz-dev
+      run:
+        - libgmp
+        - libnettle
+        - libz 
+    files:
+      - lib/libgnutls.*
+      - lib/libgnutlsxx.*
+      - share/locale
+    tests:
+      commands:
+        - test -h ${PREFIX}/lib/libgnutls.so
+
+  - name: libgnutls-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libgnutls", exact=True) }}
+    files:
+      - include/gnutls
+      - lib/pkgconfig/gnutls.pc
+      - man/man3
+    tests:
+      commands:
+        - test -f ${PREFIX}/include/gnutls/gnutls.h
