@@ -1,0 +1,35 @@
+{% set version = "0.8.3" %}
+{% set sha256 = "ee618afa96148fe262facda2cfb16c003065c65a21e1fffd3ed653939b4ff45a" %}
+
+package:
+  name: crumble
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/jkbonfield/crumble
+  license: Unknown
+  summary: "Exploration of controlled loss of quality values for compressing CRAM files."
+
+source:
+  url: https://github.com/jkbonfield/crumble/archive/v{{ version }}.tar.gz
+  fn: crumble-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+  patches:
+
+build:
+  number: 0
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - autoconf
+    - automake
+    - make
+  host:
+    - libhts-dev
+  run:
+    - libhts
+
+test:
+  commands:
+    - test -x ${PREFIX}/bin/crumble
