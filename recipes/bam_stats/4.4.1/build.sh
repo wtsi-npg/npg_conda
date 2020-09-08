@@ -8,4 +8,5 @@ make ../bin/bam_stats CC="$GCC" \
      CPPFLAGS="-I$PREFIX/include" \
      LDFLAGS="-L$PREFIX/lib"
 
+mkdir -p "$PREFIX/bin/"
 cp ../bin/bam_stats "$PREFIX/bin/"
