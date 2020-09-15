@@ -26,7 +26,7 @@ from typing import List, Dict, Tuple
 import jinja2 as jj
 import networkx as nx
 import yaml
-from packaging.specifiers import SpecifierSet
+from packaging.specifiers import SpecifierSet, Specifier
 from packaging.version import Version, parse
 
 HOST = "host"
@@ -148,7 +148,50 @@ class RecipeBook(object):
         Returns: List[Version]
         """
         candidates = self.package_versions(req_pkg)
-        return list(spec.filter(candidates)) if spec else candidates
+
+        if spec:
+            filtered = list(spec.filter(candidates))
+            self.log.debug("Initial filter of %s with %s leaves: %s",
+                           candidates, spec, filtered)
+
+            def has_unmatched_local(f):
+                """
+                PEP440 states of its version specifiers:
+
+                "If the specified version identifier is a public version
+                 identifier (no local version label), then the local version
+                 label of any candidate versions MUST be ignored when matching
+                 versions."
+
+                That means e.g. ==1.0.0 will match 1.0.0+2_abc123
+
+                However, Conda version specifiers do require a match on the
+                local version, so we need to filter out any candidates with
+                a local version when looking for matches to a public version.
+
+                Args:
+                    f: PEP440 Version object
+
+                Returns: Bool
+
+                """
+
+                for s in spec:
+                    if s.operator == "==":
+                        v = parse(s.version)
+                        if f.local and not v.local:
+                            self.log.debug("Filtering out %s because is has a "
+                                           "local component not in spec %s",
+                                           f, s)
+                            return True
+                return False
+
+            filtered = [f for f in filtered if not has_unmatched_local(f)]
+            self.log.debug("Final filter of %s with %s leaves: %s",
+                           candidates, spec, filtered)
+            candidates = filtered
+
+        return candidates
 
     def packages(self) -> List[str]:
         """Returns the names of all packages.
@@ -278,8 +321,8 @@ class RecipeBook(object):
                 m = max(v)
                 graph.add_edge((pkg, m), nv)
 
-                log.debug("Need to build package %s %s of candidates %s",
-                          pkg, m, self.pkg_versions[pkg])
+                log.debug("To build %s %s we need %s from candidates %s",
+                          pkg, spc, m, self.pkg_versions[pkg])
                 return 1
             else:
                 log.warning("Can't find version for %s required by %s",
@@ -359,8 +402,7 @@ class RecipeBook(object):
     @staticmethod
     def __parse_requirement(req_str: str) -> Tuple[str, SpecifierSet]:
         """Parses a software version requirement string conforming to the Conda
-        match specification (Note: the OR operator '|' is not supported
-        currently).
+        match specification.
 
         e.g gcc >=4.6,<7.0
 
@@ -378,9 +420,7 @@ class RecipeBook(object):
         spec_set = None
 
         if len(parts) > 1:
-            spec_strs = parts[1].split(',')
-            specs = [SpecifierSet(x) for x in spec_strs]
-            spec_set = functools.reduce(lambda vx, vy: vx & vy, specs)
+            spec_set = SpecifierSet(parts[1])
 
         return pkg_name, spec_set
 
