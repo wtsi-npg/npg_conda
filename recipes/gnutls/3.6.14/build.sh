@@ -3,8 +3,6 @@
 set -ex
 
 n="$CPU_COUNT"
-PKG_CONFIG="/usr/local/pkg-config-0.28"
-
 
 ./configure --prefix="$PREFIX" \
             --with-included-libtasn1 \
