@@ -28,4 +28,5 @@ done
      linkflags="-L$PREFIX/lib" \
      link=shared runtime-link=shared \
      threading=multi variant=release \
+     cxxstd=14 \
      install
