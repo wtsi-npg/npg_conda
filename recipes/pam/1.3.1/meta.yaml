@@ -1,0 +1,60 @@
+{% set version = "1.3.1" %}
+{% set sha256 = "eff47a4ecd833fbf18de9686632a70ee8d0794b79aecb217ebd0ce11db4cd0db" %}
+
+package:
+  name: pam
+  version: "{{ version }}"
+
+about:
+  home: http://www.linux-pam.org/
+  license: BSD
+  summary: Pluggable Authentication Modules for Linux. 
+
+build:
+  number: 0
+
+source:
+  url: https://github.com/linux-pam/linux-pam/releases/download/v{{ version }}/Linux-PAM-{{ version }}.tar.xz
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - make
+    - pkg-config
+
+outputs:
+  - name: pam
+    version: {{ version }}
+    requirements:
+      build:
+         - {{ compiler("c") }}
+         - make
+         - pkg-config
+      run:
+        - {{ pin_subpackage('libpam', exact=True) }}
+    files:
+      - sbin
+
+  - name: libpam
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - make
+        - pkg-config
+    files:
+      - lib/libpam*
+      - lib/security/pam*
+      - share/locale/*/*/Linux-PAM.*
+      - share/man/man3
+      - share/man/man5
+      - share/man/man8
+
+  - name: libpam-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage('libpam', exact=True) }}
+    files:
+      - include/security
