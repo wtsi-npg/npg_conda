@@ -7,7 +7,7 @@ n="$CPU_COUNT"
 pushd htslib
 
 autoheader
-autoreconf
+autoconf
 
 ./configure \
     --prefix="$PREFIX" \
@@ -21,3 +21,4 @@ autoreconf
 make -j "$n" AR="$AR"
 make install prefix="$PREFIX"
 popd
+
