@@ -143,7 +143,7 @@ for line in sys.stdin.readlines():
 
     for c in args.build_channel:
         log.info("Adding build channel {}".format(c))
-        build_script += "conda config --add channels {} ; ".format(c)
+        build_script += "conda config --append channels {} ; ".format(c)
 
     build_script += \
         'cd "{}" && conda build {}'.format(args.recipes_mount, path)
