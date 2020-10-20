@@ -14,7 +14,7 @@ build:
   number: 2
 
 source:
-  url: https://sourceforge.mirrorservice.org/l/li/libpng/zlib/{{ version }}/zlib-{{ version }}.tar.gz
+  url: https://sourceforge.net/projects/libpng/files/zlib/{{ version }}/zlib-{{ version }}.tar.gz/download
   fn: zlib-{{ version }}.tar.gz
   sha256: {{ sha256 }}
 
