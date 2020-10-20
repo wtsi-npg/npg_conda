@@ -1,4 +1,5 @@
 {% set version = "4.2.7" %}
+{% set clang_version = "8.0.1" %}
 
 package:
   name: irods
@@ -10,7 +11,7 @@ about:
   summary: "Open Source Data Management Software."
 
 build:
-  number: 8
+  number: 9
 
 source:
   - git_url: https://github.com/irods/irods.git
@@ -26,60 +27,46 @@ source:
 
 requirements:
   build:
-    - cmake>=3.5.0
+    - cmake >=3.5.0
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
-    - clang==8.0.1
-    - clangxx==8.0.1
+    - clang =={{ clang_version }}
+    - clangxx =={{ clang_version }}
     - make
-    - gzip
     - help2man
   host:
-    - libssl-dev
-    - cppzmq
-    - libarchive
-    - avrocpp
-    - boost-cpp>=1.73.0
-    - zeromq
-    - libpam
-    - unixodbc
-    - libjansson-dev
+    - avrocpp-dev
+    - libboost-dev
     - catch2
-    - krb5
-    - pthread-stubs
-  run:
-    - libssl
     - cppzmq
-    - libarchive
-    - avrocpp
-    - boost-cpp>=1.73.0
-    - zeromq
     - krb5
+    - libarchive
+    - libjansson-dev
+    - libpam-dev
+    - libssl-dev
+    - pthread-stubs
+    - unixodbc
+    - zeromq
 
 outputs:
   - name: irods-runtime
     version: {{ version }}
     requirements:
-      host:
-        - libssl-dev
       run:
+        - libavrocpp
+        - libboost
+#       - krb5  # Avoids pulling in zlib from defaults
         - libarchive
-        - libssl
-        - boost-cpp>=1.73.0
-        - avrocpp
         - libjansson
+        - libpam
+        - libssl
         - zeromq
-        - krb5
     files:
       - lib/irods/plugins
-      - lib/libirods_client.so
-      - lib/libirods_client.so.4.2.7
-      - lib/libirods_common.so
-      - lib/libirods_common.so.4.2.7
-      - lib/libirods_plugin_dependencies.so
-      - lib/libirods_plugin_dependencies.so.4.2.7
-      - lib/libirods_server.so
-      - lib/libirods_server.so.4.2.7
+      - lib/libirods_client.so*
+      - lib/libirods_common.so*
+      - lib/libirods_plugin_dependencies.so*
+      - lib/libirods_server.so*
 
   - name: irods-dev
     version: {{ version }}
@@ -89,12 +76,12 @@ outputs:
     files:
       - include/irods
       - lib/irods/externals
+      - lib/libRodsAPIs.a
+      - lib/libirods_client.a
       - lib/libirods_client_api.a
-      - lib/libirods_client_plugins.a
       - lib/libirods_client_api_table.a
       - lib/libirods_client_core.a
-      - lib/libirods_client.a
-      - lib/libRodsAPIs.a
+      - lib/libirods_client_plugins.a
       - lib/libirods_server.a
       - share/irods
 
@@ -103,11 +90,6 @@ outputs:
     requirements:
       run:
         - {{ pin_subpackage("irods-runtime", exact=True) }}
-        - libssl
-        - boost-cpp>=1.73.0
-        - avrocpp
-        - libjansson
-        - zeromq
     files:
       - bin/iadmin
       - bin/ibun
@@ -155,6 +137,7 @@ outputs:
       - bin/iuserinfo
       - bin/ixmsg
       - bin/izonereport
+      - share/man
 
     test:
       commands:
