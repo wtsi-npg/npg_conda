@@ -1,0 +1,31 @@
+{% set version = "4.7.1" %}
+{% set sha256 = "9853e0437d834cbed5d3c223bf1d755cadee70e7c964c6e42c4c6783dee5d02c" %}
+
+package:
+  name: cppzmq
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/zeromq/cppzmq
+  license: MIT
+  summary: "Header-only C++ binding for libzmq"
+
+source:
+  url: https://github.com/zeromq/cppzmq/archive/v{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+build:
+  number: 0
+
+requirements:
+  build:
+    - cmake
+    - make
+    - pkg-config
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+  host:
+    - catch2
+    - zeromq
+  run:
+    - zeromq
