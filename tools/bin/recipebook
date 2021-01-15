@@ -56,15 +56,21 @@ parser.add_argument("recipes",
                     type=str, nargs="?", default=".")
 
 parser.add_argument("-p", "--package", type=str,
+                    required=any(arg in sys.argv for arg in
+                                 ["--provides", "-v", "--version"]),
                     help="Report dependency relationships for the "
                          "specified package. Defaults to reporting the "
                          "packages that the specified package depends on. "
-                         "See --provides")
+                         "See --provides."
+                         "Required by --provides and -v/--version.")
 parser.add_argument("-v", "--version", type=str,
+                    required=any(arg in sys.argv for arg in
+                                 ["--provides", "-p", "--package"]),
                     help="Report dependency relationships of the "
                          "specified package version. Defaults to reporting "
                          "the packages that the specified package depends on. "
-                         "See --provides")
+                         "See --provides."
+                         "Required by --provides and -p/--package.")
 parser.add_argument("-c", "--changes", type=str,
                     help="Report only on recipes that have changed "
                          "relative to another branch (defaults to 'master'")
@@ -73,7 +79,8 @@ parser.add_argument("--provides",
                          "-p|--package and -v|--version, report the packages "
                          "which the specified package provides for. "
                          "i.e. those that are dependencies of the package, "
-                         "rather than those it depends on",
+                         "rather than those it depends on."
+                         "Requires -p/--package and -v/--version.",
                     action="store_true")
 
 parser.add_argument("--debug",
