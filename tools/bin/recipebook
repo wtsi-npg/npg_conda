@@ -104,9 +104,9 @@ def main():
         nv = (args.package, parse(args.version))
         if nv in recipe_book.dependency_graph():
             if args.provides:
-                recipe_book.print_ancestors(nv)
-            else:
                 recipe_book.print_descendants(nv)
+            else:
+                recipe_book.print_ancestors(nv)
         else:
             raise ValueError("Package {} version {} is not present "
                              "in the graph".format(nv[0], nv[1]))
