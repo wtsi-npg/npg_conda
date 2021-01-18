@@ -1,0 +1,25 @@
+{% set version = "2.13.3" %}
+{% set sha256 = "fd043a34e9889c4e91b9133ce8efcbce9d11970b266c1d7b81d62087a92fa6cb" %}
+
+package:
+  name: catch2
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/catchorg/Catch2
+  license: Boost
+  summary: "A modern, C++-native, header-only, test framework for unit-tests"
+
+source:
+  url: https://github.com/catchorg/Catch2/releases/download/v2.13.3/catch.hpp
+  sha256: {{ sha256 }}
+
+build:
+  number: 1
+
+files:
+  - include/catch2/catch.hpp
+
+test:
+  commands:
+    - test -f ${PREFIX}/include/catch2/catch.hpp
