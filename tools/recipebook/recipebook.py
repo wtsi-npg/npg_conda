@@ -248,7 +248,7 @@ class RecipeBook(object):
         """
         return self.pkg_parent[name]
 
-    def package_ancestors(self, nv: Tuple[str, Version]) -> nx.DiGraph:
+    def package_descendants(self, nv: Tuple[str, Version]) -> nx.DiGraph:
         """Returns a graph of all the packages that depend on the named
         package version.
 
@@ -261,7 +261,7 @@ class RecipeBook(object):
         g = self.dependency_graph()
         return nx.subgraph(g, nx.descendants(g, nv))
 
-    def package_descendants(self, nv: Tuple[str, Version]) -> nx.DiGraph:
+    def package_ancestors(self, nv: Tuple[str, Version]) -> nx.DiGraph:
         """Returns a graph of all the packages on which the named package
          version depends.
 
@@ -280,23 +280,23 @@ class RecipeBook(object):
         """
         self.__print_subgraph(self.dependency_graph())
 
-    def print_ancestors(self, nv: Tuple[str, Version]):
+    def print_descendants(self, nv: Tuple[str, Version]):
         """Prints a sub-graph of packages that depend on the named package
         version.
 
         Args:
             nv: package name, version tuple
         """
-        self.__print_subgraph(self.package_ancestors(nv))
+        self.__print_subgraph(self.package_descendants(nv))
 
-    def print_descendants(self, nv: Tuple[str, Version]):
+    def print_ancestors(self, nv: Tuple[str, Version]):
         """Prints a sub-graph of packages on which the named package version
         depends.
 
         Args:
         nv: package name, version tuple
         """
-        self.__print_subgraph(self.package_descendants(nv))
+        self.__print_subgraph(self.package_ancestors(nv))
 
     def print_package(self, nv: Tuple[str, Version]):
         if self.__is_root_node(nv):
