@@ -1,0 +1,17 @@
+diff --git a/src/write.c b/src/write.c
+index df58ab6..6ea847c 100644
+--- a/src/write.c
++++ b/src/write.c
+@@ -213,11 +213,10 @@ int create_collection(rcComm_t *conn, rodsPath_t *rods_path, int flags,
+     return error->code;
+ }
+ 
+-int remove_data_object(rcComm_t *conn, rodsPath_t *rods_path, int flags,
++int remove_data_object(rcComm_t *conn, rodsPath_t *rods_path, __attribute__((unused)) int flags,
+                        baton_error_t *error) {
+     dataObjInp_t obj_rm_in;
+     int status;
+-    flags = flags;
+ 
+     init_baton_error(error);
+ 
