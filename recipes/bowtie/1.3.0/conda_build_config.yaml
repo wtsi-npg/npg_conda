@@ -1,0 +1,13 @@
+
+# Set -std=c++03 (see https://github.com/BenLangmead/bowtie/issues/76)
+CXXFLAGS: >-
+  -O2
+  -fPIC
+  -ffunction-sections
+  -fno-plt
+  -fstack-protector-strong
+  -ftree-vectorize
+  -march=x86-64
+  -mtune=generic
+  -pipe
+  -std=c++03
