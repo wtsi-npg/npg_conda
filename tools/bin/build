@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2019, 2020 Genome Research Ltd. All rights reserved.
+# Copyright © 2019, 2020, 2021 Genome Research Ltd. All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,7 +36,6 @@ DEFAULT_RECIPES_MOUNT="/home/conda/recipes"
 DEFAULT_ARTEFACTS_DIR=os.path.expandvars("$HOME/conda-artefacts")
 DEFAULT_ARTEFACTS_MOUNT="/opt/conda/conda-bld"
 
-IRODS_BUILD_IMAGE="wsinpg/ub-12.04-conda-irods-4.1:latest"
 DEFAULT_BUILD_IMAGE="wsinpg/ub-12.04-conda:latest"
 
 description = """
@@ -80,10 +79,6 @@ parser.add_argument("--build-channel","--build-channels",
                     "defaults to no extra channels",
                     type=str, nargs="*", default=[])
 
-parser.add_argument("--irods-build-image",
-                    help="The Docker image used to build iRODS 4.1, "
-                    "defaults to {}".format(IRODS_BUILD_IMAGE),
-                    type=str, nargs="?", default=IRODS_BUILD_IMAGE)
 parser.add_argument("--conda-build-image",
                     help="Docker image used to build packages, "
                     "defaults to {}".format(DEFAULT_BUILD_IMAGE),
@@ -126,16 +121,11 @@ docker_pull(args.conda_build_image)
 fail = False
 
 for line in sys.stdin.readlines():
-    line.rstrip();
+    line.rstrip()
     name, version, path = line.split()
     log.info("Working on %s %s %s", name, version, path)
 
     build_image = args.conda_build_image
-    if name == "irods" and version[:4]=="4.1.":
-        build_image = args.irods_build_image
-        log.info("Using image %s", build_image)
-        docker_pull(args.irods_build_image)
-
     build_script = \
         'export CONDA_BLD_PATH="{}" ; '.format(args.artefacts_mount)
     build_script += \
