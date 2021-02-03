@@ -22,3 +22,7 @@ cp bowtie-build-s "$PREFIX/bin/"
 cp bowtie-inspect "$PREFIX/bin/"
 cp bowtie-inspect-l "$PREFIX/bin/"
 cp bowtie-inspect-s "$PREFIX/bin/"
+
+for script in bowtie bowtie-build bowtie-inspect; do
+	sed -i "1c#!$PREFIX/bin/python3" "$PREFIX/bin/$script"
+done

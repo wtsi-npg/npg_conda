@@ -10,11 +10,11 @@ about:
   summary: An ultrafast memory-efficient short read aligner.
 
 build:
-  number: 0
+  number: 2
 
 source:
   git_url: https://github.com/BenLangmead/bowtie
-  git_rev: v{{ version}}
+  git_rev: v{{ version }}
 
 requirements:
   build:
@@ -23,9 +23,11 @@ requirements:
   host:
     - tbb-devel
     - libz-dev
+    - python 3
   run:
     - tbb
     - libz
+    - python 3
 
 test:
   commands:
