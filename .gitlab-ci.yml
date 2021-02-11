@@ -1,0 +1,44 @@
+variables:
+  MINICONDA: https://repo.anaconda.com/miniconda/Miniconda3-4.6.14-Linux-x86_64.sh
+  CONDA_DIR: /tmp/miniconda
+  WSI_CONDA_CHANNEL: https://dnap.cog.sanger.ac.uk/npg/conda/devel/generic
+  CONDA_IMAGE: wsinpg/ub-12.04-conda:latest
+  S3_URL: https://cog.sanger.ac.uk/
+  CHANNEL_REM: s3://npg/conda/devel/generic
+  CHANNEL_DIR: /tmp/devel
+  BUILD_DIR: /tmp/conda_artefacts
+  COMPARE_BRANCH: devel
+
+
+before_script:
+  - cd $CI_PROJECT_DIR
+  - . ~/.bashrc
+  
+setup:
+  stage: .pre
+
+  before_script:
+    - cd $CI_PROJECT_DIR
+    
+  script:
+    - scripts/gitlab_setup.sh
+    
+build:
+  stage: build
+  
+  script:
+    - scripts/gitlab_build.sh
+    
+deploy:
+  stage: deploy
+
+  script:
+    - scripts/gitlab_deploy.sh
+
+remove_files:
+  stage: .post
+
+  script:
+    - scripts/gitlab_teardown.sh
+
+
