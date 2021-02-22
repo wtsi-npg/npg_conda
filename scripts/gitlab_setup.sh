@@ -2,25 +2,29 @@
 
 set -e -u -x
 
-mkdir -p $CHANNEL_DIR
-mkdir -p $BUILD_DIR
+mkdir -p $1 # $CHANNEL_DIR
+mkdir -p $2 # $BUILD_DIR
 
-wget --quiet $MINICONDA -O /tmp/miniconda.sh
-/bin/bash /tmp/miniconda.sh -b -p $CONDA_DIR
-$CONDA_DIR/bin/conda clean -tipsy
+if [ ! -d $CONDA_DIR ]
+then
+    
+    wget --quiet $MINICONDA -O /tmp/miniconda.sh
+    /bin/bash /tmp/miniconda.sh -b -p $CONDA_DIR
+    $CONDA_DIR/bin/conda clean -tipsy
 
-if [ -e ~/.bashrc ] ; then
-    cp ~/.bashrc ~/.bashrc.bak
+    echo ". $CONDA_DIR/etc/profile.d/conda.sh" >> ~/.bashrc
+    echo "conda activate base" >> ~/.bashrc
+
+    . $CONDA_DIR/etc/profile.d/conda.sh
+    conda activate base
+    conda config --set auto_update_conda False
+    conda config --prepend channels "$WSI_CONDA_CHANNEL"
+    conda config --append channels conda-forge
+
+else
+    . $CONDA_DIR/etc/profile.d/conda.sh
+    conda activate base    
 fi
-
-echo ". $CONDA_DIR/etc/profile.d/conda.sh" >> ~/.bashrc
-echo "conda activate base" >> ~/.bashrc
-
-. $CONDA_DIR/etc/profile.d/conda.sh
-conda activate base
-conda config --set auto_update_conda False
-conda config --prepend channels "$WSI_CONDA_CHANNEL"
-conda config --append channels conda-forge
 
 conda install conda-build
 
@@ -31,4 +35,5 @@ aws configure set plugins.endpoint awscli_plugin_endpoint
 aws configure set s3.endpoint_url $S3_URL
 aws configure set s3api.endpoint_url $S3_URL
 
-aws s3 sync "$CHANNEL_REM" "$CHANNEL_DIR"
+aws s3 sync "$3" "$1" # $CHANNEL_REM $CHANNEL_DIR
+
