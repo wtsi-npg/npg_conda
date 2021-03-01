@@ -1,7 +1,6 @@
 #! /bin/bash
 
 set -e -u
-branch="devel"
 
 usage() {
     cat 1>&2 <<EOF
