@@ -1,0 +1,34 @@
+variables:
+  #
+  # MIRROR
+  #
+  GITHUB_REPO: https://github.com/wtsi-npg/npg_conda
+  PROJECT_ID: 2541 # PID OF GITLAB REPO ON SETTINGS PAGE
+  #
+  # BUILD
+  #
+  MINICONDA: https://repo.anaconda.com/miniconda/Miniconda3-4.6.14-Linux-x86_64.sh
+  CONDA_DIR: /tmp/miniconda
+  WSI_CONDA_CHANNEL: https://dnap.cog.sanger.ac.uk/npg/conda/devel/generic
+  CONDA_IMAGE: wsinpg/ub-12.04-conda:latest
+  S3_URL: https://cog.sanger.ac.uk/
+  #
+  # merge requests
+  #
+  PRE_DEVEL_CHANNEL_REM: s3://mk35/conda/pre_devel/generic
+  PRE_DEVEL_CHANNEL_DIR: /tmp/pre_devel/generic/
+  PRE_DEVEL_BUILD_DIR: /tmp/conda_artefacts/pre_devel
+  PRE_DEVEL_COMPARE_BRANCH: devel
+  #
+  # devel commits
+  #
+  DEVEL_CHANNEL_REM: s3://mk35/conda/devel/generic
+  DEVEL_CHANNEL_DIR: /tmp/devel/generic/
+  DEVEL_BUILD_DIR: /tmp/conda_artefacts/devel
+  DEVEL_COMPARE_BRANCH: master
+
+include:
+  - .gitlab_include/mirror.yml
+  - .gitlab_include/merge_requests.yml
+  - .gitlab_include/devel_commit.yml
+

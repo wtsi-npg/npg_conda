@@ -1,0 +1,32 @@
+setup_devel:
+  stage: .pre
+  script:
+    - echo "Setting up devel ci"
+    - scripts/gitlab_setup.sh "$DEVEL_CHANNEL_DIR" "$DEVEL_BUILD_DIR" "$DEVEL_CHANNEL_REM"
+  only:
+    - devel
+  except:
+    - schedules
+
+build_devel:
+  stage: build
+  script:
+    - echo "Building devel packages"
+    - . ~/.bashrc
+    - scripts/gitlab_build.sh "$DEVEL_COMPARE_BRANCH" "$DEVEL_CHANNEL_DIR" "$DEVEL_BUILD_DIR"
+  only:
+    - devel
+  except:
+    - schedules
+
+deploy_devel:
+  stage: deploy
+  script:
+    - echo "Deploying devel packages"
+    - . ~/.bashrc
+    - scripts/gitlab_deploy.sh "$DEVEL_BUILD_DIR" "$DEVEL_CHANNEL_DIR" "$DEVEL_CHANNEL_REM"
+  only:
+    - devel
+  except:
+    - schedules
+
