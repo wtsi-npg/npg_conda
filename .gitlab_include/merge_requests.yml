@@ -1,0 +1,26 @@
+setup_merge:
+  stage: .pre
+  script:
+    - echo "Setting up merge request CI"
+    - scripts/gitlab_setup.sh "$PRE_DEVEL_CHANNEL_DIR" "$PRE_DEVEL_BUILD_DIR" "$PRE_DEVEL_CHANNEL_REM"
+  only:
+    - merge_requests
+
+build_merge:
+  stage: build
+  script:
+    - echo "Building merge request packages"
+    - . ~/.bashrc
+    - scripts/gitlab_build.sh "$PRE_DEVEL_COMPARE_BRANCH" "$PRE_DEVEL_CHANNEL_DIR" "$PRE_DEVEL_BUILD_DIR"
+  only:
+    - merge_requests
+
+deploy_merge:
+  stage: deploy
+  script:
+    - echo "Deploying merge request packages"
+    - . ~/.bashrc
+    - scripts/gitlab_deploy.sh "$PRE_DEVEL_BUILD_DIR" "$PRE_DEVEL_CHANNEL_DIR" "$PRE_DEVEL_CHANNEL_REM"
+  only:
+    - merge_requests
+

@@ -20,7 +20,7 @@ source:
 
 requirements:
   run:
-    - samtools-bin
+    - samtools
 
 test:
   commands:

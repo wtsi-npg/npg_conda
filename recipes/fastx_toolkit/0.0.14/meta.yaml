@@ -13,7 +13,7 @@ about:
   summary: "A collection of command line tools for Short-Reads FASTA/FASTQ files preprocessing."
 
 build:
-  number: 1
+  number: 2
 
 source:
   - url: https://github.com/agordon/fastx_toolkit/releases/download/{{ version }}/fastx_toolkit-{{ version }}.tar.bz2
@@ -40,7 +40,9 @@ outputs:
         - pkg-config
     files:
       - bin/fast*
+      - lib/libgtextutils*.so*
 
 test:
   commands:
     - test -x ${PREFIX}/bin/fastx_clipper
+    - echo | fasta_formatter

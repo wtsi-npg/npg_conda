@@ -1,40 +1,43 @@
 
-dist: xenial
+dist: bionic
 language: python
-python: 3.7
+python: 3.8
 
 services: docker
 
 env:
   - >
-    IRODS_IMAGE=wsinpg/ub-12.04-conda-irods-4.1:0.3
-    CONDA_IMAGE=wsinpg/ub-12.04-conda:0.3
+    CONDA_IMAGE=wsinpg/ub-12.04-conda:1.1
     CONDA_CHANNEL=https://dnap.cog.sanger.ac.uk/npg/conda/devel/generic
     COMPARE_BRANCH=origin/devel
 
 before_install:
   - docker --version
-  # We should rarely need to pull the iRODS build image, so we don't
-  # do it preemptively here
   - docker pull $CONDA_IMAGE
 
 install:
-  - pip install jinja2 networkx packaging pyaml rfc3987 setuptools
+  - pip install -r ./tools/requirements.txt
   # Ensure we have a complete repository to compare diffs with other
   # branches
   - git config remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
   - git fetch
 
 script:
-  - mkdir -p $TRAVIS_BUILD_DIR/conda-artefacts
+  - mkdir -p $TRAVIS_BUILD_DIR/conda-artefacts/linux-64
   - while sleep 300; do echo $SECONDS sec elapsed, still building ... ; done &
   - >
-    ./scripts/package_sort.py --changes $COMPARE_BRANCH | ./scripts/build.py
+    ./tools/bin/recipebook --changes $COMPARE_BRANCH recipes | ./tools/bin/build
     --recipes-dir $TRAVIS_BUILD_DIR
     --artefacts-dir $TRAVIS_BUILD_DIR/conda-artefacts
-    --irods-build-image $IRODS_IMAGE
     --conda-build-image $CONDA_IMAGE
     --build-channel $CONDA_CHANNEL
+    --verbose
+  - >
+    ./tools/bin/recipebook --changes $COMPARE_BRANCH red-recipes | ./tools/bin/build
+    --recipes-dir $TRAVIS_BUILD_DIR
+    --artefacts-dir $TRAVIS_BUILD_DIR/conda-artefacts
+    --conda-build-image $CONDA_IMAGE
+    --build-channel $CONDA_CHANNEL conda-forge bioconda
     --verbose
   - kill %1
   - ls -l $TRAVIS_BUILD_DIR/conda-artefacts/linux-64
