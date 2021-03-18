@@ -1,0 +1,19 @@
+diff --git Makefile.in Makefile.in
+index 6e78e48..bc2d3fa 100644
+--- Makefile.in
++++ Makefile.in
+@@ -38,11 +38,11 @@ OBJECTS=$(SOURCES:.cpp=.o) src/mash/capnp/MinHash.capnp.o
+ all : mash libmash.a
+ 
+ mash : libmash.a src/mash/memcpyWrap.o
+-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -o mash src/mash/memcpyWrap.o libmash.a @capnp@/lib/libcapnp.a @capnp@/lib/libkj.a @mathlib@ -lstdc++ -lz -lm -lpthread
++	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o mash src/mash/memcpyWrap.o libmash.a @capnp@/lib/libcapnp.a @capnp@/lib/libkj.a @mathlib@ -lstdc++ -lz -lm -lpthread
+ 
+ libmash.a : $(OBJECTS)
+-	ar -cr libmash.a $(OBJECTS)
+-	ranlib libmash.a
++	$(AR) -cr libmash.a $(OBJECTS)
++	$(RANLIB) libmash.a
+ 
+ .SUFFIXES :
+ 
