@@ -1,0 +1,34 @@
+{% set version = "2.13.0" %}
+{% set sha256 = "174080f1cab25b1d7fe5a8e2862f4e730a1c7c1732b7bc54132ade832ef1a07c" %}
+
+package:
+  name: nanodbc
+  version: "{{ version }}"
+
+about:
+  home: http://nanodbc.io/
+  license: MIT
+  summary: "A small C++ wrapper for the native C ODBC API"
+
+source:
+  url: https://github.com/nanodbc/nanodbc/archive/refs/tags/v{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+build:
+  number: 1
+
+requirements:
+  build:
+    - {{ compiler("cxx") }}
+    - cmake
+    - make
+  host:
+    - unixodbc
+
+files:
+  - include/nanodbc/nanodbc.h
+  - lib/libnanodbc.*
+
+test:
+  commands:
+    - test -f ${PREFIX}/include/nanodbc/nanodbc.h
