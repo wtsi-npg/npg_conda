@@ -10,7 +10,7 @@ about:
   summary: A fast sequence distance estimator using MinHash.
 
 build:
-  number: 0
+  number: 1
 
 source:
   git_url: https://github.com/marbl/Mash
@@ -29,10 +29,6 @@ requirements:
     - boost
     - capnproto
     - libz-dev
-  run:
-    - boost
-    - capnproto
-    - libz
 
 test:
   commands:
