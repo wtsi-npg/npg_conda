@@ -1,0 +1,35 @@
+{% set version = "2.3" %}
+
+package:
+  name: mash
+  version: "{{ version }}"
+
+about:
+  home: http://mash.readthedocs.org
+  license: Other
+  summary: A fast sequence distance estimator using MinHash.
+
+build:
+  number: 1
+
+source:
+  git_url: https://github.com/marbl/Mash
+  git_rev: v{{ version }}
+  patches:
+    - Makefile.in.patch
+
+requirements:
+  build:
+    - {{ compiler("cxx") }}
+    - autoconf
+    - automake
+    - libtool
+    - make
+  host:
+    - boost
+    - capnproto
+    - libz-dev
+
+test:
+  commands:
+    - mash -h
