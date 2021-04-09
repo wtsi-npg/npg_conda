@@ -1,0 +1,74 @@
+{% set version = "1.9.0" %}
+{% set hash = "14ad1114cfac67007e784dff706b03f58d145148" %}
+{% set boost_version = "1.73.0" %}
+
+package:
+  name: avrocpp
+  version: {{ version }}
+
+source:
+  fn: avro-cpp-{{ version }}.tar.gz
+  url: https://archive.apache.org/dist/avro/avro-{{ version }}/cpp/avro-cpp-{{ version }}.tar.gz
+  sha1: {{ hash }}
+
+build:
+  number: 2
+
+requirements:
+  build:
+    - cmake
+    - make
+    - pkg-config
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+  host:
+    - libboost-dev>={{ boost_version }}
+    - liblzma-dev
+    - libz-dev
+    - snappy
+  run:
+    - libboost
+    - liblzma
+    - libz
+    - snappy
+
+outputs:
+  - name: libavrocpp
+    version: {{ version }}
+    requirements:
+      run:
+        - libboost >={{ boost_version }}
+        - liblzma
+        - libz
+        - snappy
+    files:
+      - lib/libavrocpp.so*
+    test:
+      commands:
+        - test -f ${PREFIX}/lib/libavrocpp.so
+        - conda inspect linkages libavrocpp
+
+  - name: avrocpp-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libavrocpp", exact=True) }}
+    files:
+      - bin/avrogencpp
+      - include/avro
+      - lib/libavrocpp_s.a
+    test:
+      commands:
+        - test -f ${PREFIX}/lib/libavrocpp_s.a
+
+about:
+  home: http://hadoop.apache.org/avro
+  license: Apache 2.0
+  license_family: Apache
+  license_file: LICENSE
+  summary: 'Avro is a serialization and RPC framework.'
+
+extra:
+  recipe-maintainers:
+    - wtsi-npg
+    - mariusvniekerk

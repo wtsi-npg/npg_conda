@@ -1,0 +1,108 @@
+diff --git CMakeLists.txt CMakeLists.txt
+index feb5feb..4b61b38 100644
+--- CMakeLists.txt
++++ CMakeLists.txt
+@@ -3,15 +3,16 @@ include(${CMAKE_SOURCE_DIR}/cmake/RequireOutOfSourceBuild.cmake)
+ 
+ find_package(IRODS 4.2.8 EXACT REQUIRED CONFIG)
+ 
+-set(CMAKE_C_COMPILER ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang)
+-set(CMAKE_CXX_COMPILER ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang++)
++# set(CMAKE_C_COMPILER ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang)
++# set(CMAKE_CXX_COMPILER ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang++)
+ 
+-set(CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
++set(CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath-link,${CMAKE_INSTALL_PREFIX}")
+ 
+ project(icommands C CXX)
+ 
+ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+ 
++include(GNUInstallDirs)
+ include(${IRODS_TARGETS_PATH})
+ 
+ if (NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+@@ -24,16 +25,17 @@ if (NOT CPACK_PACKAGING_INSTALL_PREFIX)
+   message(STATUS "Setting unspecified CPACK_PACKAGING_INSTALL_PREFIX to '${CPACK_PACKAGING_INSTALL_PREFIX}'. This is the correct setting for normal builds.")
+ endif()
+ 
+-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+-set(CMAKE_INSTALL_RPATH ${IRODS_EXTERNALS_FULLPATH_CLANG_RUNTIME}/lib)
+ set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
++set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
++set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
+ 
+-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
+-set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -stdlib=libc++")
+-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
+-add_compile_options(-nostdinc++ -Wall -Wextra -Werror -Wno-unused-parameter)
+-link_libraries(c++abi)
+-include_directories(${IRODS_EXTERNALS_FULLPATH_CLANG}/include/c++/v1)
++set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-z,defs")
++set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,-z,defs")
++set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-z,defs")
++add_compile_options(-Wall -Wextra -Werror -Wno-unused-parameter)
++
++include_directories(${IRODS_EXTERNALS_FULLPATH_JSON}/include/nlohmann)
++include_directories(AFTER ${CMAKE_INSTALL_PREFIX}/include)
+ 
+ set(
+   IRODS_CLIENT_ICOMMANDS_EXECUTABLES
+@@ -126,10 +128,10 @@ foreach(EXECUTABLE ${IRODS_CLIENT_ICOMMANDS_EXECUTABLES})
+     TARGETS
+     ${EXECUTABLE}
+     RUNTIME
+-    DESTINATION usr/bin
++    DESTINATION ${CMAKE_INSTALL_BINDIR}
+     )
+ 
+-  if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "centos")
++  if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "CentOS")
+     if (IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR STREQUAL "6")
+       continue()
+     endif()
+@@ -148,7 +150,7 @@ foreach(EXECUTABLE ${IRODS_CLIENT_ICOMMANDS_EXECUTABLES})
+   install(
+     FILES
+     ${CMAKE_BINARY_DIR}/man/${EXECUTABLE}.1.gz
+-    DESTINATION usr/share/man/man1
++    DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
+     )
+ endforeach()
+ 
+@@ -161,11 +163,11 @@ foreach(IRODS_CLIENT_ICOMMANDS_SCRIPT ${IRODS_CLIENT_ICOMMANDS_SCRIPTS})
+   install(
+     FILES
+     ${CMAKE_SOURCE_DIR}/bin/${IRODS_CLIENT_ICOMMANDS_SCRIPT}
+-    DESTINATION usr/bin
++    DESTINATION ${CMAKE_INSTALL_BINDIR}
+     PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+     )
+ 
+-  if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "centos")
++  if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "CentOS")
+     if (IRODS_LINUX_DISTRIBUTION_VERSION_MAJOR STREQUAL "6")
+       continue()
+     endif()
+@@ -180,13 +182,13 @@ foreach(IRODS_CLIENT_ICOMMANDS_SCRIPT ${IRODS_CLIENT_ICOMMANDS_SCRIPTS})
+   install(
+     FILES
+     ${CMAKE_BINARY_DIR}/man/${IRODS_CLIENT_ICOMMANDS_SCRIPT}.1.gz
+-    DESTINATION usr/share/man/man1
++    DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
+     )
+ endforeach()
+ 
+ install(
+   DIRECTORY ${CMAKE_SOURCE_DIR}/test
+-  DESTINATION var/lib/irods/clients/icommands
++  DESTINATION ${CMAKE_INSTALL_LIBDIR}/irods/clients/icommands
+   )
+ 
+ 
+@@ -243,3 +245,5 @@ if (NOT CPACK_GENERATOR)
+ endif()
+ 
+ include(CPack)
++
++install(TARGETS ${IRODS_CLIENT_ICOMMANDS_EXECUTABLES} DESTINATION ${CMAKE_INSTALL_BINDIR})
