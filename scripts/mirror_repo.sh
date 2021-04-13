@@ -132,6 +132,10 @@ do
              } "\
              "https://gitlab.internal.sanger.ac.uk/api/v4/projects/${project_id}/merge_requests"
     fi
+
+    # remove branch to prevent updates or similarly named branches from causing errors
+    git branch -D "$branch"
+
 done
 
 #Check for old mrs in gl
