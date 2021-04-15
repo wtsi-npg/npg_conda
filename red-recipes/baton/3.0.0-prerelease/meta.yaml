@@ -11,11 +11,11 @@ about:
   summary: Client programs and API for use with iRODS (Integrated Rule-Oriented Data System).
 
 build:
-  number: 0
+  number: 1
 
 source:
-  git_url: https://github.com/kjsanger/baton.git
-  git_rev: feature/verify-checksum
+  git_url: https://github.com/wtsi-npg/baton.git
+  git_rev: ac3d2e7c461dd53dc6a541ec87de7a41aaa715d8
 
 requirements:
   build:
