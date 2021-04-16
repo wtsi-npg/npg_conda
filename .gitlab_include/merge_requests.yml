@@ -26,3 +26,12 @@ deploy_merge:
   only:
     - merge_requests
 
+test_merge:
+  stage: test
+  script:
+    - echo "Testing merge request packages"
+    - . /tmp/miniconda/etc/profile.d/conda.sh
+    - conda activate base
+    - scripts/gitlab_test.sh "$PRE_DEVEL_CHANNEL_DIR"
+  only:
+    - merge_requests

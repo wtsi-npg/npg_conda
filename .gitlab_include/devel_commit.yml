@@ -32,3 +32,14 @@ deploy_devel:
   except:
     - schedules
 
+test_devel:
+  stage: test
+  script:
+    - echo "Testing devel packages"
+    - . /tmp/miniconda/etc/profile.d/conda.sh
+    - conda activate base
+    - scripts/gitlab_test.sh "$DEVEL_CHANNEL_DIR"
+  only:
+    - devel
+  except:
+    - schedules
