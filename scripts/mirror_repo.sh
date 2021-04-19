@@ -113,10 +113,11 @@ do
     branch=$(echo $pr | jq '.branch' | sed 's/"//g')
     git remote add fork "$source"
     git fetch fork
-    git checkout --track fork/"$branch"
+    named_branch="$branch"$(echo -n "$source" | shasum | cut -f 1 -d ' ')
+    git checkout -b "$named_branch" fork/"$branch"
 
     # push to branch on gitlab (provides branch for new mr or automatically updates old mr)
-    git push -f "$gitlab_repo" "$branch"
+    git push -f "$gitlab_repo" "$named_branch"
     git remote remove fork
     
     if [ $present == 0 ]
@@ -126,7 +127,7 @@ do
         curl --header "PRIVATE-TOKEN: $gitlab_token" --header "Content-Type: application/json" --request POST -d " \
              { \
                 \"id\": $project_id, \
-                \"source_branch\": \"$branch\", \
+                \"source_branch\": \"$named_branch\", \
                 \"target_branch\": \"devel\", \
                 \"title\": \"$title\" \
              } "\
@@ -134,7 +135,8 @@ do
     fi
 
     # remove branch to prevent updates or similarly named branches from causing errors
-    git branch -D "$branch"
+    git checkout devel
+    git branch -D "$named_branch"
 
 done
 
