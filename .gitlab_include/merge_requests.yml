@@ -35,3 +35,4 @@ test_merge:
     - scripts/gitlab_test.sh "$PRE_DEVEL_CHANNEL_DIR" "$PRE_DEVEL_COMPARE_BRANCH"
   only:
     - merge_requests
+
