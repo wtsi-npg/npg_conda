@@ -15,7 +15,7 @@ source:
   sha256: {{ sha256 }}
 
 build:
-  number: 0
+  number: 1
 
 requirements:
   build:
@@ -53,7 +53,12 @@ outputs:
       run:
         - libssl
     files:
+      - lib/krb5
+      - lib/libcom_err*
+      - lib/libgss*
       - lib/libk*
+      - lib/libvert*
+      - lib/pkgconfig
     test:
       commands:
         - test -h ${PREFIX}/lib/libkrb5.so
@@ -76,6 +81,8 @@ outputs:
       - include/krb5
       - include/krb5.h
       - include/profile.h
+      - lib/libapputils.a
+      - lib/libss.a
     test:
       commands:
         - test -f ${PREFIX}/include/krb5.h
