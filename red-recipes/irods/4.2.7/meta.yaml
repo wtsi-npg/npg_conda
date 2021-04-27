@@ -11,7 +11,7 @@ about:
   summary: "Open Source Data Management Software."
 
 build:
-  number: 11
+  number: 12
 
 source:
   - git_url: https://github.com/irods/irods.git
@@ -36,12 +36,12 @@ requirements:
     - make
     - help2man
   host:
-    - avrocpp-dev
+    - avrocpp-dev <1.9
     - libboost-dev
     - catch2
     - cppzmq
     - krb5-dev
-    - libarchive
+    - libarchive-dev
     - libjansson-dev
     - libpam-dev
     - libssl-dev
@@ -54,9 +54,9 @@ outputs:
     version: {{ version }}
     requirements:
       run:
-        - libavrocpp
+        - libavrocpp <1.9
         - libboost
-#       - krb5  # Avoids pulling in zlib from defaults
+        - libkrb5
         - libarchive
         - libjansson
         - libpam
