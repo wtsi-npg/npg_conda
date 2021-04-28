@@ -20,4 +20,3 @@ make -j $n
 make install
 
 popd
-
