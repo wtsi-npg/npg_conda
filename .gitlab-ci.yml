@@ -26,6 +26,10 @@ variables:
   DEVEL_CHANNEL_DIR: /tmp/devel/generic/
   DEVEL_BUILD_DIR: /tmp/conda_artefacts/devel
   DEVEL_COMPARE_BRANCH: master
+  #
+  # TEST
+  #
+  PROD_WSI_CONDA_CHANNEL: https://dnap.cog.sanger.ac.uk/npg/conda/prod/generic
 
 include:
   - .gitlab_include/mirror.yml
