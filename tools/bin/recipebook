@@ -73,7 +73,7 @@ parser.add_argument("-v", "--version", type=str,
                          "Required by --provides and -p/--package.")
 parser.add_argument("-c", "--changes", type=str,
                     help="Report only on recipes that have changed "
-                         "relative to another branch (defaults to 'master'")
+                         "relative to another branch (defaults to 'master')")
 parser.add_argument("--provides",
                     help="When reporting dependency relationships with "
                          "-p|--package and -v|--version, report the packages "
@@ -81,6 +81,9 @@ parser.add_argument("--provides",
                          "i.e. those that are dependencies of the package, "
                          "rather than those it depends on."
                          "Requires -p/--package and -v/--version.",
+                    action="store_true")
+parser.add_argument("--sub-package",
+                    help="Report sub-package names instead of package names.",
                     action="store_true")
 
 parser.add_argument("--debug",
@@ -111,9 +114,9 @@ def main():
         nv = (args.package, parse(args.version))
         if nv in recipe_book.dependency_graph():
             if args.provides:
-                recipe_book.print_descendants(nv)
+                recipe_book.print_descendants(nv, args.sub_package)
             else:
-                recipe_book.print_ancestors(nv)
+                recipe_book.print_ancestors(nv, args.sub_package)
         else:
             raise ValueError("Package {} version {} is not present "
                              "in the graph".format(nv[0], nv[1]))
@@ -121,10 +124,10 @@ def main():
         # Print a unified list of all changed recipes
         changed_recipes = find_changed_recipe_files(root, args.changes)
         recipe_book = RecipeBook(changed_recipes)
-        recipe_book.print_graph()
+        recipe_book.print_graph(args.sub_package)
     else:
         # Print everything
-        recipe_book.print_graph()
+        recipe_book.print_graph(args.sub_package)
 
 
 if __name__ == "__main__":

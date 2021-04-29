@@ -72,10 +72,17 @@ check_package_in_channel() {
                     ;;
             esac
         fi
+
+        ldd "$CONDA_DIR/envs/test_env/bin/*" | grep ${changed[0]} | grep "/usr/lib/" &&
+            (cleanup_env && echo "system version of ${changed[0]} used" && return 3)
+        
+        ldd "$CONDA_DIR/envs/test_env/lib/*" | grep ${changed[0]} | grep "/usr/lib/" &&
+            (cleanup_env && echo "system version of ${changed[0]} used" && return 3)
+
         cleanup_env
     else
         echo "not in channel"
-        return 3
+        return 4
     fi
     return 0
 }
@@ -84,12 +91,11 @@ check_package_in_channel() {
 
 # LOOP
 
-for changed in $(tools/bin/recipebook --changes origin/$2)
+for changed in $(tools/bin/recipebook --changes origin/$2 --sub-package)
 do
     IFS=' ' changed=($changed)
-    for pkg in $(tools/bin/recipebook --package ${changed[0]} --version ${changed[1]} --provides)
+    for pkg in $(tools/bin/recipebook --package ${changed[0]} --version ${changed[1]} --provides --sub-package)
     do
-
         check_package_in_channel "$prod" "$PROD_WSI_CONDA_CHANNEL" ||
             check_package_in_channel "$devel" "$WSI_CONDA_CHANNEL" ||
             check_package_in_channel "$local" "file://$1"
