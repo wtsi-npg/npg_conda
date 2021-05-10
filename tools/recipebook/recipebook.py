@@ -309,7 +309,7 @@ class RecipeBook(object):
 
         if nv in self.pkg_recipes:
             (name, version) = nv
-            if subpackage:
+            if subpackage and name in self.pkg_parent.values():
                 for sub, parent in self.pkg_parent.items():
                     if parent == name:
                         print(sub, version, os.path.dirname(self.package_recipe(nv)))
