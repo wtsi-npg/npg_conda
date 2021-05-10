@@ -2,6 +2,8 @@
 
 set -e -u
 
+DEFAULT_GITLAB_LABELS="npg_automation"
+
 usage() {
     cat 1>&2 <<EOF
 This script automates the running of gitlab pipelines when an upstream github 
@@ -14,11 +16,12 @@ Usage: $(basename "$0")
     [-n <gitlab token name>]
     [-t <gitlab token>]
     [-i <project id>]
+    [-s <labels string>]
     [-h]
 EOF
 }
 
-while getopts "hl:o:g:k:n:t:i:" option; do
+while getopts "hl:o:g:k:n:t:i:s:" option; do
     case "$option" in
         h)
             usage
@@ -44,6 +47,9 @@ while getopts "hl:o:g:k:n:t:i:" option; do
         i)
             project_id="$OPTARG"
             ;;
+        s)
+            labels_string="$OPTARG"
+            ;;
         *)
             usage
             echo "Invalid option!"
@@ -51,6 +57,10 @@ while getopts "hl:o:g:k:n:t:i:" option; do
             ;;
     esac
 done    
+
+if [ -z "$labels_string" ] ; then
+  labels_string="$DEFAULT_GITLAB_LABELS"
+fi
 
 gitlab_repo=$(echo ${gitlab_repo} | sed "s|.*@|https://${gitlab_token_name}:${gitlab_token}@|")
 
@@ -129,7 +139,8 @@ do
                 \"id\": $project_id, \
                 \"source_branch\": \"$named_branch\", \
                 \"target_branch\": \"devel\", \
-                \"title\": \"$title\" \
+                \"title\": \"$title\", \
+                \"labels\": \"$labels_string\", \
              } "\
              "https://gitlab.internal.sanger.ac.uk/api/v4/projects/${project_id}/merge_requests"
     fi
@@ -162,4 +173,3 @@ do
         git push -d $gitlab_repo $(echo $mr | jq '.branch' | sed 's/"//g')
     fi
 done
-
