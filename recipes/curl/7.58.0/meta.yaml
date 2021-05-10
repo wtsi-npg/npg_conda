@@ -11,7 +11,7 @@ about:
   summary: Command line tool and library for transferring data with URLs.
 
 build:
-  number: 3
+  number: 4
 
 source:
   - url: http://curl.haxx.se/download/curl-{{ version }}.tar.bz2
