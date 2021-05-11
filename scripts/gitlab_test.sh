@@ -94,7 +94,7 @@ check_package_in_channel() {
 for changed in $(tools/bin/recipebook --changes origin/$2 --sub-package)
 do
     IFS=' ' changed=($changed)
-    for pkg in $(tools/bin/recipebook --package ${changed[0]} --version ${changed[1]} --provides --sub-package)
+    for pkg in $(tools/bin/recipebook --package ${changed[0]} --version ${changed[1]} --provides --output-packages)
     do
         check_package_in_channel "$prod" "$PROD_WSI_CONDA_CHANNEL" ||
             check_package_in_channel "$devel" "$WSI_CONDA_CHANNEL" ||
