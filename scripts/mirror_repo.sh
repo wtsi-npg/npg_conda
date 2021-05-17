@@ -3,6 +3,7 @@
 set -e -u
 
 DEFAULT_GITLAB_LABELS="npg_automation"
+labels_string=''
 
 usage() {
     cat 1>&2 <<EOF

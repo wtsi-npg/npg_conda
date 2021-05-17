@@ -7,7 +7,7 @@
 # versions in other channels will also be successful.
 #
 # Command Line Arguments (pipeline dependent):
-#     $1 - CHANNEL_DIR 
+#     $1 - CHANNEL_DIR (explicit for global scope)
 #     $2 - COMPARE_BRANCH 
 
 
@@ -16,9 +16,11 @@
 set -e -u -x
 IFS=$'\n'
 
+CHANNEL_DIR=$1
+
 prod=$(conda search --quiet -c "$PROD_WSI_CONDA_CHANNEL" --override-channels | sed -E 's/[[:space:]]+/ /g' | cut -f 1,2 -d' ')
 devel=$(conda search --quiet -c "$WSI_CONDA_CHANNEL" --override-channels | sed -E 's/[[:space:]]+/ /g' | cut -f 1,2 -d' ')
-local=$(conda search --quiet -c "file://$1" --override-channels | sed -E 's/[[:space:]]+/ /g' | cut -f 1,2 -d ' ') 
+local=$(conda search --quiet -c "file://$CHANNEL_DIR" --override-channels | sed -E 's/[[:space:]]+/ /g' | cut -f 1,2 -d ' ') 
 
 
 
@@ -98,7 +100,7 @@ do
     do
         check_package_in_channel "$prod" "$PROD_WSI_CONDA_CHANNEL" ||
             check_package_in_channel "$devel" "$WSI_CONDA_CHANNEL" ||
-            check_package_in_channel "$local" "file://$1"
+            check_package_in_channel "$local" "file://$CHANNEL_DIR"
     done
 done
 
