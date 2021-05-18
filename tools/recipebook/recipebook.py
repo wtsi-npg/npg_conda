@@ -42,7 +42,7 @@ VERSION = "version"
 class PrintLevel(Enum):
     ROOT = 0
     SUB = 1
-    OUT = 2
+    GROUPED = 2
 
 
 class RecipeBook(object):
@@ -343,17 +343,16 @@ class RecipeBook(object):
             return False
 
     def print_packages(self, nv: Tuple[str, Version]):
-        """Prints information that matches the output of conda build,
-        sub-packages if present, or root package if not.
+        """Prints root packages followed by their sub packages.
 
         Args:
             nv: package name, version tuple
         """
 
+        print("root", end=" ")
+        self.print_root_package(nv)
         if self._has_subpackages(nv[0]):
             self.print_sub_packages(nv)
-        else:
-            self.print_root_package(nv)
 
     def dependency_graph(self) -> nx.DiGraph:
         """
@@ -417,7 +416,7 @@ class RecipeBook(object):
                 self.print_root_package(node)
             elif level == PrintLevel.SUB:
                 self.print_sub_packages(node)
-            elif level == PrintLevel.OUT:
+            elif level == PrintLevel.GROUPED:
                 self.print_packages(node)
 
     @staticmethod
