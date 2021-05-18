@@ -47,7 +47,7 @@ check_package_in_channel() {
     
     if [[ "$1" =~  (^|[[:space:]])"$pkg"([[:space:]]|$) ]]
     then
-        IFS=' ' pkg=($pkg)
+        IFS=' ' read -r -a pkg <<< "$pkg"
         # install dependency from the local channel and package from
         # selected channel
         (conda create -y -n "test_env" -c file://$CHANNEL_DIR \
@@ -95,7 +95,7 @@ check_package_in_channel() {
 
 for changed in $(tools/bin/recipebook --changes origin/$2 --sub-package)
 do
-    IFS=' ' changed=($changed)
+    IFS=' ' read -r -a changed <<< "$changed"
     for pkg in $(tools/bin/recipebook --package ${changed[0]} --version ${changed[1]} --provides --output-packages)
     do
         check_package_in_channel "$prod" "$PROD_WSI_CONDA_CHANNEL" ||
