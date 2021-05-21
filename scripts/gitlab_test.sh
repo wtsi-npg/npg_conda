@@ -13,7 +13,7 @@
 . $CONDA_DIR/etc/profile.d/conda.sh
 
 # CONSTANTS
-set -e -u -x
+set -e -u
 IFS=$'\n'
 
 CHANNEL_DIR=$1
@@ -56,18 +56,18 @@ check_package_in_channel() {
 
     if [[ "$1" =~  (^|[[:space:]])"$pkg"([[:space:]]|$) ]] || [[ "$(echo $1 | sed 's/\_/\./g')" =~  (^|[[:space:]])"$pkg"([[:space:]]|$) ]]
     then
-        IFS=' ' read -r -a pkg <<< "$pkg"
+        IFS=' ' read -r -a package <<< "$pkg"
         # install dependency from the local channel and package from
         # selected channel
         (conda create -y -n "test_env" -c file://$CHANNEL_DIR -c $WSI_CONDA_CHANNEL -c pkgs/main --override-channels ${sub[@]} &&
              conda activate "test_env" &&
-             conda install -y -c $2 ${pkg[0]}=${pkg[1]} &&
+             conda install -y -c $2 ${package[0]}=${package[1]} &&
              conda env export &&
              echo "CHECKSUM = $(conda env export | md5sum)")||
             (cleanup_env && echo "installation fail" && return 1)
         # Find and run conda tests -
         #     some packages do not have tests, e.g. irods-runtime
-        pkg_dir=$(ls -d -1 $CONDA_DIR/pkgs/${pkg[0]}-${pkg[1]}* | head -n1)
+        pkg_dir=$(ls -d -1 $CONDA_DIR/pkgs/${package[0]}-${package[1]}* | head -n1)
         pkg_test=$(ls $pkg_dir/info/test/run_test.*)
         if [[ -f $pkg_test ]] 
         then
@@ -100,7 +100,7 @@ check_package_in_channel() {
         
         cleanup_env
     else
-        echo "not in channel"
+        echo "$pkg not in channel"
         if [ $is_root -eq 1 ]
         then
             echo "but is a root package, so may have sub packages"
