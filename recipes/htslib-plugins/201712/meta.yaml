@@ -10,7 +10,7 @@ about:
   summary: C library for high-throughput sequencing data formats.
 
 build:
-  number: 0
+  number: 1
 
 source:
   - git_url: https://github.com/samtools/htslib-plugins.git
@@ -25,7 +25,7 @@ requirements:
     - make
     - perl
   host:
-    - irods-dev >=4.1.12
+    - irods-dev {{ irods }}
     - libbz2-dev
     - libcurl-dev
     - libdeflate-dev
@@ -52,7 +52,7 @@ outputs:
         - make
         - perl
       host:
-        - irods-dev >=4.1.12
+        - irods-dev {{ irods }}
         - libbz2-dev
         - libcurl-dev
         - libdeflate-dev
@@ -68,6 +68,8 @@ outputs:
         - liblzma
         - libssl
         - libz
+      run_constrained:
+        - irods-runtime {{ irods }}
     files:
       - libexec/htslib/hfile_irods.so
       - libexec/htslib/hfile_mmap.so
