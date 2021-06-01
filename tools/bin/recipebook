@@ -84,12 +84,11 @@ parser.add_argument("--provides",
 level_group = parser.add_mutually_exclusive_group()
 level_group.add_argument("--sub-packages",
                          help="Report only sub-package names instead of root "
-                              "package names. Excludes --output-packages.",
+                              "package names. Excludes --grouped-packages.",
                          action="store_true")
-level_group.add_argument("--output-packages",
-                         help="Report package names that match outputs of "
-                              "build, i.e. sub-package names if present and "
-                              "root package names if not. Excludes --sub-packages.",
+level_group.add_argument("--grouped-packages",
+                         help="Report root package names followed by their "
+                              "group of sub-packages. Excludes --sub-packages",
                          action="store_true")
 
 parser.add_argument("--debug",
@@ -111,8 +110,8 @@ log.basicConfig(level=log_level)
 package_level = PrintLevel.ROOT
 if args.sub_packages:
     package_level = PrintLevel.SUB
-elif args.output_packages:
-    package_level = PrintLevel.OUT
+elif args.grouped_packages:
+    package_level = PrintLevel.GROUPED
 
 args = parser.parse_args()
 

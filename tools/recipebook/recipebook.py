@@ -42,7 +42,7 @@ VERSION = "version"
 class PrintLevel(Enum):
     ROOT = 0
     SUB = 1
-    OUT = 2
+    GROUPED = 2
 
 
 class RecipeBook(object):
@@ -58,7 +58,7 @@ class RecipeBook(object):
     pkg_recipes: Dict[Tuple, str]
     pkg_versions: Dict[str, List[Version]]
     pkg_requirements: Dict[Tuple, List[Tuple]]
-    pkg_parent: Dict[str, str]
+    pkg_parent: Dict[str, List]
 
     def __init__(self, recipe_files: List[str]):
         self.graph_root = (None, None)
@@ -122,7 +122,10 @@ class RecipeBook(object):
         outputs = recipe.get(OUTPUTS, [])
         for output in outputs:
             output_name = output[NAME]
-            self.pkg_parent[output_name] = pkg_name
+            try:
+                self.pkg_parent[output_name].append(pkg_version)
+            except KeyError:
+                self.pkg_parent[output_name] = [pkg_name, pkg_version]
             output_reqs = output.get(REQUIREMENTS, {})
 
             pkg_reqs += output_reqs.get(HOST, [])
@@ -253,7 +256,7 @@ class RecipeBook(object):
         Returns: str
 
         """
-        return self.pkg_parent[name]
+        return self.pkg_parent[name][0]
 
     def package_descendants(self, nv: Tuple[str, Version]) -> nx.DiGraph:
         """Returns a graph of all the packages that depend on the named
@@ -331,29 +334,28 @@ class RecipeBook(object):
         if nv in self.pkg_recipes:
             (name, version) = nv
             for sub, parent in self.pkg_parent.items():
-                if parent == name:
+                if parent[0] == name and version in parent:
                     print(sub, version, os.path.dirname(self.package_recipe(nv)))
         else:
             raise ValueError("RecipeBook does not contain {}".format(nv))
 
     def _has_subpackages(self, name) -> bool:
-        if name in self.pkg_parent.values():
+        if name in [package[0] for package in self.pkg_parent.values()]:
             return True
         else:
             return False
 
     def print_packages(self, nv: Tuple[str, Version]):
-        """Prints information that matches the output of conda build,
-        sub-packages if present, or root package if not.
+        """Prints root packages followed by their sub packages.
 
         Args:
             nv: package name, version tuple
         """
 
+        print("root", end=" ")
+        self.print_root_package(nv)
         if self._has_subpackages(nv[0]):
             self.print_sub_packages(nv)
-        else:
-            self.print_root_package(nv)
 
     def dependency_graph(self) -> nx.DiGraph:
         """
@@ -396,7 +398,7 @@ class RecipeBook(object):
                             if req_pkg in self.pkg_parent:
                                 # Require the parent package rather than
                                 # the sub-package
-                                parent_pkg = self.pkg_parent[req_pkg]
+                                parent_pkg = self.package_parent(req_pkg)
                                 num_reqs_located += add_edge(parent_pkg, spec)
                             else:
                                 log.warning("Can't find required package %s",
@@ -417,7 +419,7 @@ class RecipeBook(object):
                 self.print_root_package(node)
             elif level == PrintLevel.SUB:
                 self.print_sub_packages(node)
-            elif level == PrintLevel.OUT:
+            elif level == PrintLevel.GROUPED:
                 self.print_packages(node)
 
     @staticmethod
