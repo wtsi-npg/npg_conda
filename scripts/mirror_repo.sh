@@ -141,7 +141,7 @@ do
                 \"source_branch\": \"$named_branch\", \
                 \"target_branch\": \"devel\", \
                 \"title\": \"$title\", \
-                \"labels\": \"$labels_string\", \
+                \"labels\": \"$labels_string\" \
              } "\
              "https://gitlab.internal.sanger.ac.uk/api/v4/projects/${project_id}/merge_requests"
     fi
