@@ -1,7 +1,7 @@
-{% set version = "3.4.17" %}
-{% set short_version = "3.4" %}
-{% set sha256 = "9b50e8a670d5e950425d96935c7ddd415eb6f8079615a36df425f09a3143172e" %}
-{% set nettle_version = "==3.3" %}
+{% set version = "3.7.1" %}
+{% set short_version = "3.7" %}
+{% set sha256 = "3777d7963eca5e06eb315686163b7b3f5045e2baac5e54e038ace9835e5cac6f" %}
+{% set nettle_version = ">=3.6" %}
 
 package:
   name: gnutls-pkg
@@ -13,7 +13,7 @@ about:
   summary: "The GnuTLS Transport Layer Security Library."
 
 build:
-  number: 3
+  number: 0
 
 source:
   - url: https://www.gnupg.org/ftp/gcrypt/gnutls/v{{ short_version }}/gnutls-{{ version }}.tar.xz
