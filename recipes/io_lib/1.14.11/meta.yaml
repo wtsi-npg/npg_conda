@@ -11,7 +11,7 @@ about:
   summary: DNA sequence assembly, editing and analysis tools.
 
 build:
-  number: 3
+  number: 4
 
 source:
   url: https://github.com/jkbonfield/io_lib/releases/download/io_lib-1-14-11/io_lib-{{ version }}.tar.gz

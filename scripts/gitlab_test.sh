@@ -7,7 +7,7 @@
 # versions in other channels will also be successful.
 #
 # Command Line Arguments (pipeline dependent):
-#     $1 - CHANNEL_DIR (explicit for global scope)
+#     $1 - BUILD_DIR (explicit for global scope)
 #     $2 - COMPARE_BRANCH 
 
 . $CONDA_DIR/etc/profile.d/conda.sh
@@ -16,11 +16,11 @@
 set -e -u
 IFS=$'\n'
 
-CHANNEL_DIR=$1
+BUILD_DIR=$1
 
 prod=$(conda search --quiet -c "$PROD_WSI_CONDA_CHANNEL" --override-channels | sed -E 's/[[:space:]]+/ /g' | cut -f 1,2 -d' ')
 devel=$(conda search --quiet -c "$WSI_CONDA_CHANNEL" --override-channels | sed -E 's/[[:space:]]+/ /g' | cut -f 1,2 -d' ')
-local=$(conda search --quiet -c "file://$CHANNEL_DIR" --override-channels | sed -E 's/[[:space:]]+/ /g' | cut -f 1,2 -d ' ') 
+local=$(conda search --quiet -c "file://$BUILD_DIR" --override-channels | sed -E 's/[[:space:]]+/ /g' | cut -f 1,2 -d ' ') 
 
 #FUNCTIONS
 
@@ -59,7 +59,7 @@ check_package_in_channel() {
         IFS=' ' read -r -a package <<< "$pkg"
         # install dependency from the local channel and package from
         # selected channel
-        (conda create -y -n "test_env" -c file://$CHANNEL_DIR -c $WSI_CONDA_CHANNEL -c pkgs/main --override-channels ${sub[@]} &&
+        (conda create -y -n "test_env" -c file://$BUILD_DIR -c $WSI_CONDA_CHANNEL -c pkgs/main --override-channels ${sub[@]} &&
              conda activate "test_env" &&
              conda install -y -c $2 ${package[0]}=${package[1]} &&
              conda env export &&
@@ -127,7 +127,7 @@ test_previous_root() {
         do
             check_package_in_channel "$prod" "$PROD_WSI_CONDA_CHANNEL" ||
                 check_package_in_channel "$devel" "$WSI_CONDA_CHANNEL" ||
-                check_package_in_channel "$local" "file://$CHANNEL_DIR"
+                check_package_in_channel "$local" "file://$BUILD_DIR"
         done
     fi
 }
