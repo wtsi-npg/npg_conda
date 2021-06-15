@@ -10,7 +10,7 @@ about:
   summary:  Stream files to and from iRODS.
 
 build:
-  number: 2
+  number: 3
 
 source:
   git_url: https://github.com/whitwham/tears.git
@@ -24,11 +24,11 @@ requirements:
     - make
     - perl
   host:
-    - irods-dev ==4.1.12
+    - irods-dev {{ irods }}
     - libjansson-dev
     - libssl-dev
   run:
-    - irods-plugins ==4.1.12
+    - irods-plugins {{ irods }}
     - libjansson
     - libssl
 

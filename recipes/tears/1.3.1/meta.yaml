@@ -20,16 +20,16 @@ requirements:
   build:
     - {{ compiler("c") }}
     - autoconf
-    - automake>=1.16.2
+    - automake
     - make
     - perl
   host:
-    - irods-dev ==4.2.7
+    - irods-dev {{ irods }}
     - libjansson-dev
     - libssl
     - libssl-dev
   run:
-    - irods-runtime ==4.2.7
+    - irods-runtime {{ irods }}
     - libjansson
     - libssl
 

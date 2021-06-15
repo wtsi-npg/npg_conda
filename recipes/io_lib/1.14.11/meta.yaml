@@ -24,7 +24,7 @@ requirements:
     - autoconf
     - make
   host:
-    - irods-dev >=4.1.12
+    - irods-dev {{ irods }}
     - libbz2-dev
     - libcurl-dev
     - liblzma-dev
