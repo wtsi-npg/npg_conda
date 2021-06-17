@@ -83,6 +83,9 @@ parser.add_argument("--conda-build-image",
                     help="Docker image used to build packages, "
                     "defaults to {}".format(DEFAULT_BUILD_IMAGE),
                     type=str, nargs="?", default=DEFAULT_BUILD_IMAGE)
+parser.add_argument("--skip-image-pull",
+                    help="Skip docker pull to obtain the image",
+                    action="store_true")
 parser.add_argument("--remove-container",
                     help="Remove the Docker container after each build",
                     action="store_true")
@@ -116,7 +119,8 @@ elif args.verbose or args.dry_run:
     level = log.INFO
 log.basicConfig(level=level)
 
-docker_pull(args.conda_build_image)
+if not args.skip_image_pull:
+    docker_pull(args.conda_build_image)
 
 fail = False
 
