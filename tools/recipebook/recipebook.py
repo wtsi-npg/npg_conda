@@ -324,26 +324,42 @@ class RecipeBook(object):
         else:
             raise ValueError("RecipeBook does not contain {}".format(nv))
 
+    def _has_sub_packages(self, name) -> bool:
+        return name in [package[0] for package in self.pkg_parent.values()]
+
+    def sub_packages(self, nv: Tuple[str, Version]) -> List[str] or None:
+        """Returns a list of the subpackages of the provided root package
+
+        Args:
+            nv: package name, version tuple
+
+        Returns: List[str] or None if that package has no subpackages
+        """
+        sub_packages = []
+        if nv not in self.pkg_recipes:
+            raise ValueError("RecipeBook does not contain {}".format(nv))
+        elif not self._has_sub_packages(nv[0]):
+            return None
+        else:
+            (name, version) = nv
+            for sub, parent in self.pkg_parent.items():
+                if parent[0] == name and version in parent:
+                    sub_packages.append(sub)
+        return sub_packages
+
     def print_sub_packages(self, nv: Tuple[str, Version]):
-        """Prints only sub-package information, returns True if the package has
-        no sub-packages.
+        """Prints only sub-package information.
 
         Args:
             nv: package name, version tuple
         """
-        if nv in self.pkg_recipes:
-            (name, version) = nv
-            for sub, parent in self.pkg_parent.items():
-                if parent[0] == name and version in parent:
-                    print(sub, version, os.path.dirname(self.package_recipe(nv)))
-        else:
-            raise ValueError("RecipeBook does not contain {}".format(nv))
-
-    def _has_subpackages(self, name) -> bool:
-        if name in [package[0] for package in self.pkg_parent.values()]:
-            return True
-        else:
-            return False
+        version = nv[1]
+        try:
+            for sub_package in self.sub_packages(nv):
+                print(sub_package, version, os.path.dirname(self.package_recipe(nv)))
+        except TypeError:
+            # Print nothing if there are no subpackages
+            pass
 
     def print_packages(self, nv: Tuple[str, Version]):
         """Prints root packages followed by their sub packages.
@@ -354,7 +370,7 @@ class RecipeBook(object):
 
         print("root", end=" ")
         self.print_root_package(nv)
-        if self._has_subpackages(nv[0]):
+        if self._has_sub_packages(nv[0]):
             self.print_sub_packages(nv)
 
     def dependency_graph(self) -> nx.DiGraph:
