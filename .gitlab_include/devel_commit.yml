@@ -38,7 +38,7 @@ test_devel:
     - echo "Testing devel packages"
     - . /tmp/miniconda/etc/profile.d/conda.sh
     - conda activate base
-    - bash -i scripts/gitlab_test.sh "$DEVEL_BUILD_DIR" "$DEVEL_COMPARE_BRANCH"
+    - python scripts/gitlab_test.py -b "$DEVEL_BUILD_DIR" -c "$DEVEL_COMPARE_BRANCH" -p "$PROD_WSI_CONDA_CHANNEL" -d "$WSI_CONDA_CHANNEL"
   only:
     - devel
   except:

@@ -333,7 +333,7 @@ class RecipeBook(object):
         Args:
             nv: package name, version tuple
 
-        Returns: List[str] or None if that package has no subpackages
+        Returns: List[str] or None if that package has no sub-packages
         """
         sub_packages = []
         if nv not in self.pkg_recipes:

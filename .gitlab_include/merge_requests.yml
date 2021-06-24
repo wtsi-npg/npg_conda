@@ -32,7 +32,7 @@ test_merge:
     - echo "Testing merge request packages"
     - . /tmp/miniconda/etc/profile.d/conda.sh
     - conda activate base
-    - bash -i scripts/gitlab_test.sh "$PRE_DEVEL_BUILD_DIR" "$PRE_DEVEL_COMPARE_BRANCH"
+    - python scripts/gitlab_test.py -b "$PRE_DEVEL_BUILD_DIR" -c "$PRE_DEVEL_COMPARE_BRANCH" -p "$PROD_WSI_CONDA_CHANNEL" -d "$WSI_CONDA_CHANNEL"
   only:
     - merge_requests
 
