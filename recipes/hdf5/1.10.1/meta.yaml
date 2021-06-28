@@ -12,7 +12,7 @@ about:
   summary: A data model, library, and file format for storing and managing data.
 
 build:
-  number: 4
+  number: 5
   string: threadsafe_{{ PKG_BUILDNUM }}
 
 source:

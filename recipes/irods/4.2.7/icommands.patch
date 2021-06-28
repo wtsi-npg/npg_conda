@@ -1,25 +1,47 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 89a38f0..69ad591 100644
+index 89a38f0..c0c661b 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -1,12 +1,13 @@
+@@ -1,17 +1,19 @@
  cmake_minimum_required(VERSION 3.5.0 FATAL_ERROR) #CPACK_DEBIAN_<COMPONENT>_PACKAGE_NAME
  include(${CMAKE_SOURCE_DIR}/cmake/RequireOutOfSourceBuild.cmake)
 +include(GNUInstallDirs)
  
  find_package(IRODS 4.2.7 EXACT REQUIRED CONFIG)
  
- set(CMAKE_C_COMPILER ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang)
- set(CMAKE_CXX_COMPILER ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang++)
+-set(CMAKE_C_COMPILER ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang)
+-set(CMAKE_CXX_COMPILER ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang++)
++# set(CMAKE_C_COMPILER ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang)
++# set(CMAKE_CXX_COMPILER ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang++)
  
 -set(CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
-+set(CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS}")
++set(CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath-link,${CMAKE_INSTALL_PREFIX}")
  
  project(icommands C CXX)
  
-@@ -28,12 +29,12 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
- set(CMAKE_INSTALL_RPATH ${IRODS_EXTERNALS_FULLPATH_CLANG_RUNTIME}/lib)
+ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+ 
++include(GNUInstallDirs)
+ include(${IRODS_TARGETS_PATH})
+ 
+ if (NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+@@ -24,16 +26,18 @@ if (NOT CPACK_PACKAGING_INSTALL_PREFIX)
+   message(STATUS "Setting unspecified CPACK_PACKAGING_INSTALL_PREFIX to '${CPACK_PACKAGING_INSTALL_PREFIX}'. This is the correct setting for normal builds.")
+ endif()
+ 
+-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+-set(CMAKE_INSTALL_RPATH ${IRODS_EXTERNALS_FULLPATH_CLANG_RUNTIME}/lib)
  set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
++set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
++set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
++
++set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-z,defs")
++set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,-z,defs")
++set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-z,defs")
++add_compile_options(-Wall -Wextra -Werror -Wno-unused-parameter)
++
++include_directories(${IRODS_EXTERNALS_FULLPATH_JSON}/include/nlohmann)
++include_directories(AFTER ${CMAKE_INSTALL_PREFIX}/include)
  
 -set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
 -set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -stdlib=libc++")
@@ -27,16 +49,10 @@ index 89a38f0..69ad591 100644
 -add_compile_options(-nostdinc++ -Wall -Wextra -Werror -Wno-unused-parameter)
 -link_libraries(c++abi)
 -include_directories(${IRODS_EXTERNALS_FULLPATH_CLANG}/include/c++/v1)
-+#set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
-+#set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -stdlib=libc++")
-+#set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
-+add_compile_options(-Wall -Wextra -Wno-unused-parameter)
-+#link_libraries(c++abi)
-+#include_directories(${IRODS_EXTERNALS_FULLPATH_CLANG}/include/c++/v1)
  
  set(
    IRODS_CLIENT_ICOMMANDS_EXECUTABLES
-@@ -125,7 +126,7 @@ foreach(EXECUTABLE ${IRODS_CLIENT_ICOMMANDS_EXECUTABLES})
+@@ -125,7 +129,7 @@ foreach(EXECUTABLE ${IRODS_CLIENT_ICOMMANDS_EXECUTABLES})
      TARGETS
      ${EXECUTABLE}
      RUNTIME
@@ -45,7 +61,7 @@ index 89a38f0..69ad591 100644
      )
  
    if (IRODS_LINUX_DISTRIBUTION_NAME STREQUAL "centos")
-@@ -147,7 +148,7 @@ foreach(EXECUTABLE ${IRODS_CLIENT_ICOMMANDS_EXECUTABLES})
+@@ -147,7 +151,7 @@ foreach(EXECUTABLE ${IRODS_CLIENT_ICOMMANDS_EXECUTABLES})
    install(
      FILES
      ${CMAKE_BINARY_DIR}/man/${EXECUTABLE}.1.gz
@@ -54,7 +70,7 @@ index 89a38f0..69ad591 100644
      )
  endforeach()
  
-@@ -179,13 +180,13 @@ foreach(IRODS_CLIENT_ICOMMANDS_SCRIPT ${IRODS_CLIENT_ICOMMANDS_SCRIPTS})
+@@ -179,13 +183,13 @@ foreach(IRODS_CLIENT_ICOMMANDS_SCRIPT ${IRODS_CLIENT_ICOMMANDS_SCRIPTS})
    install(
      FILES
      ${CMAKE_BINARY_DIR}/man/${IRODS_CLIENT_ICOMMANDS_SCRIPT}.1.gz
@@ -70,7 +86,7 @@ index 89a38f0..69ad591 100644
    )
  
  
-@@ -194,8 +195,8 @@ if (NOT CPACK_DEBIAN_PACKAGE_VERSION)
+@@ -194,8 +198,8 @@ if (NOT CPACK_DEBIAN_PACKAGE_VERSION)
  endif()
  
  set(CPACK_PACKAGE_FILE_NAME "irods-icommands${IRODS_PACKAGE_FILE_NAME_SUFFIX}")
@@ -81,3 +97,47 @@ index 89a38f0..69ad591 100644
  set(CPACK_COMPONENTS_GROUPING IGNORE)
  set(CPACK_PACKAGE_VERSION ${IRODS_VERSION})
  set(CPACK_PACKAGE_VERSION_MAJOR ${IRODS_VERSION_MAJOR})
+@@ -242,3 +246,5 @@ if (NOT CPACK_GENERATOR)
+ endif()
+ 
+ include(CPack)
++
++install(TARGETS ${IRODS_CLIENT_ICOMMANDS_EXECUTABLES} DESTINATION ${CMAKE_INSTALL_BINDIR})
+diff --git a/src/imeta.cpp b/src/imeta.cpp
+index 660aa51..1f7b492 100644
+--- a/src/imeta.cpp
++++ b/src/imeta.cpp
+@@ -1188,11 +1188,10 @@ getInput( char *cmdToken[], int maxTokens ) {
+ }
+ 
+ std::tuple<po::parsed_options, po::variables_map>
+-parse_program_options (
+-    int                                     _argc,
+-    const char**                            _argv,
+-    rodsArguments_t&                        _rods_args ) {
+-
++parse_program_options(int _argc,
++                      const char** _argv,
++                      rodsArguments_t& _rods_args)
++{
+     po::options_description global("Global options");
+     global.add_options()
+         ("help,h",                                             "Show imeta help")
+@@ -1231,6 +1230,7 @@ parse_program_options (
+         if ( vm.count( "zone_name" ) ) {
+             _rods_args.zone = 1;
+             _rods_args.zoneName = (char*) vm["zone_name"].as<std::string>().c_str();
++            rstrcpy(zoneArgument, _rods_args.zoneName, sizeof(zoneArgument));
+         }
+ 
+         if ( vm.count( "help" ) ) {
+@@ -1239,7 +1239,8 @@ parse_program_options (
+         }
+ 
+         return std::make_tuple(parsed, vm);
+-    } catch ( const po::error& _e ) {
++    }
++    catch (const po::error& _e) {
+         std::cout << std::endl
+                   << "Error: "
+                   << _e.what()

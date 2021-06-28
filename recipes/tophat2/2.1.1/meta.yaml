@@ -11,7 +11,7 @@ about:
   summary: Spliced read mapper for RNA-Seq.
 
 build:
-  number: 1
+  number: 2
   
 source:
   url: http://ccb.jhu.edu/software/tophat/downloads/tophat-{{ version }}.tar.gz

@@ -11,7 +11,7 @@ about:
   summary: "Rapid mRNA/DNA and cross-species protein alignments."
 
 build:
-  number: 2
+  number: 3
 
 source:
   url: https://users.soe.ucsc.edu/~kent/src/blatSrc{{ version }}.zip

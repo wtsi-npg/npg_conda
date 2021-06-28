@@ -11,7 +11,7 @@ about:
   summary: "Graph-based alignment of next generation sequencing reads to a population of genomes."
 
 build:
-  number: 1
+  number: 2
 
 source:
   url: ftp://ftp.ccb.jhu.edu/pub/infphilo/hisat2/downloads/hisat2-{{ version }}-source.zip

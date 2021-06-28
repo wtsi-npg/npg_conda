@@ -13,7 +13,7 @@ about:
   summary: "A collection of command line tools for Short-Reads FASTA/FASTQ files preprocessing."
 
 build:
-  number: 2
+  number: 4
 
 source:
   - url: https://github.com/agordon/fastx_toolkit/releases/download/{{ version }}/fastx_toolkit-{{ version }}.tar.bz2

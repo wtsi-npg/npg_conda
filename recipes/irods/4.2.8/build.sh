@@ -44,6 +44,7 @@ cmake \
     -D CMAKE_CXX_FLAGS='-Wno-deprecated-declarations' \
     -D CMAKE_LD_FLAGS='-Wno-deprecated-declarations' \
     -D CMAKE_EXE_LINKER_FLAGS="-Wl,-rpath-link,${PREFIX}/lib -fuse-ld=${LD}" \
+    -D CMAKE_SHARED_LINKER_FLAGS="-Wl,-allow-multiple-definition" \
     -D CMAKE_C_COMPILER="${BUILD_PREFIX}/bin/clang" \
     -D CMAKE_CXX_COMPILER="${BUILD_PREFIX}/bin/clang++" \
     -D BUILD_UNIT_TESTS=OFF \
@@ -51,10 +52,9 @@ cmake \
     -D CMAKE_LINKER=${LD} \
     -D CPP=${CPP} \
     ../irods
-make VERBOSE=1 -j 8 package
+make VERBOSE=1 -j "$CPU_COUNT" package
 make VERBOSE=1 install
 popd
-
 
 [ -d build_icommands ] || mkdir build_icommands
 pushd build_icommands
@@ -78,7 +78,6 @@ cmake \
     -D CPP=${CPP} \
     ../irods_client_icommands
     
-make VERBOSE=1 -j 8 package
+make VERBOSE=1 -j "$CPU_COUNT" package
 make install
 popd
-

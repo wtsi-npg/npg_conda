@@ -10,7 +10,7 @@ about:
   summary: A fast data interchange format and capability-based RPC system.
 
 build:
-  number: 1
+  number: 2
 
 source:
   git_url: https://github.com/capnproto/capnproto

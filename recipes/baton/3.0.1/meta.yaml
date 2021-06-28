@@ -1,5 +1,5 @@
-{% set version = "2.0.1" %}
-{% set sha256 = "fdc95d4a632faf03697db8d8b2db92c7e5569926d374311acc1df20d1d1abbdc" %}
+{% set version = "3.0.1" %}
+{% set sha256 = "ae40ddcd07cc96f9300a29764c88e08f92b8668c66e867d2c9d6ae2522852b1a" %}
 
 package:
   name: baton-pkg
@@ -8,10 +8,10 @@ package:
 about:
   home: https://github.com/wtsi-npg/baton
   license: GPL2
-  summary: Client programs and API for use with iRODS (Integrated Rule-Oriented Data System).
+  summary: "Client programs and API for use with iRODS (Integrated Rule-Oriented Data System)."
 
 build:
-  number: 1
+  number: 0
 
 source:
   url: https://github.com/wtsi-npg/baton/releases/download/{{ version }}/baton-{{ version }}.tar.gz
@@ -31,10 +31,6 @@ requirements:
     - irods-dev {{ irods }}
     - libjansson-dev
     - libssl-dev
-  run:
-    - {{ pin_subpackage("libbaton", exact=True) }}
-    - libjansson
-    - libssl
 
 outputs:
   - name: baton
@@ -54,6 +50,7 @@ outputs:
         - libssl-dev
       run:
         - {{ pin_subpackage("libbaton", exact=True) }}
+        - irods-runtime {{ irods }}
         - libjansson
         - libssl
     files:
@@ -78,6 +75,7 @@ outputs:
         - libjansson-dev
         - libssl-dev
       run:
+        - irods-runtime {{ irods }}
         - libjansson
         - libssl
     files:
@@ -91,6 +89,7 @@ outputs:
     requirements:
       run:
         - {{ pin_subpackage("libbaton", exact=True) }}
+        - irods-dev {{ irods }}
     files:
       - include/baton
       - lib/pkgconfig/baton.pc

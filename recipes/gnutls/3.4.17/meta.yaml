@@ -13,7 +13,7 @@ about:
   summary: "The GnuTLS Transport Layer Security Library."
 
 build:
-  number: 3
+  number: 4
 
 source:
   - url: https://www.gnupg.org/ftp/gcrypt/gnutls/v{{ short_version }}/gnutls-{{ version }}.tar.xz
