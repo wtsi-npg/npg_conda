@@ -1,0 +1,25 @@
+package:
+  name: sub
+  version: 1.0.0
+
+build:
+  number: 0
+  noarch: generic
+
+outputs:
+  - name: libsub
+    version: 1.0.0
+    test:
+      commands:
+        - echo "libsub success"
+        - exit 0
+
+  - name: libsub-dev
+    version: 1.0.0
+    requirements:
+      run:
+        - {{ pin_subpackage("libsub", exact=True) }}
+        - python>=3.0.0
+    test:
+      imports:
+        - os

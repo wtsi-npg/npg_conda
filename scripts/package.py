@@ -1,9 +1,11 @@
+from __future__ import annotations
 from packaging.version import Version
 from typing import List, Tuple
 from conda.cli.python_api import run_command, Commands
 import re
 import os
 import sys
+import glob
 lib = os.path.realpath(os.path.join(os.path.dirname(__file__),
                                     "..", "tools", "recipebook"))
 if lib not in sys.path:
@@ -34,6 +36,17 @@ class Package:
     def nv(self) -> Tuple[str, Version]:
         return self._name, self._version
 
+    def equals(self, other: Package) -> bool:
+        """Test equality with another Package object
+
+        Args:
+            other: The Package to compare with
+
+        Returns: bool
+
+        """
+        return self.name() == other.name() and self.version() == other.version()
+
     def populate_sub_packages(self, recipe_book: RecipeBook):
         self._sub_packages = recipe_book.sub_packages((self._name, self._version))
         if not self._sub_packages:
@@ -52,9 +65,42 @@ class Package:
             if recipe_book:
                 self.populate_sub_packages(recipe_book)
             else:
-                raise ValueError("No recipe book provided when sub_packages "
-                                 "variable has not been populated")
+                raise MissingRecipeBookError("No recipe book provided when sub_packages "
+                                             "variable has not been populated")
         return self._sub_packages
+
+    def get_test_scripts(self) -> List[str]:
+        test_scripts = []
+        if self.sub_packages():
+            for sub in self.sub_packages():
+                test_scripts.extend(glob.glob(os.environ['CONDA_PREFIX'] + '/pkgs/' +
+                                              sub + '-' +
+                                              str(self.version()) +
+                                              "*/info/test/run_test.*"))
+        else:
+            test_scripts.extend(glob.glob(os.environ['CONDA_PREFIX'] + '/pkgs/' +
+                                          self.name() + '-' +
+                                          str(self.version()) +
+                                          "*/info/test/run_test.*"))
+        return test_scripts
+
+    def run_test_scripts(self, env: str):
+        test_scripts = self.get_test_scripts()
+        for test in test_scripts:
+            if test.endswith('.sh'):
+                ret_val = run_command(Commands.RUN, '-n', env, 'bash', test)
+                if ret_val[2] > 0:
+                    raise TestFailError(ret_val[1])
+            elif test.endswith('.py'):
+                ret_val = run_command(Commands.RUN, 'python', '-n', env, test)
+                if ret_val[2] > 0:
+                    raise TestFailError(ret_val[1])
+            elif test.endswith('.pl'):
+                ret_val = run_command(Commands.RUN, 'perl', '-n', env, test)
+                if ret_val[2] > 0:
+                    raise TestFailError(ret_val[1])
+            else:
+                raise ValueError('Unsupported test extension: ' + test.split('.')[-1])
 
     # TODO: it may be possible to find library names in recipes,
     #  rather than assuming that they contain the package name
@@ -68,14 +114,26 @@ class Package:
         """
         bin_ldd = run_command(Commands.RUN, '-n', env, 'ldd', path)
         for line in bin_ldd[0].split("\n"):
-            if re.search("^*/usr/lib/*", line):
+            if re.search(".*/usr/lib/.*", line):
                 if self.sub_packages():
                     for sub in self.sub_packages():
-                        if re.search("^*" + sub + "*", line):
+                        if re.search(".*" + sub + ".*", line):
                             raise LibError(line)
                 else:
-                    if re.search("^*" + self.name() + "*", line):
+                    if re.search(".*" + self.name() + ".*", line):
                         raise LibError(line)
+
+
+class MissingRecipeBookError(Exception):
+    """
+    Raise when sub_packages is called without the variable set or a recipebook provided
+    """
+
+
+class TestFailError(Exception):
+    """
+    Raise when a test script fails
+    """
 
 
 class LibError(Exception):

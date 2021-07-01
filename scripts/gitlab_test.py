@@ -4,11 +4,10 @@ import argparse
 import os
 import sys
 from channel import Channel, install_from_channels
-from package import Package, LibError
+from package import Package, TestFailError, LibError
 from conda.cli.python_api import run_command, Commands
 from conda.exceptions import PackagesNotFoundError
 import hashlib
-import glob
 lib = os.path.realpath(os.path.join(os.path.dirname(__file__),
                                     "..", "tools", "recipebook"))
 if lib not in sys.path:
@@ -87,34 +86,7 @@ def test_descendant(changed_package: Package, descendant_package: Package,
     print(export[0])
     print("CHECKSUM = " + hashlib.md5(export[0]).hexdigest())
 
-    test_scripts = []
-    if descendant_package.sub_packages():
-        for sub in descendant_package.sub_packages():
-            test_scripts.extend(glob.glob(os.environ['CONDA_DIR'] + 'pkgs/' +
-                                          sub + '-' +
-                                          str(descendant_package.version()) +
-                                          "*/info/test/run_test.*"))
-    else:
-        test_scripts.extend(glob.glob(os.environ['CONDA_DIR'] + 'pkgs/' +
-                                      descendant_package.name() + '-' +
-                                      str(descendant_package.version()) +
-                                      "*/info/test/run_test.*"))
-
-    for test in test_scripts:
-        if test.endswith('.sh'):
-            error = run_command(Commands.RUN, '-n', env, 'bash', test)[1]
-            if error:
-                raise TestFailError(error)
-        elif test.endswith('.py'):
-            error = run_command(Commands.RUN, 'python', '-n', env, test)[1]
-            if error:
-                raise TestFailError(error)
-        elif test.endswith('.pl'):
-            error = run_command(Commands.RUN, 'perl', '-n', env, test)[1]
-            if error:
-                raise TestFailError(error)
-        else:
-            raise ValueError('Unsupported test extension')
+    descendant_package.run_test_scripts(env)
 
     changed_package.check_ldd(os.environ['CONDA_DIR'] + 'envs/' + env + '/bin/*', env)
     changed_package.check_ldd(os.environ['CONDA_DIR'] + 'envs/' + env + '/lib/*', env)
@@ -130,7 +102,7 @@ def main():
     # TODO: parallelise?
     # No need to sort the graphs
     for changed in changed_recipe_book.dependency_graph():
-        if changed is not (None, None):
+        if changed != (None, None):
             changed_package = Package(changed, recipe_book)
             for descendant in recipe_book.package_descendants(changed):
                 descendant_package = Package(descendant[0], recipe_book)
@@ -141,7 +113,7 @@ def main():
                                         channel, env)
                         break
                     except PackagesNotFoundError as e:
-                        run_command(Commands.REMOVE, '-n', env)
+                        run_command(Commands.REMOVE, '-n', env, '--all')
                         if channel is local:
                             raise PackageNotFoundLocallyError(*e.args)
                         print(descendant_package.name, 'not in', channel.address)
@@ -153,12 +125,6 @@ def main():
 class PackageNotFoundLocallyError(PackagesNotFoundError):
     """
     Raise when a package is not found in the local conda channel during installation
-    """
-
-
-class TestFailError(Exception):
-    """
-    Raise when a test script fails
     """
 
 

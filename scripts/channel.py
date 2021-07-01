@@ -73,12 +73,13 @@ def search_channels(channels: List[Channel], package_name: str = "",
     """
     search = run_conda_command(Commands.SEARCH, channels, package_name,
                                override=override)
-    if search[1]:
+    if search[2] > 0:
         raise ChildProcessError(search[1])
     packages = []
-    for package in search[0].split("\n")[2:]:
+    # remove title lines and final empty line
+    for package in search[0].split("\n")[2:-1]:
         split = package.split()
-        packages.append(Package((split[0], split[1])))
+        packages.append(Package((split[0], Version(split[1]))))
     return packages
 
 
@@ -95,6 +96,6 @@ def install_from_channels(channels: List[Channel], package: str,
     """
     install = run_conda_command(Commands.INSTALL, channels,
                                 package, env, override)
-    if install[1]:
+    if install[2] > 0:
         raise ChildProcessError(install[1])
 
