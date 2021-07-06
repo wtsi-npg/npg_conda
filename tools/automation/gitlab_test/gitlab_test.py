@@ -1,15 +1,17 @@
 #! /usr/bin/env python3
-
 import argparse
+import hashlib
 import os
 import sys
-from channel import Channel, install_from_channels
-from package import Package, TestFailError, LibError
+
 from conda.cli.python_api import run_command, Commands
 from conda.exceptions import PackagesNotFoundError
-import hashlib
+
+from channel import Channel, install_from_channels
+from package import Package, TestFailError, LibError
+
 lib = os.path.realpath(os.path.join(os.path.dirname(__file__),
-                                    "..", "tools", "recipebook"))
+                                    "..", "..", "tools", "recipebook"))
 if lib not in sys.path:
     sys.path.insert(0, lib)
 
@@ -105,21 +107,22 @@ def main():
         if changed != (None, None):
             changed_package = Package(changed, recipe_book)
             for descendant in recipe_book.package_descendants(changed):
-                descendant_package = Package(descendant[0], recipe_book)
-                for channel in (prod, devel, local):
-                    env = 'test_env'
-                    try:
-                        test_descendant(changed_package, descendant_package,
-                                        channel, env)
-                        break
-                    except PackagesNotFoundError as e:
-                        run_command(Commands.REMOVE, '-n', env, '--all')
-                        if channel is local:
-                            raise PackageNotFoundLocallyError(*e.args)
-                        print(descendant_package.name, 'not in', channel.address)
-                    except ValueError or TestFailError or LibError:
-                        if channel is local:
-                            raise
+                if descendant is not None:
+                    descendant_package = Package(descendant[0], recipe_book)
+                    for channel in (prod, devel, local):
+                        env = 'test_env'
+                        try:
+                            test_descendant(changed_package, descendant_package,
+                                            channel, env)
+                            break
+                        except PackagesNotFoundError as e:
+                            run_command(Commands.REMOVE, '-n', env, '--all')
+                            if channel is local:
+                                raise PackageNotFoundLocallyError(*e.args)
+                            print(descendant_package.name, 'not in', channel.address)
+                        except ValueError or TestFailError or LibError:
+                            if channel is local:
+                                raise
 
 
 class PackageNotFoundLocallyError(PackagesNotFoundError):

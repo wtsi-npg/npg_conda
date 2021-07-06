@@ -1,13 +1,16 @@
 from __future__ import annotations
-from packaging.version import Version
-from typing import List, Tuple
-from conda.cli.python_api import run_command, Commands
-import re
-import os
-import sys
+
 import glob
+import os
+import re
+import sys
+from typing import List, Tuple
+
+from conda.cli.python_api import run_command, Commands
+from packaging.version import Version
+
 lib = os.path.realpath(os.path.join(os.path.dirname(__file__),
-                                    "..", "tools", "recipebook"))
+                                    "..", "..", "recipebook"))
 if lib not in sys.path:
     sys.path.insert(0, lib)
 
@@ -69,8 +72,10 @@ class Package:
                                              "variable has not been populated")
         return self._sub_packages
 
-    def get_test_scripts(self) -> List[str]:
+    def get_test_scripts(self, recipe_book: RecipeBook = None) -> List[str]:
         test_scripts = []
+        if recipe_book:
+            self.populate_sub_packages(recipe_book)
         if self.sub_packages():
             for sub in self.sub_packages():
                 test_scripts.extend(glob.glob(os.environ['CONDA_PREFIX'] + '/pkgs/' +
@@ -84,8 +89,8 @@ class Package:
                                           "*/info/test/run_test.*"))
         return test_scripts
 
-    def run_test_scripts(self, env: str):
-        test_scripts = self.get_test_scripts()
+    def run_test_scripts(self, env: str, recipe_book: RecipeBook = None):
+        test_scripts = self.get_test_scripts(recipe_book)
         for test in test_scripts:
             if test.endswith('.sh'):
                 ret_val = run_command(Commands.RUN, '-n', env, 'bash', test)

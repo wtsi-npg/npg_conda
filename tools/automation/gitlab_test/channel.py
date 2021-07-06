@@ -1,6 +1,8 @@
 from typing import List, Tuple
-from packaging.version import Version
+
 from conda.cli.python_api import run_command, Commands
+from packaging.version import Version
+
 from package import Package
 
 

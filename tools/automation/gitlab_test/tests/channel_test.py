@@ -1,8 +1,10 @@
+import os
+
 import pytest
+from packaging.version import Version
+
 from channel import Channel
 from package import Package
-import os
-from packaging.version import Version
 
 c = Channel(os.path.join("file://", os.path.dirname(__file__), "data/channel"))
 
