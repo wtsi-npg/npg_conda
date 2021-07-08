@@ -10,7 +10,7 @@ variables:
   MINICONDA: https://repo.anaconda.com/miniconda/Miniconda3-4.6.14-Linux-x86_64.sh
   CONDA_DIR: /tmp/miniconda
   WSI_CONDA_CHANNEL: https://dnap.cog.sanger.ac.uk/npg/conda/devel/generic
-  CONDA_IMAGE: wsinpg/ub-12.04-conda:latest
+  CONDA_IMAGE: wsinpg/centos-7-conda:latest
   S3_URL: https://cog.sanger.ac.uk/
   #
   # merge requests
