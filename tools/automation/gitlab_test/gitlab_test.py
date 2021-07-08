@@ -107,8 +107,8 @@ def main():
         if changed != (None, None):
             changed_package = Package(changed, recipe_book)
             for descendant in recipe_book.package_descendants(changed):
-                if descendant is not None:
-                    descendant_package = Package(descendant[0], recipe_book)
+                if descendant != (None, None):
+                    descendant_package = Package(descendant, recipe_book)
                     for channel in (prod, devel, local):
                         env = 'test_env'
                         try:
