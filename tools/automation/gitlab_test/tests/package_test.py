@@ -14,7 +14,6 @@ if lib not in sys.path:
     sys.path.insert(0, lib)
 from recipebook import RecipeBook, find_recipe_files
 
-
 c = Channel(os.path.join("file://", os.path.dirname(__file__), "data/channel"))
 env = 'test_env'
 run_command(Commands.CREATE, '-n', env)
@@ -43,9 +42,11 @@ def test_sub_packages():
 
 def test_get_test_scripts():
     test_scripts = success.get_test_scripts()
-    assert os.environ['CONDA_PREFIX'] + '/pkgs/success-1.0.0-0/info/test/run_test.sh' in test_scripts
+    assert os.environ['CONDA_PREFIX'] + \
+           '/pkgs/success-1.0.0-0/info/test/run_test.sh' in test_scripts
     test_scripts = sub.get_test_scripts()
-    assert os.environ['CONDA_PREFIX'] + '/pkgs/libsub-dev-1.0.0-0/info/test/run_test.py' in test_scripts
+    assert os.environ['CONDA_PREFIX'] + \
+           '/pkgs/libsub-dev-1.0.0-0/info/test/run_test.py' in test_scripts
 
 
 def test_run_test_scripts(mocker):
@@ -53,8 +54,9 @@ def test_run_test_scripts(mocker):
     with pytest.raises(package.TestFailError) as err:
         fail.run_test_scripts(env, recipe_book)
     assert str(err.value) == ''
-    mocker.patch('package.Package.get_test_scripts', return_value=[os.environ['CONDA_PREFIX'] +
-                                                                   '/pkgs/success-1.0.0-0/info/test/run_test.fake'])
+    mocker.patch('package.Package.get_test_scripts',
+                 return_value=[os.environ['CONDA_PREFIX'] +
+                               '/pkgs/success-1.0.0-0/info/test/run_test.fake'])
     with pytest.raises(ValueError) as err:
         success.run_test_scripts(env)
     assert str(err.value) == 'Unsupported test extension: fake'
@@ -62,11 +64,17 @@ def test_run_test_scripts(mocker):
 
 def test_ldd(mocker):
     mocker.patch('package.run_command',
-                 return_value=("libsub.so.0 => /usr/lib/libsub.so.0 (0x00007ffee9523000)", "", 0))
+                 return_value=(
+                     "libsub.so.0 => /usr/lib/libsub.so.0 (0x00007ffee9523000)",
+                     "", 0))
     with pytest.raises(package.LibError) as err:
         sub.check_ldd("path", "env")
-    assert str(err.value) == "libsub.so.0 => /usr/lib/libsub.so.0 (0x00007ffee9523000)"
+    assert str(
+        err.value) == "libsub.so.0 => /usr/lib/libsub.so.0 (0x00007ffee9523000)"
 
     mocker.patch('package.run_command',
-                 return_value=("libsub.so.0 => /home/ubuntu/miniconda3/lib/libz.so.0 (0x00007ffee9523000)", "", 0))
+                 return_value=(
+                     "libsub.so.0 => /home/ubuntu/miniconda3/lib/libz.so.0 "
+                     "(0x00007ffee9523000)",
+                     "", 0))
     sub.check_ldd("path", "env")

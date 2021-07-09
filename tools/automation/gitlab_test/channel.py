@@ -38,7 +38,8 @@ class Channel:
 
 def run_conda_command(command: str, channels: List[Channel], package: str = "",
                       env: str = "", override: bool = False) -> Tuple:
-    """Runs a conda command and returns the output a list of the arguments to be passed to run_command
+    """Runs a conda command and returns the output a list of the arguments
+    to be passed to run_command
 
     Args:
         command: the conda command to run

@@ -16,5 +16,6 @@ def test_content():
                 Package(("libsub-dev", Version("1.0.0")))]
     for package in c.content():
         if not any([package.equals(other) for other in expected]):
-            pytest.fail("Wrong content:\ngot " + str([p.nv() for p in c.content()]) +
+            pytest.fail("Wrong content:\ngot " +
+                        str([p.nv() for p in c.content()]) +
                         "\nexpected " + str([p.nv() for p in expected]))

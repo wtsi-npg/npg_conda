@@ -22,7 +22,7 @@ class Package:
     and any number of sub-packages (including zero).
     """
 
-    def __init__(self, nv: Tuple[str, Version], recipebook: RecipeBook = None) -> object:
+    def __init__(self, nv: Tuple[str, Version], recipebook: RecipeBook = None):
         self._name = nv[0]
         self._version = nv[1]
         self._has_sub_packages = True
@@ -51,7 +51,8 @@ class Package:
         return self.name() == other.name() and self.version() == other.version()
 
     def populate_sub_packages(self, recipe_book: RecipeBook):
-        self._sub_packages = recipe_book.sub_packages((self._name, self._version))
+        self._sub_packages = recipe_book.sub_packages((self._name,
+                                                       self._version))
         if not self._sub_packages:
             self._has_sub_packages = False
 
@@ -68,8 +69,9 @@ class Package:
             if recipe_book:
                 self.populate_sub_packages(recipe_book)
             else:
-                raise MissingRecipeBookError("No recipe book provided when sub_packages "
-                                             "variable has not been populated")
+                raise MissingRecipeBookError("No recipe book provided when "
+                                             "sub_packages variable has not "
+                                             "been populated")
         return self._sub_packages
 
     def get_test_scripts(self, recipe_book: RecipeBook = None) -> List[str]:
@@ -78,12 +80,14 @@ class Package:
             self.populate_sub_packages(recipe_book)
         if self.sub_packages():
             for sub in self.sub_packages():
-                test_scripts.extend(glob.glob(os.environ['CONDA_PREFIX'] + '/pkgs/' +
+                test_scripts.extend(glob.glob(os.environ['CONDA_PREFIX']
+                                              + '/pkgs/' +
                                               sub + '-' +
                                               str(self.version()) +
                                               "*/info/test/run_test.*"))
         else:
-            test_scripts.extend(glob.glob(os.environ['CONDA_PREFIX'] + '/pkgs/' +
+            test_scripts.extend(glob.glob(os.environ['CONDA_PREFIX'] +
+                                          '/pkgs/' +
                                           self.name() + '-' +
                                           str(self.version()) +
                                           "*/info/test/run_test.*"))
@@ -105,7 +109,8 @@ class Package:
                 if ret_val[2] > 0:
                     raise TestFailError(ret_val[1])
             else:
-                raise ValueError('Unsupported test extension: ' + test.split('.')[-1])
+                raise ValueError('Unsupported test extension: ' +
+                                 test.split('.')[-1])
 
     # TODO: it may be possible to find library names in recipes,
     #  rather than assuming that they contain the package name
@@ -114,7 +119,8 @@ class Package:
         system version of libraries containing the package name
 
         Args:
-            path: The path to a directory of (or a single) executables or libraries
+            path: The path to a directory of (or a single) executables or
+                    libraries
             env: The conda environment in which to run ldd
         """
         bin_ldd = run_command(Commands.RUN, '-n', env, 'ldd', path)
@@ -131,7 +137,8 @@ class Package:
 
 class MissingRecipeBookError(Exception):
     """
-    Raise when sub_packages is called without the variable set or a recipebook provided
+    Raise when sub_packages is called without the variable set or a recipebook
+    provided
     """
 
 
@@ -143,5 +150,6 @@ class TestFailError(Exception):
 
 class LibError(Exception):
     """
-    Raise when a library or executable is pulling in the wrong version of a library
+    Raise when a library or executable is pulling in the wrong version of a
+    library
     """

@@ -53,12 +53,16 @@ def install_package_products(package: Package, primary_channel: Channel,
     if package.sub_packages():
         for sub in package.sub_packages():
             if primary_channel.has_package((sub, package.version())):
-                install_from_channels(channels=[primary_channel, devel, defaults],
+                install_from_channels(channels=[primary_channel,
+                                                devel,
+                                                defaults],
                                       package=sub + "=" + package.version(),
                                       env=env, override=True)
     else:
         if primary_channel.has_package(package.nv()):
-            install_from_channels(channels=[primary_channel, devel, defaults],
+            install_from_channels(channels=[primary_channel,
+                                            devel,
+                                            defaults],
                                   package="=".join(package.nv()),
                                   env=env, override=True)
 
@@ -90,8 +94,10 @@ def test_descendant(changed_package: Package, descendant_package: Package,
 
     descendant_package.run_test_scripts(env)
 
-    changed_package.check_ldd(os.environ['CONDA_DIR'] + 'envs/' + env + '/bin/*', env)
-    changed_package.check_ldd(os.environ['CONDA_DIR'] + 'envs/' + env + '/lib/*', env)
+    changed_package.check_ldd(os.environ['CONDA_DIR'] + 'envs/' + env +
+                              '/bin/*', env)
+    changed_package.check_ldd(os.environ['CONDA_DIR'] + 'envs/' + env +
+                              '/lib/*', env)
 
 
 def main():
@@ -119,7 +125,8 @@ def main():
                             run_command(Commands.REMOVE, '-n', env, '--all')
                             if channel is local:
                                 raise PackageNotFoundLocallyError(*e.args)
-                            print(descendant_package.name, 'not in', channel.address)
+                            print(descendant_package.name, 'not in',
+                                  channel.address)
                         except ValueError or TestFailError or LibError:
                             if channel is local:
                                 raise
@@ -127,7 +134,8 @@ def main():
 
 class PackageNotFoundLocallyError(PackagesNotFoundError):
     """
-    Raise when a package is not found in the local conda channel during installation
+    Raise when a package is not found in the local conda channel during
+    installation
     """
 
 
