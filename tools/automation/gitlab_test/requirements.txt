@@ -1,6 +1,0 @@
-conda
-conda-build
-packaging
-pytest
-pytest-mock
-

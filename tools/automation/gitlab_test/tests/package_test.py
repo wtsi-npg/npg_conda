@@ -14,6 +14,8 @@ if lib not in sys.path:
     sys.path.insert(0, lib)
 from recipebook import RecipeBook, find_recipe_files
 
+conda_path = '/'.join(os.environ['CONDA_EXE'].split('/')[:-2])
+
 c = Channel(os.path.join("file://", os.path.dirname(__file__), "data/channel"))
 env = 'test_env'
 run_command(Commands.CREATE, '-n', env)
@@ -42,10 +44,10 @@ def test_sub_packages():
 
 def test_get_test_scripts():
     test_scripts = success.get_test_scripts()
-    assert os.environ['CONDA_PREFIX'] + \
+    assert conda_path + \
            '/pkgs/success-1.0.0-0/info/test/run_test.sh' in test_scripts
     test_scripts = sub.get_test_scripts()
-    assert os.environ['CONDA_PREFIX'] + \
+    assert conda_path + \
            '/pkgs/libsub-dev-1.0.0-0/info/test/run_test.py' in test_scripts
 
 
@@ -55,7 +57,7 @@ def test_run_test_scripts(mocker):
         fail.run_test_scripts(env, recipe_book)
     assert str(err.value) == ''
     mocker.patch('package.Package.get_test_scripts',
-                 return_value=[os.environ['CONDA_PREFIX'] +
+                 return_value=[conda_path +
                                '/pkgs/success-1.0.0-0/info/test/run_test.fake'])
     with pytest.raises(ValueError) as err:
         success.run_test_scripts(env)
