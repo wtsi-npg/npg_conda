@@ -11,7 +11,7 @@ about:
   summary: A Massively Spiffy Yet Delicately Unobtrusive Compression Library.
 
 build:
-  number: 2
+  number: 3
 
 source:
   url: https://sourceforge.net/projects/libpng/files/zlib/{{ version }}/zlib-{{ version }}.tar.gz/download

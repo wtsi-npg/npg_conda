@@ -11,7 +11,7 @@ about:
   summary: Data compressor.
 
 build:
-  number: 5
+  number: 6
 
 source:
   url: http://http.debian.net/debian/pool/main/b/bzip2/bzip2_{{ version }}.orig.tar.bz2

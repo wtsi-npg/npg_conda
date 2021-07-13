@@ -1,4 +1,5 @@
 {% set version = "1.2.2" %}
+{% set tbb_version = "2019.8" %}
 
 package:
   name: bowtie
@@ -10,7 +11,7 @@ about:
   summary: An ultrafast memory-efficient short read aligner.
 
 build:
-  number: 2
+  number: 3
 
 source:
   git_url: https://github.com/BenLangmead/bowtie
@@ -21,10 +22,10 @@ requirements:
     - {{ compiler("cxx") }}
     - make
   host:
-    - tbb-devel
+    - tbb-devel =={{ tbb_version }}
     - libz-dev
   run:
-    - tbb
+    - tbb =={{ tbb_version }}
     - libz
 
 test:

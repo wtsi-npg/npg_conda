@@ -11,7 +11,7 @@ about:
   summary: Burrows-Wheeler Aligner for short-read alignment.
 
 build:
-  number: 1
+  number: 2
 
 source:
   - git_url: https://github.com/bwa-mem2/bwa-mem2.git

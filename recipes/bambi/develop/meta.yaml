@@ -11,7 +11,7 @@ about:
   summary: "A set of programs to manipulate SAM/BAM/CRAM files, using HTSLIB."
 
 build:
-  number: 0
+  number: 1
 
 source:
   git_url: https://github.com/wtsi-npg/bambi.git

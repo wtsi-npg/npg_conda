@@ -11,7 +11,7 @@ about:
   summary: C library for high-throughput sequencing data formats.
 
 build:
-  number: 4
+  number: 5
 
 source:
   - git_url: https://github.com/samtools/htslib.git

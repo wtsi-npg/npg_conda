@@ -12,7 +12,7 @@ about:
   summary: Collection of data structures and algorithms.
 
 build:
-  number: 5
+  number: 6
 
 source:
   url: https://github.com/gt1/libmaus2/archive/{{ version }}-release-20171116172420.tar.gz

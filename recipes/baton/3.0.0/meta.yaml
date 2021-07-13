@@ -11,7 +11,7 @@ about:
   summary: "Client programs and API for use with iRODS (Integrated Rule-Oriented Data System)."
 
 build:
-  number: 0
+  number: 1
 
 source:
   url: https://github.com/wtsi-npg/baton/releases/download/{{ version }}/baton-{{ version }}.tar.gz
@@ -29,7 +29,6 @@ requirements:
     - pkg-config
   host:
     - irods-dev {{ irods }}
-    - irods-runtime {{ irods }}
     - libjansson-dev
     - libssl-dev
 

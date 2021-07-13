@@ -11,7 +11,7 @@ about:
   summary: "Command-line JSON processor."
 
 build:
-  number: 1
+  number: 2
 
 source:
   url: https://github.com/stedolan/jq/releases/download/jq-{{ version }}/jq-{{ version }}.tar.gz

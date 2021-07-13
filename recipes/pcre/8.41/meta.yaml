@@ -11,7 +11,7 @@ about:
   summary: "Perl Compatible Regular Expressions."
 
 build:
-  number: 4
+  number: 5
 
 source:
   url: https://ftp.pcre.org/pub/pcre/pcre-{{ version }}.tar.gz

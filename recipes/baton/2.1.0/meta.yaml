@@ -1,0 +1,101 @@
+{% set version = "2.1.0" %}
+{% set sha256 = "a3f359f6bb1793a67dac1bbad8bbccf3d7bbbd0f66544cf8e5dbfd26322a1911" %}
+
+package:
+  name: baton-pkg
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/wtsi-npg/baton
+  license: GPL2
+  summary: Client programs and API for use with iRODS (Integrated Rule-Oriented Data System).
+
+build:
+  number: 2
+
+source:
+  url: https://github.com/wtsi-npg/baton/releases/download/{{ version }}/baton-{{ version }}.tar.gz
+  fn: baton-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+  patches:
+    - selfassign.patch
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - autoconf
+    - automake
+    - libtool
+    - make
+    - perl
+    - pkg-config
+  host:
+    - irods-dev {{ irods }}
+    - libjansson-dev
+    - libssl-dev
+
+outputs:
+  - name: baton
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - autoconf
+        - automake
+        - libtool
+        - make
+        - perl
+        - pkg-config
+      host:
+        - irods-dev {{ irods }}
+        - libjansson-dev
+        - libssl-dev
+      run:
+        - {{ pin_subpackage("libbaton", exact=True) }}
+        - irods-runtime {{ irods }}
+        - libjansson
+        - libssl
+    files:
+      - bin/baton-*
+    test:
+      commands:
+        - baton-list --version
+
+  - name: libbaton
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - autoconf
+        - automake
+        - libtool
+        - make
+        - perl
+        - pkg-config
+      host:
+        - irods-dev {{ irods }}
+        - libjansson-dev
+        - libssl-dev
+      run:
+        - irods-runtime {{ irods }}
+        - libjansson
+        - libssl
+    files:
+      - lib/libbaton.*
+    test:
+      commands:
+        - test -h ${PREFIX}/lib/libbaton.so
+
+  - name: libbaton-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libbaton", exact=True) }}
+        - irods-dev {{ irods }}
+    files:
+      - include/baton
+      - lib/pkgconfig/baton.pc
+    test:
+      commands:
+        - test -f ${PREFIX}/include/baton/baton.h

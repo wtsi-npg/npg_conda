@@ -24,7 +24,7 @@ needs:
   production. The recipes are located in directory hierarchy by name
   and version.
 
-* Recipes do not support Windows or MacOS.
+* Recipes do not support Windows or macOS.
 
 Typical Conda recipes create a single package bundling all build
 artefacts (executables, libraries, headers, manpages etc) together, so
@@ -38,7 +38,7 @@ are in complete control of the deployed package dependency graph and
 do not unexpectedly upgrade (or downgrade) packages that may affect
 data analysis.
 
-We don't use the Windows or MacOS platforms, so we simplify our
+We don't use the Windows or macOS platforms, so we simplify our
 recipes by omitting support for them.
 
 ### Building the recipes ###
@@ -92,7 +92,7 @@ A complete build example:
 
     ./tools/bin/recipebook | ./tools/bin/build \
     --recipes-dir $PWD --artefacts-dir $HOME/conda-artefacts \
-    --conda-build-image wsinpg/ub-12.04-conda:latest --verbose
+    --conda-build-image wsinpg/centos-7-conda:latest --verbose
 
 Here the recipes directory that will be mounted by the container is
 set explicitly, as is the artefacts directory, where the built
@@ -108,13 +108,13 @@ If there are errors Conda will report the full path to the failed
 build so that you can investigate. Common reasons for build failures
 (aside from errors in the new recipe) are
 
-* The software being packaged requiring an older or newer version of a
+* The software being packaged requires an older or newer version of a
   compiler, build tool or library than is available in the channels
 
-* The software being packaged having a build system that fails to
+* The software being packaged has a build system that fails to
   respect `$PREFIX` during installation
 
-* The software being packaged having undocumented dependencies
+* The software being packaged has undocumented dependencies
 
 A successfully built package will be dropped in the output root
 directory, the default being `<CONDA_PREFIX>/conda-bld/`. This may be
@@ -132,12 +132,49 @@ The rules are:
 1. The package containing the executables should be named after the
 commonly used name for the software (e.g. bwa, minimap2, curl)
 
-2. If 1. is not possible e.g. because the executables are in
-sub-package, the Conda meta-package is renamed [package name]-pkg and
+2. If 1. is not possible, e.g. because the executables are in
+sub-package, the Conda meta-package is renamed {package name}-pkg and
 the executables sub-package keeps the common name
-(e.g. curl-pkg,curl,libcurl,libcurl-dev)
+(e.g. curl-pkg,curl,libcurl,libcurl-dev).
 
-3. If 2. is not possible because e.g. the common name for the software
-is a library name and the software also provides executables then the
-executables package is renamed [package]-bin
-(e.g. libml2-pkg,libxml2-bin,libxml2,libxml2-dev)
+3. If 2. is not possible because, e.g. the common name for the software
+is a library name and the software also provides executables, then the
+executables package is renamed {package}-bin,
+(e.g. libml2-pkg,libxml2-bin,libxml2,libxml2-dev).
+
+
+### Notes on glibc ###
+
+The `defaults` Conda channel uses glibc 2.17 from CentOS 7.x. Our packages 
+are built in a Docker CentOS 7.x container.
+
+### Special compilers ###
+
+iRODS requires Clang to build. The Clang package available from 
+`conda-forge` is unable to locate the Conda GCC 9.3 installation. We have 
+made forks of the [LLVM](https://github.com/wtsi-npg/llvmdev-feedstock) and 
+[Clang](https://github.com/wtsi-npg/clangdev-feedstock) Conda recipes to 
+work around this.
+
+The packages may be built within the CentOS container using the following 
+commands:
+
+    docker run --mount \
+    source=/home/ubuntu/llvmdev-feedstock,\
+    target=/home/conda/recipes,type=bind \
+    --mount \
+    source=/home/ubuntu/conda-artefacts,\
+    target=/opt/conda/conda-bld,type=bind \
+    -e CONDA_USER_ID=1001 -e CONDA_GROUP_ID=1001 -i --rm \
+    wsinpg/centos-7-conda:latest \ 
+    /bin/sh -c 'exportCONDA_BLD_PATH="/opt/conda/conda-bld" ; conda config --set auto_update_conda False ; cd /home/conda/recipes && conda build recipe'
+
+    docker run --mount \
+    source=/home/ubuntu/clangdev-feedstock,\
+    target=/home/conda/recipes,type=bind \
+    --mount \
+    source=/home/ubuntu/conda-artefacts,\
+    target=/opt/conda/conda-bld,type=bind \
+    -e CONDA_USER_ID=1001 -e CONDA_GROUP_ID=1001 -i --rm \
+    wsinpg/centos-7-conda:latest \
+    /bin/sh -c 'export CONDA_BLD_PATH="/opt/conda/conda-bld" ; conda config --set auto_update_conda False ; cd /home/conda/recipes && conda build recipe'

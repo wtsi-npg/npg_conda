@@ -11,7 +11,7 @@ about:
   summary: Pluggable Authentication Modules for Linux. 
 
 build:
-  number: 0
+  number: 1
 
 source:
   url: https://github.com/linux-pam/linux-pam/releases/download/v{{ version }}/Linux-PAM-{{ version }}.tar.xz

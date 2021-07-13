@@ -10,7 +10,7 @@ about:
   summary: "NGS reference implementations and helper code for mapping and mapping related stats."
 
 build:
-  number: 0
+  number: 1
   
 source:
   git_url: https://github.com/cancerit/PCAP-core.git
