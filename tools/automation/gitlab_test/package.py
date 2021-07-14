@@ -5,6 +5,7 @@ import os
 import re
 import sys
 from typing import List, Tuple
+from pathlib import Path
 
 from conda.cli.python_api import run_command, Commands
 from packaging.version import Version
@@ -15,6 +16,8 @@ if lib not in sys.path:
     sys.path.insert(0, lib)
 
 from recipebook import RecipeBook
+
+conda_path = Path(os.environ['CONDA_EXE']).parent.parent
 
 
 class Package:
@@ -80,17 +83,14 @@ class Package:
             self.populate_sub_packages(recipe_book)
         if self.sub_packages():
             for sub in self.sub_packages():
-                test_scripts.extend(glob.glob(os.environ['CONDA_PREFIX']
-                                              + '/pkgs/' +
-                                              sub + '-' +
-                                              str(self.version()) +
-                                              "*/info/test/run_test.*"))
+                test_scripts.extend(conda_path.glob(f'pkgs/{sub}-'
+                                                    f'{str(self.version())}*/'
+                                                    'info/test/run_test.*'))
         else:
-            test_scripts.extend(glob.glob(os.environ['CONDA_PREFIX'] +
-                                          '/pkgs/' +
-                                          self.name() + '-' +
-                                          str(self.version()) +
-                                          "*/info/test/run_test.*"))
+            test_scripts.extend(conda_path.glob(f'pkgs/{self.name()}-'
+                                                f'{str(self.version())}*/'
+                                                'info/test/run_test.*'))
+        test_scripts = [str(test) for test in test_scripts]
         return test_scripts
 
     def run_test_scripts(self, env: str, recipe_book: RecipeBook = None):
@@ -128,10 +128,10 @@ class Package:
             if re.search(".*/usr/lib/.*", line):
                 if self.sub_packages():
                     for sub in self.sub_packages():
-                        if re.search(".*" + sub + ".*", line):
+                        if re.search(f'.*{sub}.*', line):
                             raise LibError(line)
                 else:
-                    if re.search(".*" + self.name() + ".*", line):
+                    if re.search(f'.*{self.name()}.*', line):
                         raise LibError(line)
 
 

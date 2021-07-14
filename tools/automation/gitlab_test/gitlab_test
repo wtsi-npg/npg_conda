@@ -94,10 +94,8 @@ def test_descendant(changed_package: Package, descendant_package: Package,
 
     descendant_package.run_test_scripts(env)
 
-    changed_package.check_ldd(os.environ['CONDA_DIR'] + 'envs/' + env +
-                              '/bin/*', env)
-    changed_package.check_ldd(os.environ['CONDA_DIR'] + 'envs/' + env +
-                              '/lib/*', env)
+    changed_package.check_ldd(f'{os.environ["CONDA_DIR"]}envs/{env}/bin/*{env}')
+    changed_package.check_ldd(f'{os.environ["CONDA_DIR"]}envs/{env}/lib/*{env}')
 
 
 def main():
