@@ -10,7 +10,7 @@ about:
   summary: Burrows-Wheeler Aligner for short-read alignment.
 
 build:
-  number: 2
+  number: 3
 
 source:
   - git_url: https://github.com/lh3/bwa.git

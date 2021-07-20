@@ -13,7 +13,7 @@ about:
   summary: VCF commands and BCF calling.
 
 build:
-  number: 0
+  number: 1
 
 source:
   url: https://github.com/samtools/bcftools/releases/download/{{ upstream_version }}/bcftools-{{ upstream_version }}.tar.bz2

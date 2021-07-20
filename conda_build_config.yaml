@@ -9,3 +9,7 @@ CFLAGS: >-
   -march=x86-64
   -mtune=generic
   -pipe
+
+irods:
+  - 4.2.7
+  - 4.2.8

@@ -11,7 +11,7 @@ about:
   summary: A spillable pipe buffer.
 
 build:
-  number: 2
+  number: 3
 
 source:
   url: https://github.com/wtsi-npg/teepot/releases/download/{{ version }}/teepot-1.2.0.tar.gz

@@ -12,7 +12,7 @@ about:
   summary: Tools for early stage alignment file processing.
 
 build:
-  number: 4
+  number: 5
 
 source:
   url: https://github.com/gt1/biobambam2/archive/{{ version }}-release-20171006114010.tar.gz

@@ -1,3 +1,8 @@
+c_compiler_version:
+  - 7.5
+
+cxx_compiler_version:
+  - 7.5
 
 # Set -std=c++03 (see https://github.com/BenLangmead/bowtie/issues/76)
 CXXFLAGS: >-

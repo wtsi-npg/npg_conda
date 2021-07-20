@@ -11,7 +11,7 @@ about:
   summary: A low-level cryptographic library
 
 build:
-  number: 4
+  number: 5
 
 source:
   url: https://ftp.gnu.org/gnu/nettle/nettle-{{ version }}.tar.gz

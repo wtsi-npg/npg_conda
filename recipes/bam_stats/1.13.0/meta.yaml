@@ -10,7 +10,7 @@ about:
   summary: "Legacy, see cancerit/PCAP-core: NGS reference implementations and helper code for the IGCG/TCGA Pan-Cancer Analysis Project."
 
 build:
-  number: 1
+  number: 2
   
 source:
   git_url: https://github.com/ICGC-TCGA-PanCancer/PCAP-core.git

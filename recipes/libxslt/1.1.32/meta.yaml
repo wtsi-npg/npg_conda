@@ -11,7 +11,7 @@ about:
   summary: "XSLT C library developed for the GNOME project."
 
 build:
-  number: 1
+  number: 2
 
 source:
   url: ftp://xmlsoft.org/libxslt/libxslt-{{ version }}.tar.gz
