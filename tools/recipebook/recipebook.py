@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2019, 2020 Genome Research Ltd. All rights reserved.
+# Copyright © 2019, 2020, 2021 Genome Research Ltd. All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,32 +17,36 @@
 #
 # @author Keith James <kdj@sanger.ac.uk>
 
-import functools
 import logging as log
 import os
 import subprocess
-from typing import List, Dict, Tuple
-from enum import Enum
+from enum import Enum, unique
+from typing import Dict, Final, List, Set, Tuple
 
-import jinja2 as jj
 import networkx as nx
-import yaml
-from packaging.specifiers import SpecifierSet, Specifier
-from packaging.version import Version, parse
+from conda.exports import MatchSpec
+from conda.models.version import VersionOrder, VersionSpec
+from conda_build.api import render
+from conda_build.metadata import MetaData
 
-HOST = "host"
-NAME = "name"
-OUTPUTS = "outputs"
-PACKAGE = "package"
-REQUIREMENTS = "requirements"
-RUN = "run"
-VERSION = "version"
+PACKAGE: Final = "package"
+NAME: Final = "name"
+VERSION: Final = "version"
+REQUIREMENTS: Final = "requirements"
+BUILD: Final = "build"
+HOST: Final = "host"
+RUN: Final = "run"
 
 
+@unique
 class PrintLevel(Enum):
     ROOT = 0
     SUB = 1
     GROUPED = 2
+
+
+class UnknownPackageError(ValueError):
+    pass
 
 
 class RecipeBook(object):
@@ -56,152 +60,47 @@ class RecipeBook(object):
     recipe has its dependencies built before it is itself built.
     """
     pkg_recipes: Dict[Tuple, str]
-    pkg_versions: Dict[str, List[Version]]
-    pkg_requirements: Dict[Tuple, List[Tuple]]
-    pkg_parent: Dict[str, List]
+    pkg_versions: Dict[str, Set[str]]
+    pkg_requirements: Dict[Tuple, Set[Tuple]]
+    pkg_parent: Dict[str, str]
+    pkg_subpackages: Dict[Tuple, Set[str]]
 
-    def __init__(self, recipe_files: List[str]):
+    def __init__(self):
         self.graph_root = (None, None)
 
-        self.template_env = self.__make_template_env(recipe_files)
-
-        # Maps a (package name, version Specifier) to the recipe file that
+        # Maps a (package name, version string) tuple to the recipe file that
         # defined it. It is used to determine which recipe to use to build
         # a package.
         self.pkg_recipes = {}
 
-        # Maps a package name to a list of Versions of the package.
+        # Maps a package name to a set of version strings that exist for that
+        # package.
         self.pkg_versions = {}
 
-        # Maps a (package name, Version) to the dependencies of that version
-        # of the package expressed as a list of (package name,
-        # version Specifier) tuples.
+        # Maps a (package name, version string) tuple to the dependencies of
+        # that version of the package expressed as a list of
+        # (package name, VersionSpec) tuples.
         self.pkg_requirements = {}
 
-        # Maps a sub-package name to the name its parent package.
+        # Maps a sub-package name to the name of its parent package.
         self.pkg_parent = {}
+
+        # Maps a parent (package name, version string) tuple to a set of
+        # sub-package names
+        self.pkg_subpackages = {}
 
         self.log = log.getLogger(type(self).__name__)
 
-        for f in recipe_files:
-            self.add_recipe(f)
-
-    def add_recipe(self, recipe_file: str) -> Dict:
-        """Adds the packages defined in a recipe file.
-
-        Args:
-            recipe_file: A Conda metay.yaml recipe file.
-
-        Returns: Dict
-
-        """
-        self.log.debug("Adding recipe_file: %s", recipe_file)
-        recipe = yaml.safe_load(self.__render_recipe(recipe_file))
-
-        def add_listval(dikt, key, value):
-            if key in dikt:
-                dikt[key].append(value)
-            else:
-                dikt[key] = [value]
-
-        pkg = recipe[PACKAGE]
-        pkg_name = pkg[NAME]
-        pkg_version = parse(pkg[VERSION])
-
-        add_listval(self.pkg_versions, pkg_name, pkg_version)
-        self.log.debug("package name: %s %s", pkg_name, pkg_version)
-
-        self.pkg_recipes[(pkg_name, pkg_version)] = recipe_file
-
-        pkg_reqs = []
-        base_reqs = recipe.get(REQUIREMENTS, {})
-        pkg_reqs += base_reqs.get(HOST, [])
-        pkg_reqs += base_reqs.get(RUN, [])
-
-        # Also search outputs for requirements
-        outputs = recipe.get(OUTPUTS, [])
-        for output in outputs:
-            output_name = output[NAME]
-            try:
-                self.pkg_parent[output_name].append(pkg_version)
-            except KeyError:
-                self.pkg_parent[output_name] = [pkg_name, pkg_version]
-            output_reqs = output.get(REQUIREMENTS, {})
-
-            pkg_reqs += output_reqs.get(HOST, [])
-            pkg_reqs += output_reqs.get(RUN, [])
-
-        pkg_reqs = list(set(pkg_reqs))
-        # Jinja2 macros appear as 'None' - filter any of these out
-        pkg_reqs = [x for x in pkg_reqs if x != "None"]
-
-        self.log.debug("Requirements for %s are: %s", pkg_name, pkg_reqs)
-
-        for pkg_req in pkg_reqs:
-            req, spec = self.__parse_requirement(pkg_req)
-            self.log.debug("%s version: %s requires %s version: %s",
-                           pkg_name, pkg_version, req, spec)
-            add_listval(self.pkg_requirements, (pkg_name, pkg_version),
-                        (req, spec))
-
-        return recipe
-
-    def find_package_version(self, req_pkg: str,
-                             spec=None) -> List[Version]:
-        """Returns any available versions of a package within a range, or all
-        versions if no range limit is supplied.
-
-        Args:
-            req_pkg: A package name.
-            spec: A specifier for acceptable versions.
-
-        Returns: List[Version]
-        """
-        candidates = self.package_versions(req_pkg)
-
-        if spec:
-            filtered = list(spec.filter(candidates))
-            self.log.debug("Initial filter of %s with %s leaves: %s",
-                           candidates, spec, filtered)
-
-            def has_unmatched_local(f):
-                """
-                PEP440 states of its version specifiers:
-
-                "If the specified version identifier is a public version
-                 identifier (no local version label), then the local version
-                 label of any candidate versions MUST be ignored when matching
-                 versions."
-
-                That means e.g. ==1.0.0 will match 1.0.0+2_abc123
-
-                However, Conda version specifiers do require a match on the
-                local version, so we need to filter out any candidates with
-                a local version when looking for matches to a public version.
-
-                Args:
-                    f: PEP440 Version object
-
-                Returns: Bool
-
-                """
-
-                for s in spec:
-                    if s.operator == "==":
-                        v = parse(s.version)
-                        if f.local and not v.local:
-                            self.log.debug("Filtering out %s because is has a "
-                                           "local component not in spec %s",
-                                           f, s)
-                            return True
-                return False
-
-            filtered = [f for f in filtered if not has_unmatched_local(f)]
-            self.log.debug("Final filter of %s with %s leaves: %s",
-                           candidates, spec, filtered)
-            candidates = filtered
-
-        return candidates
+        # WORKAROUND:
+        #
+        # Stop conda-build library loggers writing to STDOUT.
+        #
+        # conda-build loggers are apparently configurable by file, but how
+        # isn't documented. They write to STDOUT, even when set to FATAL level
+        # and pollute our output.
+        #
+        log.getLogger("conda_build.metadata").disabled = True
+        log.getLogger("conda_build.variants").disabled = True
 
     def packages(self) -> List[str]:
         """Returns the names of all packages.
@@ -211,54 +110,37 @@ class RecipeBook(object):
         """
         return list(self.pkg_versions.keys())
 
-    def package_recipe(self, nv: Tuple[str, Version]) -> str:
-        """Returns the recipe for a package name and version.
-
-        Args:
-            nv: package name, version tuple
-
-        Returns: Tuple[str, Version]
-
-        """
-        return self.pkg_recipes[nv]
-
-    def package_requirements(self, nv: Tuple[str, Version]) -> \
-            List[Tuple[str, Version]]:
-        """Returns the requirements to build a package version as a list of
-        package name, version tuples.
-
-        Args:
-            nv: package name, version tuple
-
-        Returns: List[Tuple[str, Version]]
-
-        """
-        return self.pkg_requirements[nv]
-
-    def package_versions(self, name: str) -> List[Version]:
+    def package_versions(self, pkg_name: str) -> Set[str]:
         """Returns all versions of a named package as package name, version
          tuples.
 
         Args:
-            name: package name
+            pkg_name: package name
 
-        Returns: List[Tuple[str, Version]]
+        Returns: Set[str]
 
         """
-        return self.pkg_versions[name]
+        if pkg_name in self.pkg_versions:
+            return self.pkg_versions[pkg_name]
+        else:
+            raise UnknownPackageError("Unknown package {}".format(pkg_name))
 
-    def package_parent(self, name) -> str:
-        """Returns the name of a package's parent or None.
+    def package_requirements(self, nv: Tuple[str, str]) -> \
+            Set[Tuple[str, VersionSpec]]:
+        """Returns the requirements of the names package version
+        as a set of package name, VersionSpec tuples.
 
         Args:
-            name: package name
+            nv: package name, version tuple
 
-        Returns: str
-
+        Returns: Set[Tuple[str, VersionSpec]]
         """
-        return self.pkg_parent[name][0]
+        if nv in self.pkg_requirements:
+            return self.pkg_requirements[nv]
+        else:
+            raise UnknownPackageError("Unknown package {}".format(nv))
 
-    def package_descendants(self, nv: Tuple[str, Version]) -> nx.DiGraph:
+    def package_descendants(self, nv: Tuple[str, str]) -> nx.DiGraph:
         """Returns a graph of all the packages that depend on the named
         package version.
 
@@ -271,7 +153,7 @@ class RecipeBook(object):
         g = self.dependency_graph()
         return nx.subgraph(g, nx.descendants(g, nv))
 
-    def package_ancestors(self, nv: Tuple[str, Version]) -> nx.DiGraph:
+    def package_ancestors(self, nv: Tuple[str, str]) -> nx.DiGraph:
         """Returns a graph of all the packages on which the named package
          version depends.
 
@@ -284,6 +166,60 @@ class RecipeBook(object):
         g = self.dependency_graph()
         return nx.subgraph(g, nx.ancestors(g, nv))
 
+    def package_recipe(self, nv: Tuple[str, str]) -> str:
+        """Returns the recipe for a package name and version.
+
+        Args:
+            nv: package name, version tuple
+
+        Returns: str
+
+        """
+        if nv in self.pkg_recipes:
+            return self.pkg_recipes[nv]
+        else:
+            raise UnknownPackageError("Unknown package {}".format(nv))
+
+    def add_recipe(self, recipe_file: str):
+        """Adds a single recipe."""
+        self.log.debug("Processing recipe file {}".format(recipe_file))
+
+        rendered = render(recipe_file, finalize=False)
+        for i, r in enumerate(rendered):
+            self.log.debug("Adding {} metadata [{}]".format(recipe_file, i))
+            (metadata, _, _) = r
+            self.__add_metadata(recipe_file, metadata)
+
+    def add_recipes(self, recipe_files: List[str]):
+        """Adds a list of recipes."""
+        for f in recipe_files:
+            self.add_recipe(f)
+
+    def find_package_version(self, req_pkg: str,
+                             spec=None) -> List[str]:
+        """Returns any available versions of a package within a range, or all
+        versions if no range limit is supplied.
+
+        Args:
+            req_pkg: A package name.
+            spec: A specified for acceptable versions.
+
+        Returns: List[str]
+        """
+        candidates = self.package_versions(req_pkg)
+
+        if spec:
+            filtered = []
+            for version in candidates:
+                if spec.match(version):
+                    filtered.append(version)
+
+            self.log.debug("Initial filter of {} with {} "
+                           "leaves {}".format(candidates, spec, filtered))
+            candidates = filtered
+
+        return candidates
+
     def print_graph(self, level: PrintLevel):
         """Prints the entire package graph in topological sort order.
 
@@ -292,7 +228,7 @@ class RecipeBook(object):
         """
         self.__print_subgraph(self.dependency_graph(), level)
 
-    def print_descendants(self, nv: Tuple[str, Version], level: PrintLevel):
+    def print_descendants(self, nv: Tuple[str, str], level: PrintLevel):
         """Prints a sub-graph of packages and/or sub-packages that depend on
         the named package version.
 
@@ -302,7 +238,7 @@ class RecipeBook(object):
         """
         self.__print_subgraph(self.package_descendants(nv), level)
 
-    def print_ancestors(self, nv: Tuple[str, Version], level: PrintLevel):
+    def print_ancestors(self, nv: Tuple[str, str], level: PrintLevel):
         """Prints a sub-graph of packages and/or sub-packages on which the
         named package version depends.
 
@@ -312,7 +248,7 @@ class RecipeBook(object):
         """
         self.__print_subgraph(self.package_ancestors(nv), level)
 
-    def print_root_package(self, nv: Tuple[str, Version]):
+    def print_root_package(self, nv: Tuple[str, str]):
         """Prints only root package information.
 
         Args:
@@ -322,46 +258,33 @@ class RecipeBook(object):
             (name, version) = nv
             print(name, version, os.path.dirname(self.package_recipe(nv)))
         else:
-            raise ValueError("RecipeBook does not contain {}".format(nv))
+            raise UnknownPackageError("Unknown package {}".format(nv))
 
-    def _has_sub_packages(self, name) -> bool:
-        return name in [package[0] for package in self.pkg_parent.values()]
-
-    def sub_packages(self, nv: Tuple[str, Version]) -> List[str] or None:
-        """Returns a list of the subpackages of the provided root package
+    def has_sub_packages(self, nv: Tuple[str, str]) -> bool:
+        """Return true if the named package has sub-packages.
 
         Args:
             nv: package name, version tuple
-
-        Returns: List[str] or None if that package has no sub-packages
         """
-        sub_packages = []
-        if nv not in self.pkg_recipes:
-            raise ValueError("RecipeBook does not contain {}".format(nv))
-        elif not self._has_sub_packages(nv[0]):
-            return None
-        else:
+        return nv in self.pkg_subpackages
+
+    def print_sub_packages(self, nv: Tuple[str, str]):
+        """Prints only sub-package information, returns True if the package has
+        no sub-packages.
+
+        Args:
+            nv: package name, version tuple
+        """
+        if nv in self.pkg_recipes:
             (name, version) = nv
             for sub, parent in self.pkg_parent.items():
                 if parent[0] == name and version in parent:
-                    sub_packages.append(sub)
-        return sub_packages
+                    print(sub, version,
+                          os.path.dirname(self.package_recipe(nv)))
+        else:
+            raise UnknownPackageError("Unknown package {}".format(nv))
 
-    def print_sub_packages(self, nv: Tuple[str, Version]):
-        """Prints only sub-package information.
-
-        Args:
-            nv: package name, version tuple
-        """
-        version = nv[1]
-        try:
-            for sub_package in self.sub_packages(nv):
-                print(sub_package, version, os.path.dirname(self.package_recipe(nv)))
-        except TypeError:
-            # Print nothing if there are no subpackages
-            pass
-
-    def print_packages(self, nv: Tuple[str, Version]):
+    def print_packages(self, nv: Tuple[str, str]):
         """Prints root packages followed by their sub packages.
 
         Args:
@@ -370,7 +293,7 @@ class RecipeBook(object):
 
         print("root", end=" ")
         self.print_root_package(nv)
-        if self._has_sub_packages(nv[0]):
+        if self.has_sub_packages(nv):
             self.print_sub_packages(nv)
 
     def dependency_graph(self) -> nx.DiGraph:
@@ -380,27 +303,31 @@ class RecipeBook(object):
         graph = nx.DiGraph(directed=True)
         graph.add_node(self.graph_root)
 
-        def add_edge(pkg, spc):
-            v = self.find_package_version(pkg, spec=spc)
-            if v:
-                m = max(v)
-                graph.add_edge((pkg, m), nv)
+        def add_edge(req_name: str, spc: VersionSpec):
+            matching_versions = self.find_package_version(req_name, spec=spc)
+            if matching_versions:
+                # Conda version sorting is implemented by the VersionOrder
+                # class
+                vos = [VersionOrder(v) for v in matching_versions]
+                max_version = str(max(vos))
+                graph.add_edge((req_name, max_version), nv)
 
-                log.debug("To build %s %s we need %s from candidates %s",
-                          pkg, spc, m, self.pkg_versions[pkg])
+                self.log.debug("To build {} {} we are using {} "
+                               "from candidates {}".format(req_name, spc,
+                                                           max_version,
+                                                           matching_versions))
                 return 1
             else:
-                log.warning("Can't find version for %s required by %s",
-                            pkg, nv)
+                self.log.warning("Can't find a suitable version for {} "
+                                 "required by {}".format(req_name, nv))
                 return 0
 
         for package_name, versions in self.pkg_versions.items():
             for version in versions:
                 nv = (package_name, version)
-
                 if nv in self.pkg_requirements:
-                    reqs = self.pkg_requirements[nv]
-                    log.debug("%s requires %s", nv, reqs)
+                    reqs = self.package_requirements(nv)
+                    self.log.debug("{} requires {}".format(nv, reqs))
 
                     num_reqs_located = 0
                     for (req_pkg, spec) in reqs:
@@ -411,23 +338,97 @@ class RecipeBook(object):
                         # Is the required package one of the sub-packages
                         # of the packages we are building?
                         else:
+                            # Require the parent package rather than the
+                            # sub-package
                             if req_pkg in self.pkg_parent:
-                                # Require the parent package rather than
-                                # the sub-package
-                                parent_pkg = self.package_parent(req_pkg)
+                                parent_pkg = self.pkg_parent[req_pkg]
                                 num_reqs_located += add_edge(parent_pkg, spec)
                             else:
-                                log.warning("Can't find required package %s",
-                                            req_pkg)
-                        if num_reqs_located == 0:
-                            log.debug("%s has no locatable requirements", nv)
-                            graph.add_edge(nv, self.graph_root)
+                                self.log.warning("Required package {} is not "
+                                                 "included".format(req_pkg))
+
+                    if num_reqs_located == 0:
+                        self.log.debug("Package {} has no locatable "
+                                       "requirements".format(nv))
+                        graph.add_edge(nv, self.graph_root)
                 else:
-                    log.debug("%s has no requirements", nv)
+                    self.log.debug("Package {} has no requirements".format(nv))
                     graph.add_edge(nv, self.graph_root)
         return graph
 
+    def __add_metadata(self, recipe_file: str, metadata: MetaData):
+        pkg_name = metadata.name()
+        pkg_version = metadata.version()
+        effective_pkg_name = pkg_name
+
+        if metadata.is_output:  # i.e. it's a sub-package
+            toplevel = metadata.get_top_level_recipe_without_outputs()
+            parent_pkg_name = toplevel[PACKAGE][NAME]
+
+            # Map sub-package to parent
+            self.__add_sub_package((parent_pkg_name, pkg_version), pkg_name)
+
+            # We want to record subsequent details as if they apply to
+            # the parent package because that's the package we'll actually
+            # build. Sub-packages are built as a consequence of that. The
+            # MetaData.ms_depends() method doesn't return a complete set of
+            # requirements (that I can see).
+            effective_pkg_name = parent_pkg_name
+
+            # The MetaData objects for some recipes don't appear to include
+            # toplevel requirements (needed to build the sub-package),
+            # so we manually dig into the parsed Dict here.
+            if REQUIREMENTS in toplevel:
+                # We could also look at requirements["build"]
+                if HOST in toplevel[REQUIREMENTS]:
+                    nv = (effective_pkg_name, pkg_version)
+                    for spec in toplevel[REQUIREMENTS][HOST]:
+                        m = MatchSpec(spec)
+                        self.__add_package_requirement(nv, (m.name, m.version))
+
+        nv = (effective_pkg_name, pkg_version)
+        self.__add_package_recipe(nv, recipe_file)
+        self.__add_package_version(nv)
+
+        for dep in metadata.ms_depends(HOST):
+            self.__add_package_requirement(nv, (dep.name, dep.version))
+
+        return
+
+    def __add_package_recipe(self, nv: Tuple[str, str], recipe_file: str):
+        self.pkg_recipes[nv] = recipe_file
+
+    def __add_package_version(self, nv: Tuple[str, str]):
+        pkg_name, pkg_version = nv
+        if pkg_name in self.pkg_versions:
+            self.pkg_versions[pkg_name].add(pkg_version)
+        else:
+            self.pkg_versions[pkg_name] = {pkg_version}
+
+    def __add_sub_package(self, parent_nv: Tuple[str, str], sub_pkg_name: str):
+        self.log.debug("Package {} has sub-package {}".format(parent_nv,
+                                                              sub_pkg_name))
+        parent_pkg_name, _ = parent_nv
+        self.pkg_parent[sub_pkg_name] = parent_pkg_name
+
+        if parent_nv in self.pkg_subpackages:
+            self.pkg_subpackages[parent_nv].add(sub_pkg_name)
+        else:
+            self.pkg_subpackages[parent_nv] = {sub_pkg_name}
+
+    def __add_package_requirement(self,
+                                  pkg_nv: Tuple[str, str],
+                                  dep_nv: Tuple[str, str]):
+        self.log.debug("Package {} depends on {}".format(pkg_nv, dep_nv))
+        if pkg_nv in self.pkg_requirements:
+            self.pkg_requirements[pkg_nv].add(dep_nv)
+        else:
+            self.pkg_requirements[pkg_nv] = {dep_nv}
+
     def __print_subgraph(self, graph, level: PrintLevel):
+        if level is None:
+            level = PrintLevel.ROOT
+
         for node in nx.topological_sort(graph):
             if self.__is_root_node(node):
                 continue
@@ -439,75 +440,9 @@ class RecipeBook(object):
                 self.print_packages(node)
 
     @staticmethod
-    def __is_root_node(node: Tuple[str, Version]):
-        return node[0] is None and node[1] is None
-
-    @staticmethod
-    def __make_template_env(recipe_files: List[str]) -> jj.Environment:
-        """Makes a new Jinja2 template environment by loading Conda recipes as
-        templates. Add some dummy template expansion functions so that we don't
-        need the Conda itself to process the recipes.
-
-        Args:
-            recipe_files: Paths of recipe files.
-
-        Returns: jinja2.Environment
-        """
-        templates = {}
-        for f in recipe_files:
-            with open(f) as t:
-                templates[f] = t.read()
-
-        # Hack to expand templates. The value of this may safely be incorrect;
-        # we don't use the value, we simply need a dummy value to permit
-        # template expansion.
-        template_loader = jj.DictLoader(templates)
-        env = jj.Environment(loader=template_loader)
-        env.globals['PKG_BUILDNUM'] = 9999
-        env.globals['compiler'] = lambda *args, **kwargs: None
-
-        # Don't declare sub-package dependencies because they refer to
-        # their own package and introduce a cycle in the graph.
-        env.globals['pin_subpackage'] = lambda *args, **kwargs: None
-        return env
-
-    @staticmethod
-    def __parse_requirement(req_str: str) -> Tuple[str, SpecifierSet]:
-        """Parses a software version requirement string conforming to the Conda
-        match specification.
-
-        e.g gcc >=4.6,<7.0
-
-        The tuple of PEP440 package name and version specifier returned may be
-        used to identify software that will fulfill the requirement described
-        by the argument.
-
-        Args:
-            req_str: The requirement Conda match specification.
-
-        Returns: Tuple[str, SpecifierSet]
-        """
-        parts = list(map(str.strip, req_str.split()))
-        pkg_name = parts[0]
-        spec_set = None
-
-        if len(parts) > 1:
-            spec_set = SpecifierSet(parts[1])
-
-        return pkg_name, spec_set
-
-    def __render_recipe(self, recipe_file: str) -> str:
-        """Renders a Conda recipe file (which contains Jinja2 templates) into
-        a valid YAML document so that we can parse it. Return the YAML document.
-
-        Args:
-            recipe_file: The recipe file path.
-
-        Returns: str
-        """
-        log.info("Working on %s", recipe_file)
-        template = self.template_env.get_template(recipe_file)
-        return template.render()
+    def __is_root_node(node: Tuple[str, str]):
+        pkg_name, version = node
+        return pkg_name is None and version is None
 
 
 def find_recipe_files(root: str) -> List[str]:
