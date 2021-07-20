@@ -18,8 +18,6 @@
 #
 # @author Keith James <kdj@sanger.ac.uk>
 
-from packaging.version import parse
-
 import logging as log
 import argparse
 import os
@@ -30,7 +28,7 @@ lib = os.path.realpath(os.path.join(os.path.dirname(__file__),
 if lib not in sys.path:
     sys.path.insert(0, lib)
 
-from recipebook import RecipeBook, PrintLevel
+from recipebook import PrintLevel, RecipeBook, UnknownPackageError
 from recipebook import find_changed_recipe_files, find_recipe_files
 
 description = """recipebook creates a directed, acyclic graph (DAG) of Conda
@@ -105,7 +103,7 @@ if args.debug:
     log_level = log.DEBUG
 elif args.verbose:
     log_level = log.INFO
-log.basicConfig(level=log_level)
+log.basicConfig(level=log_level, stream=sys.stderr)
 
 package_level = PrintLevel.ROOT
 if args.sub_packages:
@@ -118,26 +116,29 @@ args = parser.parse_args()
 
 def main():
     root = args.recipes
-    recipe_book = RecipeBook(find_recipe_files(root))
+    recipe_book = RecipeBook()
+    recipe_book.log.setLevel(log_level)
 
     if args.package and args.version:
         # Print a sub-graph for a specific package name and version
-        nv = (args.package, parse(args.version))
-        if nv in recipe_book.dependency_graph():
-            if args.provides:
-                recipe_book.print_descendants(nv, package_level)
-            else:
-                recipe_book.print_ancestors(nv, package_level)
+        recipe_book.add_recipes(find_recipe_files(root))
+
+        nv = (args.package, args.version)
+        if nv not in recipe_book.dependency_graph():
+            raise UnknownPackageError("Package {} is not present "
+                                      "in the graph".format(nv))
+        if args.provides:
+            recipe_book.print_descendants(nv, package_level)
         else:
-            raise ValueError("Package {} version {} is not present "
-                             "in the graph".format(nv[0], nv[1]))
+            recipe_book.print_ancestors(nv, package_level)
+
     elif args.changes:
         # Print a unified list of all changed recipes
-        changed_recipes = find_changed_recipe_files(root, args.changes)
-        recipe_book = RecipeBook(changed_recipes)
+        recipe_book.add_recipes(find_changed_recipe_files(root, args.changes))
         recipe_book.print_graph(package_level)
     else:
         # Print everything
+        recipe_book.add_recipes(find_recipe_files(root))
         recipe_book.print_graph(package_level)
 
 
