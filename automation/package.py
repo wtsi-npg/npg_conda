@@ -1,21 +1,13 @@
 from __future__ import annotations
 
-import glob
 import os
 import re
-import sys
 from typing import List, Tuple
 from pathlib import Path
 
 from conda.cli.python_api import run_command, Commands
-from packaging.version import Version
 
-lib = os.path.realpath(os.path.join(os.path.dirname(__file__),
-                                    "..", "..", "recipebook"))
-if lib not in sys.path:
-    sys.path.insert(0, lib)
-
-from recipebook import RecipeBook
+from recipebook.recipebook import RecipeBook
 
 conda_path = Path(os.environ['CONDA_EXE']).parent.parent
 
@@ -25,7 +17,12 @@ class Package:
     and any number of sub-packages (including zero).
     """
 
-    def __init__(self, nv: Tuple[str, Version], recipebook: RecipeBook = None):
+    _name: str
+    _version: str
+    _has_subpackages: bool
+    _sub_packages: set or None
+
+    def __init__(self, nv: Tuple[str, str], recipebook: RecipeBook = None):
         self._name = nv[0]
         self._version = nv[1]
         self._has_sub_packages = True
@@ -36,10 +33,10 @@ class Package:
     def name(self) -> str:
         return self._name
 
-    def version(self) -> Version:
+    def version(self) -> str:
         return self._version
 
-    def nv(self) -> Tuple[str, Version]:
+    def nv(self) -> Tuple[str, str]:
         return self._name, self._version
 
     def equals(self, other: Package) -> bool:
@@ -54,16 +51,16 @@ class Package:
         return self.name() == other.name() and self.version() == other.version()
 
     def populate_sub_packages(self, recipe_book: RecipeBook):
-        self._sub_packages = recipe_book.sub_packages((self._name,
-                                                       self._version))
-        if not self._sub_packages:
+        try:
+            self._sub_packages = recipe_book.pkg_subpackages[self.nv()]
+        except KeyError:
             self._has_sub_packages = False
 
     def sub_packages(self, recipe_book: RecipeBook = None) -> List[str] or None:
         """Returns a list of subpackages of the package
 
         Args:
-            recipe_book: The Recipebook in which to search for sub-packages
+            recipe_book: The RecipeBook in which to search for sub-packages
 
         Returns: List[str] or None if that package has no sub-packages
 

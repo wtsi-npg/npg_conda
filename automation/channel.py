@@ -1,9 +1,8 @@
 from typing import List, Tuple
 
 from conda.cli.python_api import run_command, Commands
-from packaging.version import Version
 
-from package import Package
+from automation.package import Package
 
 
 class Channel:
@@ -24,7 +23,7 @@ class Channel:
             self._content = search_channels([self], override=True)
         return self._content
 
-    def has_package(self, nv: Tuple[str, Version]) -> bool:
+    def has_package(self, nv: Tuple[str, str]) -> bool:
         """Returns true if a package is in this channel.
 
         Args:
@@ -82,7 +81,7 @@ def search_channels(channels: List[Channel], package_name: str = "",
     # remove title lines and final empty line
     for package in search[0].split("\n")[2:-1]:
         split = package.split()
-        packages.append(Package((split[0], Version(split[1]))))
+        packages.append(Package((split[0], split[1])))
     return packages
 
 
@@ -101,4 +100,3 @@ def install_from_channels(channels: List[Channel], package: str,
                                 package, env, override)
     if install[2] > 0:
         raise ChildProcessError(install[1])
-

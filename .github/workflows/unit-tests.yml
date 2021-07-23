@@ -42,8 +42,8 @@ jobs:
           mkdir -p "$GITHUB_WORKSPACE/conda-artefacts/linux-64"
           while sleep 300; do echo $SECONDS sec elapsed, still building ... ; done &
 
-          ./tools/bin/recipebook --changes "$COMPARE_BRANCH" recipes | \
-            ./tools/bin/build \
+          ./bin/recipebook --changes "$COMPARE_BRANCH" recipes | \
+            ./bin/build \
             --recipes-dir "$GITHUB_WORKSPACE" \
             --artefacts-dir "$GITHUB_WORKSPACE/conda-artefacts" \
             --conda-build-image "$CONDA_IMAGE" \

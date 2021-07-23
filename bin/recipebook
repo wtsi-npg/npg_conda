@@ -20,16 +20,10 @@
 
 import logging as log
 import argparse
-import os
 import sys
 
-lib = os.path.realpath(os.path.join(os.path.dirname(__file__),
-                                    "..", "recipebook"))
-if lib not in sys.path:
-    sys.path.insert(0, lib)
-
-from recipebook import PrintLevel, RecipeBook, UnknownPackageError
-from recipebook import find_changed_recipe_files, find_recipe_files
+from recipebook.recipebook import PrintLevel, RecipeBook, UnknownPackageError
+from recipebook.recipebook import find_changed_recipe_files, find_recipe_files
 
 description = """recipebook creates a directed, acyclic graph (DAG) of Conda
 recipes which allows us to sort them for building, ensuring those recipes that

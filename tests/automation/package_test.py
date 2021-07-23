@@ -1,35 +1,31 @@
 import os
-import sys
 
 import pytest
 from conda.cli.python_api import Commands, run_command
-from packaging.version import Version
 from pathlib import Path
+from . import test_path
 
-import package
-from channel import Channel
+from automation import package
+from automation.channel import Channel
 
-lib = os.path.realpath(os.path.join(os.path.dirname(__file__),
-                                    "..", "..", "..", "tools", "recipebook"))
-if lib not in sys.path:
-    sys.path.insert(0, lib)
-from recipebook import RecipeBook, find_recipe_files
+from recipebook.recipebook import RecipeBook, find_recipe_files
 
 conda_path = Path(os.environ['CONDA_EXE']).parent.parent
+data_path = test_path / 'data' / 'automation'
 
-c = Channel(os.path.join("file://", os.path.dirname(__file__), "data/channel"))
+c = Channel(Path(data_path / 'channel').as_uri())
 env = 'test_env'
 run_command(Commands.CREATE, '-n', env)
-success = package.Package(("success", Version("1.0.0")))
-sub = package.Package(("sub", Version("1.0.0")))
-fail = package.Package(("fail", Version("1.0.0")))
-recipe_book = RecipeBook(find_recipe_files(os.path.realpath(os.path.join(
-    os.path.dirname(__file__), "data", "recipes"))))
+success = package.Package(("success", "1.0.0"))
+sub = package.Package(("sub", "1.0.0"))
+fail = package.Package(("fail", "1.0.0"))
+recipe_book = RecipeBook()
+recipe_book.add_recipes(find_recipe_files(data_path / 'recipes'))
 
 
 def test_equals():
-    p1 = package.Package(("success", Version("1.0.0")))
-    p2 = package.Package(("fail", Version("1.0.0")))
+    p1 = package.Package(("success", "1.0.0"))
+    p2 = package.Package(("fail", "1.0.0"))
     assert success.equals(p1)
     assert not success.equals(p2)
 
@@ -40,7 +36,7 @@ def test_sub_packages():
     assert str(err.value) == 'No recipe book provided when sub_packages ' \
                              'variable has not been populated'
     assert success.sub_packages(recipe_book) is None
-    assert sub.sub_packages(recipe_book) == ["libsub", "libsub-dev"]
+    assert sub.sub_packages(recipe_book) == {"libsub", "libsub-dev"}
 
 
 def test_get_test_scripts():
@@ -57,7 +53,7 @@ def test_run_test_scripts(mocker):
     with pytest.raises(package.TestFailError) as err:
         fail.run_test_scripts(env, recipe_book)
     assert str(err.value) == ''
-    mocker.patch('package.Package.get_test_scripts',
+    mocker.patch('automation.package.Package.get_test_scripts',
                  return_value=[str(conda_path) +
                                '/pkgs/success-1.0.0-0/info/test/run_test.fake'])
     with pytest.raises(ValueError) as err:
@@ -66,7 +62,7 @@ def test_run_test_scripts(mocker):
 
 
 def test_ldd(mocker):
-    mocker.patch('package.run_command',
+    mocker.patch('automation.package.run_command',
                  return_value=(
                      "libsub.so.0 => /usr/lib/libsub.so.0 (0x00007ffee9523000)",
                      "", 0))
@@ -75,7 +71,7 @@ def test_ldd(mocker):
     assert str(
         err.value) == "libsub.so.0 => /usr/lib/libsub.so.0 (0x00007ffee9523000)"
 
-    mocker.patch('package.run_command',
+    mocker.patch('automation.package.run_command',
                  return_value=(
                      "libsub.so.0 => /home/ubuntu/miniconda3/lib/libz.so.0 "
                      "(0x00007ffee9523000)",
