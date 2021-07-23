@@ -2,20 +2,15 @@
 import argparse
 import hashlib
 import os
-import sys
 
 from conda.cli.python_api import run_command, Commands
 from conda.exceptions import PackagesNotFoundError
 
-from channel import Channel, install_from_channels
-from package import Package, TestFailError, LibError
+from automation.channel import Channel, install_from_channels
+from automation.package import Package, TestFailError, LibError
 
-lib = os.path.realpath(os.path.join(os.path.dirname(__file__),
-                                    "..", "..", "tools", "recipebook"))
-if lib not in sys.path:
-    sys.path.insert(0, lib)
-
-from recipebook import RecipeBook, find_recipe_files, find_changed_recipe_files
+from recipebook.recipebook import RecipeBook, find_recipe_files, \
+    find_changed_recipe_files
 
 parser = argparse.ArgumentParser(
     description="A script to run tests on the dependencies of newly built "
@@ -94,16 +89,20 @@ def test_descendant(changed_package: Package, descendant_package: Package,
 
     descendant_package.run_test_scripts(env)
 
-    changed_package.check_ldd(f'{os.environ["CONDA_DIR"]}envs/{env}/bin/*{env}')
-    changed_package.check_ldd(f'{os.environ["CONDA_DIR"]}envs/{env}/lib/*{env}')
+    changed_package.check_ldd(f'{os.environ["CONDA_DIR"]}envs/{env}/bin/*{env}',
+                              env)
+    changed_package.check_ldd(f'{os.environ["CONDA_DIR"]}envs/{env}/lib/*{env}',
+                              env)
 
 
 def main():
 
-    recipe_book = RecipeBook(find_recipe_files('.'))
+    recipe_book = RecipeBook()
+    recipe_book.add_recipes(find_recipe_files('.'))
 
     changed_recipes = find_changed_recipe_files(".", args.changes)
-    changed_recipe_book = RecipeBook(changed_recipes)
+    changed_recipe_book = RecipeBook()
+    changed_recipe_book.add_recipes(changed_recipes)
 
     # TODO: parallelise?
     # No need to sort the graphs

@@ -275,14 +275,14 @@ class RecipeBook(object):
         Args:
             nv: package name, version tuple
         """
-        if nv in self.pkg_recipes:
-            (name, version) = nv
-            for sub, parent in self.pkg_parent.items():
-                if parent[0] == name and version in parent:
-                    print(sub, version,
-                          os.path.dirname(self.package_recipe(nv)))
-        else:
-            raise UnknownPackageError("Unknown package {}".format(nv))
+        try:
+            if nv in self.pkg_recipes:
+                for sub in self.pkg_subpackages[nv]:
+                    print(sub, nv[1], os.path.dirname(self.package_recipe(nv)))
+            else:
+                raise UnknownPackageError("Unknown package {}".format(nv))
+        except KeyError:
+            return True
 
     def print_packages(self, nv: Tuple[str, str]):
         """Prints root packages followed by their sub packages.
@@ -410,7 +410,6 @@ class RecipeBook(object):
                                                               sub_pkg_name))
         parent_pkg_name, _ = parent_nv
         self.pkg_parent[sub_pkg_name] = parent_pkg_name
-
         if parent_nv in self.pkg_subpackages:
             self.pkg_subpackages[parent_nv].add(sub_pkg_name)
         else:
