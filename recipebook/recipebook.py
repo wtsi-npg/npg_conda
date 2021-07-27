@@ -268,21 +268,30 @@ class RecipeBook(object):
         """
         return nv in self.pkg_subpackages
 
+    def get_sub_packages(self, nv: Tuple[str, str]) -> Set[str]:
+        """Returns sub-package names
+
+        Args:
+            nv: package name, version tuple
+
+        Returns: Set[str] or None
+        """
+        try:
+            return self.pkg_subpackages[nv]
+        except KeyError:
+            return set()
+
     def print_sub_packages(self, nv: Tuple[str, str]):
-        """Prints only sub-package information, returns True if the package has
-        no sub-packages.
+        """Prints only sub-package information.
 
         Args:
             nv: package name, version tuple
         """
-        try:
-            if nv in self.pkg_recipes:
-                for sub in self.pkg_subpackages[nv]:
-                    print(sub, nv[1], os.path.dirname(self.package_recipe(nv)))
-            else:
-                raise UnknownPackageError("Unknown package {}".format(nv))
-        except KeyError:
-            return True
+        if nv in self.pkg_recipes:
+            for sub in self.get_sub_packages(nv):
+                print(sub, nv[1], os.path.dirname(self.package_recipe(nv)))
+        else:
+            raise UnknownPackageError("Unknown package {}".format(nv))
 
     def print_packages(self, nv: Tuple[str, str]):
         """Prints root packages followed by their sub packages.

@@ -1,0 +1,78 @@
+{% set version = "201712" %}
+
+package:
+  name: htslib-plugins
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/samtools/htslib
+  license: MIT
+  summary: C library for high-throughput sequencing data formats.
+
+build:
+  number: 2
+
+source:
+  - git_url: https://github.com/samtools/htslib-plugins.git
+    git_rev: {{ version }}
+    folder: plugins
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - autoconf
+    - automake
+    - make
+    - perl
+  host:
+    - irods-dev {{ irods }}
+    - libbz2-dev
+    - libcurl-dev
+    - libdeflate-dev
+    - libhts-dev
+    - liblzma-dev
+    - libssl-dev
+    - libz-dev
+  run:
+    - libbz2
+    - libcurl
+    - libdeflate
+    - liblzma
+    - libssl
+    - libz
+
+outputs:
+  - name: libhts-plugins
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - autoconf
+        - automake
+        - make
+        - perl
+      host:
+        - irods-dev {{ irods }}
+        - libbz2-dev
+        - libcurl-dev
+        - libdeflate-dev
+        - libhts-dev
+        - liblzma-dev
+        - libssl-dev
+        - libz-dev
+      run:
+        - libbz2
+        - libcurl
+        - libdeflate
+        - libhts
+        - liblzma
+        - libssl
+        - libz
+      run_constrained:
+        - irods-runtime {{ irods }}
+    files:
+      - libexec/htslib/hfile_irods.so
+      - libexec/htslib/hfile_mmap.so
+    test:
+      commands:
+        - test -f ${PREFIX}/libexec/htslib/hfile_irods.so

@@ -35,7 +35,7 @@ def test_sub_packages():
         success.sub_packages()
     assert str(err.value) == 'No recipe book provided when sub_packages ' \
                              'variable has not been populated'
-    assert success.sub_packages(recipe_book) is None
+    assert success.sub_packages(recipe_book) == set()
     assert sub.sub_packages(recipe_book) == {"libsub", "libsub-dev"}
 
 
