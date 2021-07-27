@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 import re
-from typing import List, Tuple
+from typing import List, Tuple, Set
 from pathlib import Path
 
 from conda.cli.python_api import run_command, Commands
@@ -51,18 +51,17 @@ class Package:
         return self.name() == other.name() and self.version() == other.version()
 
     def populate_sub_packages(self, recipe_book: RecipeBook):
-        try:
-            self._sub_packages = recipe_book.pkg_subpackages[self.nv()]
-        except KeyError:
+        self._sub_packages = recipe_book.get_sub_packages(self.nv())
+        if not self._sub_packages:
             self._has_sub_packages = False
 
-    def sub_packages(self, recipe_book: RecipeBook = None) -> List[str] or None:
+    def sub_packages(self, recipe_book: RecipeBook = None) -> Set[str]:
         """Returns a list of subpackages of the package
 
         Args:
             recipe_book: The RecipeBook in which to search for sub-packages
 
-        Returns: List[str] or None if that package has no sub-packages
+        Returns: Set[str]
 
         """
         if self._has_sub_packages and not self._sub_packages:
