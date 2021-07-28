@@ -28,7 +28,7 @@ fi
 
 conda install conda-build
 
-pip install -r ./tools/requirements.txt
+pip install -r ./requirements.txt
 pip install awscli-plugin-endpoint
 
 aws configure set plugins.endpoint awscli_plugin_endpoint

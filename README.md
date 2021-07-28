@@ -65,32 +65,32 @@ container. The benefits are
 Our build image contains Conda pre-installed and works by mounting two
 local directories, one which should contain the Conda recipes to build
 and another which will receive the built packages. The
-`tools/bin/build` script handles mounting the directories and running
+`bin/build` script handles mounting the directories and running
 the builds. The build script requires a list of packages to be
 supplied on STDIN and it will build them in that order.
 
 This means that for a complete from-source build of all packages, they
 must be sorted so that packages that have dependencies are built after
 those they depend on. This can be achieved using the
-`tools/bin/recipebook` script which inspects the recipes,
+`bin/recipebook` script which inspects the recipes,
 calculates their dependency DAG and then outputs a list sorted so that
 they are built in the correct order:
 
-    ./tools/bin/recipebook recipes/ | head -4
+    ./bin/recipebook recipes/ | head -4
     rna-seqc 1.1.8 recipes/rna-seqc/1.1.8
     bowtie2 2.2.7 recipes/bowtie2/2.2.7
     teepot 1.2.0 recipes/teepot/1.2.0
     eigen 3.3.4 recipes/eigen/3.3.4
 
 Both of these scripts have command line help and a number of options
-to configure their behaviour. Note that the online help for `tools/bin/build`
+to configure their behaviour. Note that the online help for `/bin/build`
 reports default values dynamically (i.e. they are calculated for your
 current environment so that they describe accurately the values that
 will be used).
 
 A complete build example:
 
-    ./tools/bin/recipebook | ./tools/bin/build \
+    ./bin/recipebook | ./bin/build \
     --recipes-dir $PWD --artefacts-dir $HOME/conda-artefacts \
     --conda-build-image wsinpg/centos-7-conda:latest --verbose
 
