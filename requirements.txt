@@ -1,6 +1,4 @@
 conda
 conda-build
-jinja2
 networkx
-packaging
-pyyaml
+.

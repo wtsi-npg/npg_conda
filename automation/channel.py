@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 from conda.cli.python_api import run_command, Commands
 
-from automation.package import Package
+from .package import Package
 
 
 class Channel:
