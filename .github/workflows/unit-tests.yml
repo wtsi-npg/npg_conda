@@ -48,13 +48,5 @@ jobs:
             --build-channel "$WSI_CONDA_CHANNEL" \
             --verbose
 
-          ./tools/bin/recipebook --changes "$COMPARE_BRANCH" recipes | \
-            ./tools/bin/build \
-            --recipes-dir "$GITHUB_WORKSPACE" \
-            --artefacts-dir "$GITHUB_WORKSPACE/conda-artefacts" \
-            --conda-build-image "$CONDA_IMAGE" \
-            --build-channel "$WSI_CONDA_CHANNEL" conda-forge bioconda \
-            --verbose
-
           kill %1
           ls -l "$GITHUB_WORKSPACE/conda-artefacts/linux-64"
