@@ -11,6 +11,6 @@ index 37bfc67..465b7e7 100644
  sw.o:  BandedSmithWaterman.o SmithWatermanGotoh.o LeftAlign.o Repeats.o IndelAllele.o disorder.o
 -	ld -r $^ -o sw.o -L.
 +	$(LD) -r $^ -o sw.o -L.
-        #$(CXX) $(CFLAGS) -c -o smithwaterman.cpp $(OBJECTS_NO_MAIN) -I.
+	#$(CXX) $(CFLAGS) -c -o smithwaterman.cpp $(OBJECTS_NO_MAIN) -I.
  
  ### @$(CXX) $(LDFLAGS) $(CFLAGS) -o $@ $^ -I.
