@@ -1,0 +1,156 @@
+{% set version = "4.2.8" %}
+{% set clang_version = "8.0.1" %}
+
+package:
+  name: irods
+  version: "{{ version }}"
+
+about:
+  home: https://irods.org
+  license: BSD
+  summary: "Open Source Data Management Software."
+
+build:
+  number: 19
+
+source:
+  - git_url: https://github.com/irods/irods.git
+    git_rev: "{{ version }}"
+    folder: irods
+    patches:
+      - irods.patch
+  - git_url: https://github.com/irods/irods_client_icommands.git
+    git_rev: "{{ version }}"
+    folder: irods_client_icommands
+    patches:
+      - irods_icommands.patch
+
+requirements:
+  build:
+    - cmake >=3.5.0
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - clang =={{ clang_version }}
+    - clangxx =={{ clang_version }}
+    - make
+    - help2man
+  host:
+    - avrocpp-dev >=1.9
+    - catch2
+    - cppzmq
+    - fmt
+    - json
+    - krb5-dev
+    - libarchive-dev
+    - libboost-dev
+    - libjansson-dev
+    - libpam-dev
+    - libssl-dev
+    - nanodbc
+    - unixodbc
+    - zeromq
+
+outputs:
+  - name: irods-runtime
+    version: {{ version }}
+    requirements:
+      run:
+        - fmt
+        - libarchive
+        - libavrocpp >=1.9
+        - libboost
+        - libjansson
+        - libkrb5
+        - libpam
+        - libssl
+        - zeromq
+    files:
+      - lib/irods/plugins
+      - lib/libirods_client.so*
+      - lib/libirods_common.so*
+      - lib/libirods_plugin_dependencies.so*
+      - lib/libirods_server.so*
+
+  - name: irods-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("irods-runtime", exact=True) }}
+    files:
+      - include/irods
+      - lib/irods/externals
+      - lib/libRodsAPIs.a
+      - lib/libirods_client.a
+      - lib/libirods_client_api.a
+      - lib/libirods_client_api_table.a
+      - lib/libirods_client_core.a
+      - lib/libirods_client_plugins.a
+      - lib/libirods_server.a
+      - share/irods
+
+  - name: irods-icommands
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("irods-runtime", exact=True) }}
+        - fmt
+        - libarchive
+        - libavrocpp >=1.9
+        - libboost
+        - libjansson
+        - libkrb5
+        - libpam
+        - libssl
+        - zeromq
+    files:
+      - bin/iadmin
+      - bin/ibun
+      - bin/ichksum
+      - bin/ichmod
+      - bin/icp
+      - bin/idbug
+      - bin/ienv
+      - bin/ierror
+      - bin/iexecmd
+      - bin/iexit
+      - bin/ifsck
+      - bin/iget
+      - bin/igroupadmin
+      - bin/ihelp
+      - bin/iinit
+      - bin/ils
+      - bin/ilsresc
+      - bin/imcoll
+      - bin/imeta
+      - bin/imiscsvrinfo
+      - bin/imkdir
+      - bin/imv
+      - bin/ipasswd
+      - bin/iphybun
+      - bin/iphymv
+      - bin/ips
+      - bin/iput
+      - bin/ipwd
+      - bin/iqdel
+      - bin/iqmod
+      - bin/iqmod
+      - bin/iqstat
+      - bin/iquest
+      - bin/iquota
+      - bin/irepl
+      - bin/irm
+      - bin/irmtrash
+      - bin/irsync
+      - bin/irule
+      - bin/iscan
+      - bin/isysmeta
+      - bin/iticket
+      - bin/itrim
+      - bin/iuserinfo
+      - bin/ixmsg
+      - bin/izonereport
+      - share/man
+
+    test:
+      commands:
+        - ienv

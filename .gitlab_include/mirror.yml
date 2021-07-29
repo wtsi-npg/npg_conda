@@ -3,4 +3,4 @@ mirror:
     - schedules
 
   script:
-    - tools/automation/mirror_repo.sh -l $CI_REPOSITORY_URL -g $GITHUB_REPO -k $GITHUB_TOKEN -n $GITLAB_TOKEN_NAME -t $GITLAB_TOKEN -i $PROJECT_ID
+    - scripts/mirror_repo.sh -l $CI_REPOSITORY_URL -g $GITHUB_REPO -k $GITHUB_TOKEN -n $GITLAB_TOKEN_NAME -t $GITLAB_TOKEN -i $PROJECT_ID
