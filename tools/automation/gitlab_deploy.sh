@@ -2,7 +2,7 @@
 
 set -e -u -x
 
-rsync -av --include='*.tar.bz2' --exclude='*' $1/linux-64/ $2/linux-64/ # $BUILD_DIR $CHANNEL_DIR 
+rsync -rlv --include='*.tar.bz2' --exclude='*' $1/linux-64/ $2/linux-64/ # $BUILD_DIR $CHANNEL_DIR
 
 conda index $2 # $CHANNEL_DIR
 
