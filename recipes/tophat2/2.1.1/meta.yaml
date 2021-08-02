@@ -11,12 +11,14 @@ about:
   summary: Spliced read mapper for RNA-Seq.
 
 build:
-  number: 2
+  number: 3
   
 source:
   url: http://ccb.jhu.edu/software/tophat/downloads/tophat-{{ version }}.tar.gz
   fn: tophat2-{{ version }}.tar.gz
   sha256: {{ sha256 }}
+  patches:
+    - cxx11template.patch
 
 requirements:
   build:
