@@ -6,6 +6,10 @@ jobs:
   build:
     runs-on: ubuntu-18.04
 
+    defaults:
+      run:
+        shell: bash -l -e -o pipefail {0}
+
     env:
       WSI_CONDA_CHANNEL: "https://dnap.cog.sanger.ac.uk/npg/conda/devel/generic"
       CONDA_IMAGE: "wsinpg/centos-7-conda:latest"
@@ -14,13 +18,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: "Set up Python 3.x"
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.x"
+      - name: "Initialize Miniconda"
+        run: |
+          echo 'source $CONDA/etc/profile.d/conda.sh' >> "$HOME/.bash_profile"
+          echo 'conda activate' >> "$HOME/.bash_profile"
 
       - name: "Install dependencies"
         run: |
+          conda install conda-build pip
           python -m pip install --upgrade pip setuptools wheel
           pip install -r ./requirements.txt
 
@@ -37,13 +42,12 @@ jobs:
 
       - name: "Build recipes"
         run: |
-          set -o pipefail
 
           mkdir -p "$GITHUB_WORKSPACE/conda-artefacts/linux-64"
           while sleep 300; do echo $SECONDS sec elapsed, still building ... ; done &
 
-          ./bin/recipebook --changes "$COMPARE_BRANCH" recipes | \
-            ./bin/build \
+          recipebook --changes "$COMPARE_BRANCH" recipes | \
+            build \
             --recipes-dir "$GITHUB_WORKSPACE" \
             --artefacts-dir "$GITHUB_WORKSPACE/conda-artefacts" \
             --conda-build-image "$CONDA_IMAGE" \
