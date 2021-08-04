@@ -4,16 +4,16 @@
 *** 41,47 ****
   
   bwa:bwt_gen/libbwtgen.a $(OBJS) main.c main.h
-                d=`date`;\
-!               $(CC) $(CFLAGS) -DBLDDATE="$$d" -c main.c -o main.o ;\
-                $(CC) $(CFLAGS) $(DFLAGS) $(OBJS) main.o -o $@ $(LIBS)
+  		d=`date`;\
+! 		$(CC) $(CFLAGS) -DBLDDATE="$$d" -c main.c -o main.o ;\
+  		$(CC) $(CFLAGS) $(DFLAGS) $(OBJS) main.o -o $@ $(LIBS)
   
   depend:
 --- 41,47 ----
   
   bwa:bwt_gen/libbwtgen.a $(OBJS) main.c main.h
-                d=`date`;\
-!               $(CC) $(CFLAGS) -DBLDDATE="$$d" $(INCLUDES) -c main.c -o main.o ;\
-                $(CC) $(CFLAGS) $(DFLAGS) $(OBJS) main.o -o $@ $(LIBS)
+  		d=`date`;\
+! 		$(CC) $(CFLAGS) -DBLDDATE="$$d" $(INCLUDES) -c main.c -o main.o ;\
+  		$(CC) $(CFLAGS) $(DFLAGS) $(OBJS) main.o -o $@ $(LIBS)
   
   depend:
