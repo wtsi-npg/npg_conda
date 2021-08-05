@@ -37,6 +37,8 @@ jobs:
 
       - name: "Build recipes"
         run: |
+          set -o pipefail
+
           mkdir -p "$GITHUB_WORKSPACE/conda-artefacts/linux-64"
           while sleep 300; do echo $SECONDS sec elapsed, still building ... ; done &
 
