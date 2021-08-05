@@ -90,7 +90,7 @@ def test_descendant(changed_package: Package, descendant_package: Package,
     export = run_command(Commands.RUN, "-n", env,
                          "conda", "env", "export")
     print(export[0])
-    print("CHECKSUM = " + hashlib.md5(export[0]).hexdigest())
+    print("CHECKSUM = " + hashlib.md5(export[0].encode('utf-8')).hexdigest())
 
     descendant_package.run_test_scripts(env)
 
