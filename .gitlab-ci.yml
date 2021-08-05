@@ -18,14 +18,14 @@ variables:
   PRE_DEVEL_CHANNEL_REM: s3://dnap/npg/conda/pre_devel/generic
   PRE_DEVEL_CHANNEL_DIR: /tmp/pre_devel/generic/
   PRE_DEVEL_BUILD_DIR: /tmp/conda_artefacts/pre_devel
-  PRE_DEVEL_COMPARE_BRANCH: origin/devel
+  PRE_DEVEL_COMPARE_BRANCH: devel
   #
   # devel commits
   #
   DEVEL_CHANNEL_REM: s3://dnap/npg/conda/devel/generic
   DEVEL_CHANNEL_DIR: /tmp/devel/generic/
   DEVEL_BUILD_DIR: /tmp/conda_artefacts/devel
-  DEVEL_COMPARE_BRANCH: origin/master
+  DEVEL_COMPARE_BRANCH: master
   #
   # TEST
   #
