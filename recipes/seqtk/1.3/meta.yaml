@@ -1,0 +1,38 @@
+{% set version = "v1.3" %}
+{% set seqtk_sha256 = "9e1f00c4c9f286be59ac0e07ddb7504f3b6433c93c5c7941d6e3208306ff5806" %}
+
+package:
+  name: seqtk
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/lh3/seqtk
+  license: MIT
+  summary: "A fast and lightweight tool for processing sequences in the FASTA or FASTQ format."
+
+build:
+  number: 1
+
+source:
+  - url: https://github.com/lh3/seqtk/archive/refs/tags/{{ version }}.tar.gz
+    folder: seqtk
+    sha256: {{ seqtk_sha256 }}
+
+requirements:
+  build:
+    - {{ compiler("cxx") }}
+    - make
+
+outputs:
+  - name: seqtk
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("cxx") }}
+        - make
+    files:
+      - seqtk
+
+test:
+  commands:
+    - test -x ${PREFIX}/bin/seqtk
