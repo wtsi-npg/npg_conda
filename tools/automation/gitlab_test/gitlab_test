@@ -25,7 +25,8 @@ parser = argparse.ArgumentParser(
 parser.add_argument("-b", "--build_dir",
                     help="The directory to which the packages have been built")
 parser.add_argument("-c", "--changes",
-                    help="The branch against which recipebook will compare")
+                    help="The branch against which recipebook will compare, "
+                         "takes the form [remote]/[branch]")
 parser.add_argument("-p", "--prod_channel",
                     help="Address of the prod channel")
 parser.add_argument("-d", "--devel_channel",
@@ -94,15 +95,17 @@ def test_descendant(changed_package: Package, descendant_package: Package,
 
     descendant_package.run_test_scripts(env)
 
-    changed_package.check_ldd(f'{os.environ["CONDA_DIR"]}envs/{env}/bin/*{env}')
-    changed_package.check_ldd(f'{os.environ["CONDA_DIR"]}envs/{env}/lib/*{env}')
+    changed_package.check_ldd(f'{os.environ["CONDA_DIR"]}envs/{env}/bin/*{env}',
+                              env)
+    changed_package.check_ldd(f'{os.environ["CONDA_DIR"]}envs/{env}/lib/*{env}',
+                              env)
 
 
 def main():
 
-    recipe_book = RecipeBook(find_recipe_files('.'))
+    recipe_book = RecipeBook(find_recipe_files('./recipes'))
 
-    changed_recipes = find_changed_recipe_files(".", args.changes)
+    changed_recipes = find_changed_recipe_files('./recipes', args.changes)
     changed_recipe_book = RecipeBook(changed_recipes)
 
     # TODO: parallelise?
