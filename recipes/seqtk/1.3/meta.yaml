@@ -1,5 +1,5 @@
-{% set version = "v1.3" %}
-{% set seqtk_sha256 = "9e1f00c4c9f286be59ac0e07ddb7504f3b6433c93c5c7941d6e3208306ff5806" %}
+{% set version = "1.3" %} # reset build to zero on changing
+{% set seqtk_rev = "fe1cc9e8d926d40a88f6ff368c07466d33c3665d" %}
 
 package:
   name: seqtk
@@ -11,28 +11,37 @@ about:
   summary: "A fast and lightweight tool for processing sequences in the FASTA or FASTQ format."
 
 build:
-  number: 1
+  number: 0
 
 source:
-  - url: https://github.com/lh3/seqtk/archive/refs/tags/{{ version }}.tar.gz
-    folder: seqtk
-    sha256: {{ seqtk_sha256 }}
+  - git_url: https://github.com/lh3/seqtk.git
+    git_rev: {{ seqtk_rev }}
 
 requirements:
   build:
-    - {{ compiler("cxx") }}
+    - {{ compiler("c") }}
     - make
+  host:
+    - libz-dev
+  run:
+    - libz
 
 outputs:
   - name: seqtk
     version: {{ version }}
     requirements:
       build:
-        - {{ compiler("cxx") }}
+        - {{ compiler("c") }}
         - make
+      host:
+        - libz-dev
+      run:
+        - libz
     files:
-      - seqtk
+      - bin/seqtk
 
 test:
   commands:
     - test -x ${PREFIX}/bin/seqtk
+    - echo -e ">foo\nACGTTTT\n" | seqtk seq -r -
+    - seqtk 2>&1 | grep -qP '\Q{{ version }}\E\b'

@@ -2,9 +2,8 @@
 
 set -ex
 
-n="$CPU_COUNT"
+mkdir -p "${PREFIX}/bin"
 
-pushd seqtk
-make -j "$n"
-make install BINDIR="$PREFIX"
-popd
+make CC="$GCC" CFLAGS="$CPPFLAGS $LDFLAGS"
+
+make install BINDIR="${PREFIX}/bin"
