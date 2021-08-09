@@ -1,4 +1,5 @@
 {% set version = "2.1.0" %}
+{% set shortver = "210" %}
 {% set sha256 = "89a276eed1fc07414b1601947bc9466bdeb50e8f148ad42074186fe39a1ee781" %}
 
 package:
@@ -11,11 +12,11 @@ about:
   summary: "Graph-based alignment of next generation sequencing reads to a population of genomes."
 
 build:
-  number: 2
+  number: 3
 
 source:
-  url: ftp://ftp.ccb.jhu.edu/pub/infphilo/hisat2/downloads/hisat2-{{ version }}-source.zip
-  fn: hisat2-{{ version }}-source.zip
+  url: "https://cloud.biohpc.swmed.edu/index.php/s/hisat2-{{ shortver }}-source/download"
+  fn: hisat2-{{ shortver }}-source.zip
   sha256: {{ sha256 }}
   patches:
     - Makefile.patch
@@ -32,3 +33,4 @@ requirements:
 test:
   commands:
     - hisat2 -h
+    - hisat2 --version | grep -qP '\b\Q{{ version }}\E\b'
