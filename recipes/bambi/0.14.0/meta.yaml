@@ -1,5 +1,5 @@
 {% set version = "0.14.0" %}
-{% set htslib_version = "1.12" %}
+{% set htslib_version = "1.13" %}
 
 package:
   name: bambi-pkg
@@ -11,7 +11,7 @@ about:
   summary: "A set of programs to manipulate SAM/BAM/CRAM files, using HTSLIB."
 
 build:
-  number: 1
+  number: 3
 
 source:
   git_url: https://github.com/wtsi-npg/bambi.git
@@ -38,6 +38,24 @@ requirements:
 
 outputs:
   - name: bambi
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - autoconf
+        - automake
+        - make
+        - perl
+        - pkg-config
+      host:
+        - libgd-dev
+        - libhts-dev =={{ htslib_version }}
+        - libxml2-dev
+        - libz-dev
+      run:
+        - libgd
+        - libhts =={{ htslib_version }}
+        - libxml2
+        - libz
     files:
       - bin/bambi
       - bin/check_bcl
