@@ -28,6 +28,7 @@ jobs:
           conda install conda-build pip
           python -m pip install --upgrade pip setuptools wheel
           pip install -r ./requirements.txt
+          pip install -r ./test-requirements.txt
 
       - name: "Configure git"
         run: |
@@ -56,3 +57,7 @@ jobs:
 
           kill %1
           ls -l "$GITHUB_WORKSPACE/conda-artefacts/linux-64"
+
+      - name: "Run tool unit tests"
+        run: |
+          pytest
