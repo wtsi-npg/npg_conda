@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Recipes
  - bambi 0.14.0
+ - baton 3.0.0, 3.0.1
  - capnproto 0.7.0
  - gnutls 3.7.1, 3.7.2
  - hisat 2.1.0
