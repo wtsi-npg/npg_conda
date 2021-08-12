@@ -44,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
  - Build host image changed from Ubuntu 12.04 to CentOS 7.
- - Update recipes to build with new Conda GCC 9.3 and glibc 2.17.
+ - Update recipes to build with Conda >= 4.10.3 to use GCC 9.3 and glibc 2.17.
  - The URL for boost source code was updated.
  - The --sub-packages CLI option of the recipebook script now acts as a
    modifier for --output-packages to print only sub-packages.
