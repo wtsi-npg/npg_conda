@@ -30,9 +30,8 @@ lib = os.path.realpath(os.path.join(os.path.dirname(__file__),
 if lib not in sys.path:
     sys.path.insert(0, lib)
 
-from recipebook import RecipeBook
+from recipebook import RecipeBook, PrintLevel
 from recipebook import find_changed_recipe_files, find_recipe_files
-
 
 description = """recipebook creates a directed, acyclic graph (DAG) of Conda
 recipes which allows us to sort them for building, ensuring those recipes that
@@ -73,7 +72,7 @@ parser.add_argument("-v", "--version", type=str,
                          "Required by --provides and -p/--package.")
 parser.add_argument("-c", "--changes", type=str,
                     help="Report only on recipes that have changed "
-                         "relative to another branch (defaults to 'master'")
+                         "relative to another branch (defaults to 'master')")
 parser.add_argument("--provides",
                     help="When reporting dependency relationships with "
                          "-p|--package and -v|--version, report the packages "
@@ -82,6 +81,15 @@ parser.add_argument("--provides",
                          "rather than those it depends on."
                          "Requires -p/--package and -v/--version.",
                     action="store_true")
+level_group = parser.add_mutually_exclusive_group()
+level_group.add_argument("--sub-packages",
+                         help="Report only sub-package names instead of root "
+                              "package names. Excludes --grouped-packages.",
+                         action="store_true")
+level_group.add_argument("--grouped-packages",
+                         help="Report root package names followed by their "
+                              "group of sub-packages. Excludes --sub-packages",
+                         action="store_true")
 
 parser.add_argument("--debug",
                     help="Enable DEBUG level logging to STDERR",
@@ -92,12 +100,18 @@ parser.add_argument("--verbose",
 
 args = parser.parse_args()
 
-level = log.ERROR
+log_level = log.ERROR
 if args.debug:
-    level = log.DEBUG
+    log_level = log.DEBUG
 elif args.verbose:
-    level = log.INFO
-log.basicConfig(level=level)
+    log_level = log.INFO
+log.basicConfig(level=log_level)
+
+package_level = PrintLevel.ROOT
+if args.sub_packages:
+    package_level = PrintLevel.SUB
+elif args.grouped_packages:
+    package_level = PrintLevel.GROUPED
 
 args = parser.parse_args()
 
@@ -111,9 +125,9 @@ def main():
         nv = (args.package, parse(args.version))
         if nv in recipe_book.dependency_graph():
             if args.provides:
-                recipe_book.print_descendants(nv)
+                recipe_book.print_descendants(nv, package_level)
             else:
-                recipe_book.print_ancestors(nv)
+                recipe_book.print_ancestors(nv, package_level)
         else:
             raise ValueError("Package {} version {} is not present "
                              "in the graph".format(nv[0], nv[1]))
@@ -121,10 +135,10 @@ def main():
         # Print a unified list of all changed recipes
         changed_recipes = find_changed_recipe_files(root, args.changes)
         recipe_book = RecipeBook(changed_recipes)
-        recipe_book.print_graph()
+        recipe_book.print_graph(package_level)
     else:
         # Print everything
-        recipe_book.print_graph()
+        recipe_book.print_graph(package_level)
 
 
 if __name__ == "__main__":

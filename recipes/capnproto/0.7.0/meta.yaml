@@ -1,0 +1,35 @@
+{% set version = "0.7.0" %}
+
+package:
+  name: capnproto
+  version: "{{ version }}"
+
+about:
+  home: https://capnproto.org
+  license: MIT
+  summary: A fast data interchange format and capability-based RPC system.
+
+build:
+  number: 2
+
+source:
+  git_url: https://github.com/capnproto/capnproto
+  git_rev: v{{ version }}
+
+requirements:
+  build:
+    - {{ compiler("cxx") }}
+    - autoconf
+    - automake
+    - libtool
+    - make
+  host:
+    - libz-dev
+    - libssl-dev
+  run:
+    - libz
+    - libssl
+
+test:
+  commands:
+    - capnp --help

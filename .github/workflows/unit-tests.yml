@@ -1,0 +1,54 @@
+name: "Unit tests"
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    env:
+      WSI_CONDA_CHANNEL: "https://dnap.cog.sanger.ac.uk/npg/conda/devel/generic"
+      CONDA_IMAGE: "wsinpg/centos-7-conda:latest"
+      COMPARE_BRANCH: "origin/devel"
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: "Install dependencies"
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -r ./tools/requirements.txt
+
+      - name: "Configure git"
+        run: |
+          # Ensure we have a complete repository to compare diffs with other
+          # branches
+          git config remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
+          git fetch
+
+      - name: "Pull build image"
+        run: |
+          docker pull "$CONDA_IMAGE"
+
+      - name: "Build recipes"
+        run: |
+          set -o pipefail
+
+          mkdir -p "$GITHUB_WORKSPACE/conda-artefacts/linux-64"
+          while sleep 300; do echo $SECONDS sec elapsed, still building ... ; done &
+
+          ./tools/bin/recipebook --changes "$COMPARE_BRANCH" recipes | \
+            ./tools/bin/build \
+            --recipes-dir "$GITHUB_WORKSPACE" \
+            --artefacts-dir "$GITHUB_WORKSPACE/conda-artefacts" \
+            --conda-build-image "$CONDA_IMAGE" \
+            --build-channel "$WSI_CONDA_CHANNEL" \
+            --verbose
+
+          kill %1
+          ls -l "$GITHUB_WORKSPACE/conda-artefacts/linux-64"

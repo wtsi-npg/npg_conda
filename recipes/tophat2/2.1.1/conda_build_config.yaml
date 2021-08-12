@@ -1,8 +1,8 @@
 c_compiler_version:
-  - 5.4
+  - 7.5
 
 cxx_compiler_version:
-  - 5.4
+  - 7.5
 
 CFLAGS: >-
   -O2

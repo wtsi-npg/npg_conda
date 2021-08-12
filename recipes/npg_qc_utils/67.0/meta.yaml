@@ -10,7 +10,7 @@ about:
   summary: "C programs extracted from npg_qc."
 
 build:
-  number: 0
+  number: 1
 
 source:
   - git_url: https://github.com/wtsi-npg/npg_qc_utils.git

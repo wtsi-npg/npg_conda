@@ -1,0 +1,38 @@
+{% set version = "1.3.1" %}
+
+package:
+  name: tears
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/whitwham/tears
+  license: GPL3
+  summary:  Stream files to and from iRODS.
+
+build:
+  number: 1
+
+source:
+  git_url: https://github.com/whitwham/tears.git
+  git_rev: "v{{ version }}"
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - autoconf
+    - automake
+    - make
+    - perl
+  host:
+    - irods-dev {{ irods }}
+    - libjansson-dev
+    - libssl
+    - libssl-dev
+  run:
+    - irods-runtime {{ irods }}
+    - libjansson
+    - libssl
+
+test:
+  commands:
+    - test -x ${PREFIX}/bin/tears

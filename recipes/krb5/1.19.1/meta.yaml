@@ -1,0 +1,88 @@
+{% set version = "1.19.1" %}
+{% set sha256 = "09d8135425e67242ad18bbda54843ba26aa0102893dfcfa0d0910cb496d7bf42" %}
+
+package:
+  name: krb5
+  version: {{ version }}
+
+about:
+  home: http://web.mit.edu/kerberos/
+  license: MIT
+  summary: "A network authentication protocol"
+
+source:
+  url: https://github.com/krb5/krb5/archive/krb5-{{ version }}-final.tar.gz
+  sha256: {{ sha256 }}
+
+build:
+  number: 2
+
+requirements:
+  build:
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - autoconf
+    - automake
+    - bison
+    - libtool
+    - make
+    - pkg-config
+  host:
+    - libssl-dev
+  run:
+    - libssl
+
+outputs:
+  - name: krb5
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libkrb5", exact=True) }}
+        - libssl
+    files:
+      - bin
+      - sbin
+      - share/man/man1
+      - share/locale
+    test:
+      command:
+        - kinit --help
+
+  - name: libkrb5
+    requirements:
+      run:
+        - libssl
+    files:
+      - lib/krb5
+      - lib/libcom_err*
+      - lib/libgss*
+      - lib/libk*
+      - lib/libvert*
+      - lib/pkgconfig
+    test:
+      commands:
+        - test -h ${PREFIX}/lib/libkrb5.so
+        - test -f $( readlink -f ${PREFIX}/lib/libkrb5.so )
+
+  - name: krb5-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libkrb5", exact=True) }}
+        - libssl
+    files:
+      - include/com_err.h
+      - include/gssapi
+      - include/gssapi.h
+      - include/gssrpc
+      - include/kadm5
+      - include/kdb.h
+      - include/krad.h
+      - include/krb5
+      - include/krb5.h
+      - include/profile.h
+      - lib/libapputils.a
+      - lib/libss.a
+    test:
+      commands:
+        - test -f ${PREFIX}/include/krb5.h

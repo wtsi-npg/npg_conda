@@ -1,0 +1,10 @@
+package:
+  name: success
+  version: 1.0.0
+
+build:
+  number: 0
+
+test:
+  commands:
+    - exit 0

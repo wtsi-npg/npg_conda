@@ -1,0 +1,67 @@
+{% set version = "3.5.1" %}
+{% set sha256 = "9015d109ec00bb9ae1a384b172bf2fc1dff41e2c66e5a9eeddf933af9db37f5a" %}
+
+package:
+  name: libarchive-pkg
+  version: "{{ version }}"
+
+about:
+  home: https://www.libarchive.org/
+  license: BSD-2-Clause
+  summary: "Multi-format archive and compression library"
+
+source:
+  url: https://github.com/libarchive/libarchive/releases/download/{{ version }}/libarchive-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+build:
+  number: 1
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - make
+    - pkg-config
+  host:
+    - libbz2-dev
+    - liblzma-dev
+    - libz-dev
+  run:
+    - libbz2
+    - liblzma
+    - libz
+
+outputs:
+  - name: libarchive
+    files:
+      - lib/libarchive.so*
+    test:
+      commands:
+        - test -h ${PREFIX}/lib/libarchive.so
+        - test -f $( readlink -f ${PREFIX}/lib/libarchive.so )
+
+  - name: libarchive-dev
+    files:
+      - include/archive.h
+      - include/archive_entry.h
+      - lib/libarchive.a
+      - lib/pkgconfig/libarchive.pc
+      - share/man/man3
+      - share/man/man5
+    requirements:
+      run:
+        - {{ pin_subpackage("libarchive", exact=True) }}
+    test:
+      commands:
+        - test -f ${PREFIX}/include/archive.h
+        - test -f ${PREFIX}/lib/libarchive.a
+
+  - name: libarchive-bin
+    files:
+      - bin/bsd*
+      - share/man/man1
+    test:
+      commands:
+        - test -f ${PREFIX}/bin/bsdcat
+        - test -f ${PREFIX}/bin/bsdcpio
+        - test -f ${PREFIX}/bin/bsdtar

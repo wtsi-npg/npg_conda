@@ -2,7 +2,7 @@ setup_merge:
   stage: .pre
   script:
     - echo "Setting up merge request CI"
-    - scripts/gitlab_setup.sh "$PRE_DEVEL_CHANNEL_DIR" "$PRE_DEVEL_BUILD_DIR" "$PRE_DEVEL_CHANNEL_REM"
+    - tools/automation/gitlab_setup.sh "$PRE_DEVEL_CHANNEL_DIR" "$PRE_DEVEL_BUILD_DIR" "$PRE_DEVEL_CHANNEL_REM"
   only:
     - merge_requests
 
@@ -10,8 +10,9 @@ build_merge:
   stage: build
   script:
     - echo "Building merge request packages"
-    - . ~/.bashrc
-    - scripts/gitlab_build.sh "$PRE_DEVEL_COMPARE_BRANCH" "$PRE_DEVEL_CHANNEL_DIR" "$PRE_DEVEL_BUILD_DIR"
+    - . /tmp/miniconda/etc/profile.d/conda.sh
+    - conda activate base
+    - tools/automation/gitlab_build.sh "$PRE_DEVEL_COMPARE_BRANCH" "$PRE_DEVEL_CHANNEL_DIR" "$PRE_DEVEL_BUILD_DIR"
   only:
     - merge_requests
 
@@ -19,8 +20,19 @@ deploy_merge:
   stage: deploy
   script:
     - echo "Deploying merge request packages"
-    - . ~/.bashrc
-    - scripts/gitlab_deploy.sh "$PRE_DEVEL_BUILD_DIR" "$PRE_DEVEL_CHANNEL_DIR" "$PRE_DEVEL_CHANNEL_REM"
+    - . /tmp/miniconda/etc/profile.d/conda.sh
+    - conda activate base
+    - tools/automation/gitlab_deploy.sh "$PRE_DEVEL_BUILD_DIR" "$PRE_DEVEL_CHANNEL_DIR" "$PRE_DEVEL_CHANNEL_REM"
+  only:
+    - merge_requests
+
+test_merge:
+  stage: test
+  script:
+    - echo "Testing merge request packages"
+    - . /tmp/miniconda/etc/profile.d/conda.sh
+    - conda activate base
+    - python tools/automation/gitlab_test/gitlab_test -b "$PRE_DEVEL_BUILD_DIR" -c "origin/$PRE_DEVEL_COMPARE_BRANCH" -p "$PROD_WSI_CONDA_CHANNEL" -d "$WSI_CONDA_CHANNEL"
   only:
     - merge_requests
 

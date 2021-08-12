@@ -22,6 +22,7 @@ import logging as log
 import os
 import subprocess
 from typing import List, Dict, Tuple
+from enum import Enum
 
 import jinja2 as jj
 import networkx as nx
@@ -38,6 +39,12 @@ RUN = "run"
 VERSION = "version"
 
 
+class PrintLevel(Enum):
+    ROOT = 0
+    SUB = 1
+    GROUPED = 2
+
+
 class RecipeBook(object):
     """A RecipeBook is a directed, acyclic graph (DAG) of Conda recipes. Each
     node is a package name, version tuple and each edge represents a dependency
@@ -51,7 +58,7 @@ class RecipeBook(object):
     pkg_recipes: Dict[Tuple, str]
     pkg_versions: Dict[str, List[Version]]
     pkg_requirements: Dict[Tuple, List[Tuple]]
-    pkg_parent: Dict[str, str]
+    pkg_parent: Dict[str, List]
 
     def __init__(self, recipe_files: List[str]):
         self.graph_root = (None, None)
@@ -115,7 +122,10 @@ class RecipeBook(object):
         outputs = recipe.get(OUTPUTS, [])
         for output in outputs:
             output_name = output[NAME]
-            self.pkg_parent[output_name] = pkg_name
+            try:
+                self.pkg_parent[output_name].append(pkg_version)
+            except KeyError:
+                self.pkg_parent[output_name] = [pkg_name, pkg_version]
             output_reqs = output.get(REQUIREMENTS, {})
 
             pkg_reqs += output_reqs.get(HOST, [])
@@ -246,7 +256,7 @@ class RecipeBook(object):
         Returns: str
 
         """
-        return self.pkg_parent[name]
+        return self.pkg_parent[name][0]
 
     def package_descendants(self, nv: Tuple[str, Version]) -> nx.DiGraph:
         """Returns a graph of all the packages that depend on the named
@@ -274,39 +284,94 @@ class RecipeBook(object):
         g = self.dependency_graph()
         return nx.subgraph(g, nx.ancestors(g, nv))
 
-    def print_graph(self):
+    def print_graph(self, level: PrintLevel):
         """Prints the entire package graph in topological sort order.
 
+        Args:
+            level: print level enum
         """
-        self.__print_subgraph(self.dependency_graph())
+        self.__print_subgraph(self.dependency_graph(), level)
 
-    def print_descendants(self, nv: Tuple[str, Version]):
-        """Prints a sub-graph of packages that depend on the named package
-        version.
+    def print_descendants(self, nv: Tuple[str, Version], level: PrintLevel):
+        """Prints a sub-graph of packages and/or sub-packages that depend on
+        the named package version.
+
+        Args:
+            nv: package name, version tuple
+            level: print level Enum
+        """
+        self.__print_subgraph(self.package_descendants(nv), level)
+
+    def print_ancestors(self, nv: Tuple[str, Version], level: PrintLevel):
+        """Prints a sub-graph of packages and/or sub-packages on which the
+        named package version depends.
+
+        Args:
+            nv: package name, version tuple
+            level: print level enum
+        """
+        self.__print_subgraph(self.package_ancestors(nv), level)
+
+    def print_root_package(self, nv: Tuple[str, Version]):
+        """Prints only root package information.
 
         Args:
             nv: package name, version tuple
         """
-        self.__print_subgraph(self.package_descendants(nv))
-
-    def print_ancestors(self, nv: Tuple[str, Version]):
-        """Prints a sub-graph of packages on which the named package version
-        depends.
-
-        Args:
-        nv: package name, version tuple
-        """
-        self.__print_subgraph(self.package_ancestors(nv))
-
-    def print_package(self, nv: Tuple[str, Version]):
-        if self.__is_root_node(nv):
-            return
-
         if nv in self.pkg_recipes:
             (name, version) = nv
             print(name, version, os.path.dirname(self.package_recipe(nv)))
         else:
             raise ValueError("RecipeBook does not contain {}".format(nv))
+
+    def _has_sub_packages(self, name) -> bool:
+        return name in [package[0] for package in self.pkg_parent.values()]
+
+    def sub_packages(self, nv: Tuple[str, Version]) -> List[str] or None:
+        """Returns a list of the subpackages of the provided root package
+
+        Args:
+            nv: package name, version tuple
+
+        Returns: List[str] or None if that package has no sub-packages
+        """
+        sub_packages = []
+        if nv not in self.pkg_recipes:
+            raise ValueError("RecipeBook does not contain {}".format(nv))
+        elif not self._has_sub_packages(nv[0]):
+            return None
+        else:
+            (name, version) = nv
+            for sub, parent in self.pkg_parent.items():
+                if parent[0] == name and version in parent:
+                    sub_packages.append(sub)
+        return sub_packages
+
+    def print_sub_packages(self, nv: Tuple[str, Version]):
+        """Prints only sub-package information.
+
+        Args:
+            nv: package name, version tuple
+        """
+        version = nv[1]
+        try:
+            for sub_package in self.sub_packages(nv):
+                print(sub_package, version, os.path.dirname(self.package_recipe(nv)))
+        except TypeError:
+            # Print nothing if there are no subpackages
+            pass
+
+    def print_packages(self, nv: Tuple[str, Version]):
+        """Prints root packages followed by their sub packages.
+
+        Args:
+            nv: package name, version tuple
+        """
+
+        print("root", end=" ")
+        self.print_root_package(nv)
+        if self._has_sub_packages(nv[0]):
+            self.print_sub_packages(nv)
 
     def dependency_graph(self) -> nx.DiGraph:
         """
@@ -349,7 +414,7 @@ class RecipeBook(object):
                             if req_pkg in self.pkg_parent:
                                 # Require the parent package rather than
                                 # the sub-package
-                                parent_pkg = self.pkg_parent[req_pkg]
+                                parent_pkg = self.package_parent(req_pkg)
                                 num_reqs_located += add_edge(parent_pkg, spec)
                             else:
                                 log.warning("Can't find required package %s",
@@ -362,9 +427,16 @@ class RecipeBook(object):
                     graph.add_edge(nv, self.graph_root)
         return graph
 
-    def __print_subgraph(self, graph):
+    def __print_subgraph(self, graph, level: PrintLevel):
         for node in nx.topological_sort(graph):
-            self.print_package(node)
+            if self.__is_root_node(node):
+                continue
+            elif level == PrintLevel.ROOT:
+                self.print_root_package(node)
+            elif level == PrintLevel.SUB:
+                self.print_sub_packages(node)
+            elif level == PrintLevel.GROUPED:
+                self.print_packages(node)
 
     @staticmethod
     def __is_root_node(node: Tuple[str, Version]):

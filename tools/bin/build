@@ -36,7 +36,7 @@ DEFAULT_RECIPES_MOUNT="/home/conda/recipes"
 DEFAULT_ARTEFACTS_DIR=os.path.expandvars("$HOME/conda-artefacts")
 DEFAULT_ARTEFACTS_MOUNT="/opt/conda/conda-bld"
 
-DEFAULT_BUILD_IMAGE="wsinpg/ub-12.04-conda:latest"
+DEFAULT_BUILD_IMAGE="wsinpg/centos-7-conda:latest"
 
 description = """
 
@@ -83,6 +83,10 @@ parser.add_argument("--conda-build-image",
                     help="Docker image used to build packages, "
                     "defaults to {}".format(DEFAULT_BUILD_IMAGE),
                     type=str, nargs="?", default=DEFAULT_BUILD_IMAGE)
+parser.add_argument("--pull-build-image",
+                    help="Pull the Docker image used to build packages, "
+                    "defaults to false",
+                    action="store_true")
 parser.add_argument("--remove-container",
                     help="Remove the Docker container after each build",
                     action="store_true")
@@ -116,7 +120,8 @@ elif args.verbose or args.dry_run:
     level = log.INFO
 log.basicConfig(level=level)
 
-docker_pull(args.conda_build_image)
+if args.pull_build_image:
+    docker_pull(args.conda_build_image)
 
 fail = False
 

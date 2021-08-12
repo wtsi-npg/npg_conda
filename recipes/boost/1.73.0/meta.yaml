@@ -12,10 +12,10 @@ about:
   summary: "Free peer-reviewed portable C++ source libraries."
 
 build:
-  number: 0
+  number: 2
 
 source:
-  url: https://dl.bintray.com/boostorg/release/{{ version }}/source/boost_{{ alt_version }}.tar.bz2
+  url: https://boostorg.jfrog.io/artifactory/main/release/{{ version }}/source/boost_{{ alt_version }}.tar.bz2
   fn: boost_{{ alt_version }}.tar.bz2
   sha256: {{ sha256 }}
 
