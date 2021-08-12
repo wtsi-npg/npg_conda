@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - mash 2.3
  - samtools/htslib/bcftools 1.12, 1.13
  - seqtk 1.3
- - wr 0.23.3, 0.23.4, 0.25.0
+ - wr 0.23.3, 0.23.4, 0.25.0, 0.26.0
 
 #### Features
  - Automatic package building on pull requests
