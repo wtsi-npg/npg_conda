@@ -16,17 +16,17 @@ setup() {
 
     for role in prod test; do
         # RedHat live; foo
-        cp "$BATS_TEST_DIRNAME/data/packages/foo-1.0.0-0.tar.bz2" \
+        cp "$BATS_TEST_DIRNAME/data/building/packages/foo-1.0.0-0.tar.bz2" \
            "$TEST_TMPDIR/channels/live/$role/RedHat/7.5/linux-64"
 
         # Ubuntu live; foo, bar
-        cp "$BATS_TEST_DIRNAME/data/packages/foo-1.0.0-0.tar.bz2" \
+        cp "$BATS_TEST_DIRNAME/data/building/packages/foo-1.0.0-0.tar.bz2" \
            "$TEST_TMPDIR/channels/live/$role/Ubuntu/18.04/linux-64"
-        cp "$BATS_TEST_DIRNAME/data/packages/bar-1.0.0-0.tar.bz2" \
+        cp "$BATS_TEST_DIRNAME/data/building/packages/bar-1.0.0-0.tar.bz2" \
            "$TEST_TMPDIR/channels/live/$role/Ubuntu/18.04/linux-64"
 
         # Ubuntu staging; baz
-        cp "$BATS_TEST_DIRNAME/data/packages/baz-1.0.0-0.tar.bz2" \
+        cp "$BATS_TEST_DIRNAME/data/building/packages/baz-1.0.0-0.tar.bz2" \
            "$TEST_TMPDIR/channels/staging/$role/Ubuntu/18.04/linux-64"
     done
 }
