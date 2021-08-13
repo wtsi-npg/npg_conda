@@ -83,7 +83,7 @@ they are built in the correct order:
     eigen 3.3.4 recipes/eigen/3.3.4
 
 Both of these scripts have command line help and a number of options
-to configure their behaviour. Note that the online help for `/bin/build`
+to configure their behaviour. Note that the online help for `bin/build`
 reports default values dynamically (i.e. they are calculated for your
 current environment so that they describe accurately the values that
 will be used).
