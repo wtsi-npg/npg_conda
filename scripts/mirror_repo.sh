@@ -65,11 +65,13 @@ fi
 
 gitlab_repo=$(echo ${gitlab_repo} | sed "s|.*@|https://${gitlab_token_name}:${gitlab_token}@|")
 
-# update devel
+# update master and devel
+git checkout master
+git pull $github_repo master
+git push -f $gitlab_repo master
+
 git checkout devel
-
 git pull $github_repo devel
-
 git push -f $gitlab_repo devel
 
 prs=$(curl -N --header "Authorization: bearer $github_token" --request POST -d " \
