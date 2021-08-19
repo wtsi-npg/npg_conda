@@ -7,7 +7,7 @@ mkdir -p $2 # $BUILD_DIR
 
 if [ ! -d $CONDA_DIR ]
 then
-    
+
     wget --quiet $MINICONDA -O /tmp/miniconda.sh
     /bin/bash /tmp/miniconda.sh -b -p $CONDA_DIR
     $CONDA_DIR/bin/conda clean -tipsy

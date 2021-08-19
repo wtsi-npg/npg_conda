@@ -38,6 +38,7 @@ test_devel:
     - echo "Testing devel packages"
     - . /tmp/miniconda/etc/profile.d/conda.sh
     - conda activate base
+    - export PREFIX=$TEST_ENV_PREFIX
     - python bin/gitlab_test -b "$DEVEL_BUILD_DIR" -c "origin/$DEVEL_COMPARE_BRANCH" -p "$PROD_WSI_CONDA_CHANNEL" -d "$WSI_CONDA_CHANNEL"
   only:
     - devel
