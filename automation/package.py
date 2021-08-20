@@ -119,7 +119,9 @@ class Package:
                     libraries
             env: The conda environment in which to run ldd
         """
-        bin_ldd = run_command(Commands.RUN, '-n', env, 'ldd', path)
+        # '|| exit 0' prevents ldd from failing due to non executables
+        bin_ldd = run_command(Commands.RUN, '-n', env, 'ldd', path, '||',
+                              'exit', '0')
         for line in bin_ldd[0].split("\n"):
             if re.search(".*/usr/lib/.*", line):
                 if self.sub_packages():
