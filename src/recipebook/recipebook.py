@@ -104,6 +104,9 @@ class RecipeBook(object):
         log.getLogger("conda_build.metadata").disabled = True
         log.getLogger("conda_build.variants").disabled = True
 
+    def __repr__(self):
+        return "RecipeBook of {} recipes".format(len(self.pkg_recipes))
+
     def packages(self) -> List[str]:
         """Returns the names of all packages.
 
@@ -278,10 +281,7 @@ class RecipeBook(object):
 
         Returns: Set[str] or None
         """
-        try:
-            return self.pkg_subpackages[nv]
-        except KeyError:
-            return set()
+        return self.pkg_subpackages[nv]
 
     def print_sub_packages(self, nv: Tuple[str, str]):
         """Prints only sub-package information.

@@ -1,4 +1,23 @@
 #! /usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# Copyright © 2021 Genome Research Ltd. All rights reserved.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# @author Michael Kubiak <mk53@sanger.ac.uk>
+
 import argparse
 import hashlib
 import os
@@ -7,7 +26,7 @@ from conda.cli.python_api import run_command, Commands
 from conda.exceptions import PackagesNotFoundError
 
 from automation.channel import Channel, install_from_channels
-from automation.package import Package, TestFailError, LibError
+from automation.package import Package, FailedTestError, LibError
 
 from recipebook.recipebook import RecipeBook, find_recipe_files, \
     find_changed_recipe_files
@@ -126,7 +145,7 @@ def main():
                                 raise PackageNotFoundLocallyError(*e.args)
                             print(descendant_package.name, 'not in',
                                   channel.address)
-                        except ValueError or TestFailError or LibError:
+                        except ValueError or FailedTestError or LibError:
                             if channel is local:
                                 raise
 
