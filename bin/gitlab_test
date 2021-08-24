@@ -54,6 +54,9 @@ def install_package_products(package: Package, primary_channel: Channel,
                                                 defaults],
                                       package=sub + "=" + package.version(),
                                       env=env, override=True)
+            else:
+                raise PackagesNotFoundError(sub + '=' + package.version(),
+                                            (primary_channel.address()))
     else:
         if primary_channel.has_package(package.nv()):
             install_from_channels(channels=[primary_channel,
@@ -61,6 +64,9 @@ def install_package_products(package: Package, primary_channel: Channel,
                                             defaults],
                                   package="=".join(package.nv()),
                                   env=env, override=True)
+        else:
+            raise PackagesNotFoundError('='.join(package.nv()),
+                                        (primary_channel.address()))
 
 
 def test_descendant(changed_package: Package, descendant_package: Package,
@@ -78,7 +84,8 @@ def test_descendant(changed_package: Package, descendant_package: Package,
     try:
         install_package_products(changed_package, local, env)
     except PackagesNotFoundError:
-        raise PackageNotFoundLocallyError(changed_package.name, local.address())
+        raise PackageNotFoundLocallyError(changed_package.name(),
+                                          local.address())
     install_package_products(descendant_package, channel, env)
 
     # export env - not possible with the api
@@ -94,6 +101,8 @@ def test_descendant(changed_package: Package, descendant_package: Package,
                               env)
     changed_package.check_ldd(f'{os.environ["CONDA_DIR"]}envs/{env}/lib/*{env}',
                               env)
+
+    run_command(Commands.REMOVE, "-n", env, "--all")
 
 
 def main():
