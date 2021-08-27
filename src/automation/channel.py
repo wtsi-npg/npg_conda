@@ -1,8 +1,29 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright © 2021 Genome Research Ltd. All rights reserved.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# @author Michael Kubiak <mk53@sanger.ac.uk>
+
+import logging as log
+
 from typing import List, Tuple
 
 from conda.cli.python_api import run_command, Commands
 
-from .package import Package
+from automation.package import Package
 
 
 class Channel:
@@ -73,15 +94,16 @@ def search_channels(channels: List[Channel], package_name: str = "",
 
     Returns: List[Package]
     """
-    search = run_conda_command(Commands.SEARCH, channels, package_name,
-                               override=override)
-    if search[2] > 0:
-        raise ChildProcessError(search[1])
+    stdout, stderr, code = run_conda_command(Commands.SEARCH, channels,
+                                             package_name,
+                                             override=override)
+    if code > 0:
+        raise ChildProcessError(stderr)
     packages = []
     # remove title lines and final empty line
-    for package in search[0].split("\n")[2:-1]:
-        split = package.split()
-        packages.append(Package((split[0], split[1])))
+    for package in stdout.split("\n")[2:-1]:
+        name, version, _, _ = package.split()
+        packages.append(Package((name, version)))
     return packages
 
 
@@ -96,7 +118,7 @@ def install_from_channels(channels: List[Channel], package: str,
         override: Add override-channels option if true
 
     """
-    install = run_conda_command(Commands.INSTALL, channels,
-                                package, env, override)
-    if install[2] > 0:
-        raise ChildProcessError(install[1])
+    _, stderr, code = run_conda_command(Commands.INSTALL, channels,
+                                        package, env, override)
+    if code > 0:
+        raise ChildProcessError(stderr)

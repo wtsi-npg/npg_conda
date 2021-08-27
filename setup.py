@@ -1,7 +1,8 @@
 from setuptools import setup, find_packages
 
 setup(name="npg_conda",
-      packages=find_packages('.', exclude=['tests']),
+      packages=find_packages('src'),
+      package_dir={'': 'src'},
       url="https://github.com/wtsi-npg/npg_conda",
       license="GPL3",
       author="Keith James, Michael Kubiak",

@@ -20,6 +20,7 @@
 import logging as log
 import os
 import subprocess
+from collections import defaultdict
 from enum import Enum, unique
 from typing import Dict, Final, List, Set, Tuple
 
@@ -60,9 +61,10 @@ class RecipeBook(object):
     recipe has its dependencies built before it is itself built.
     """
     pkg_recipes: Dict[Tuple, str]
+    pkg_parent: Dict[str, str]
+
     pkg_versions: Dict[str, Set[str]]
     pkg_requirements: Dict[Tuple, Set[Tuple]]
-    pkg_parent: Dict[str, str]
     pkg_subpackages: Dict[Tuple, Set[str]]
 
     def __init__(self):
@@ -73,21 +75,21 @@ class RecipeBook(object):
         # a package.
         self.pkg_recipes = {}
 
+        # Maps a sub-package name to the name of its parent package.
+        self.pkg_parent = {}
+
         # Maps a package name to a set of version strings that exist for that
         # package.
-        self.pkg_versions = {}
+        self.pkg_versions = defaultdict(lambda: set())
 
         # Maps a (package name, version string) tuple to the dependencies of
         # that version of the package expressed as a list of
         # (package name, VersionSpec) tuples.
-        self.pkg_requirements = {}
-
-        # Maps a sub-package name to the name of its parent package.
-        self.pkg_parent = {}
+        self.pkg_requirements = defaultdict(lambda: set())
 
         # Maps a parent (package name, version string) tuple to a set of
         # sub-package names
-        self.pkg_subpackages = {}
+        self.pkg_subpackages = defaultdict(lambda: set())
 
         self.log = log.getLogger(type(self).__name__)
 
@@ -101,6 +103,9 @@ class RecipeBook(object):
         #
         log.getLogger("conda_build.metadata").disabled = True
         log.getLogger("conda_build.variants").disabled = True
+
+    def __repr__(self):
+        return "RecipeBook of {} recipes".format(len(self.pkg_recipes))
 
     def packages(self) -> List[str]:
         """Returns the names of all packages.
@@ -276,10 +281,7 @@ class RecipeBook(object):
 
         Returns: Set[str] or None
         """
-        try:
-            return self.pkg_subpackages[nv]
-        except KeyError:
-            return set()
+        return self.pkg_subpackages[nv]
 
     def print_sub_packages(self, nv: Tuple[str, str]):
         """Prints only sub-package information.
@@ -388,7 +390,7 @@ class RecipeBook(object):
             # toplevel requirements (needed to build the sub-package),
             # so we manually dig into the parsed Dict here.
             if REQUIREMENTS in toplevel:
-                # We could also look at requirements["build"]
+                # We could also look at requirements[BUILD]
                 if HOST in toplevel[REQUIREMENTS]:
                     nv = (effective_pkg_name, pkg_version)
                     for spec in toplevel[REQUIREMENTS][HOST]:
@@ -409,29 +411,20 @@ class RecipeBook(object):
 
     def __add_package_version(self, nv: Tuple[str, str]):
         pkg_name, pkg_version = nv
-        if pkg_name in self.pkg_versions:
-            self.pkg_versions[pkg_name].add(pkg_version)
-        else:
-            self.pkg_versions[pkg_name] = {pkg_version}
+        self.pkg_versions[pkg_name].add(pkg_version)
 
     def __add_sub_package(self, parent_nv: Tuple[str, str], sub_pkg_name: str):
         self.log.debug("Package {} has sub-package {}".format(parent_nv,
                                                               sub_pkg_name))
         parent_pkg_name, _ = parent_nv
         self.pkg_parent[sub_pkg_name] = parent_pkg_name
-        if parent_nv in self.pkg_subpackages:
-            self.pkg_subpackages[parent_nv].add(sub_pkg_name)
-        else:
-            self.pkg_subpackages[parent_nv] = {sub_pkg_name}
+        self.pkg_subpackages[parent_nv].add(sub_pkg_name)
 
     def __add_package_requirement(self,
                                   pkg_nv: Tuple[str, str],
                                   dep_nv: Tuple[str, str]):
         self.log.debug("Package {} depends on {}".format(pkg_nv, dep_nv))
-        if pkg_nv in self.pkg_requirements:
-            self.pkg_requirements[pkg_nv].add(dep_nv)
-        else:
-            self.pkg_requirements[pkg_nv] = {dep_nv}
+        self.pkg_requirements[pkg_nv].add(dep_nv)
 
     def __print_subgraph(self, graph, level: PrintLevel):
         if level is None:
@@ -492,8 +485,8 @@ def find_changed_recipe_files(root: str, branch="master") -> List[str]:
     dirs.sort()
 
     recipe_files = []
-    for dir in dirs:
-        recipe = os.path.join(dir, "meta.yaml")
+    for d in dirs:
+        recipe = os.path.join(d, "meta.yaml")
         if os.path.isfile(recipe):
             recipe_files.append(recipe)
 
