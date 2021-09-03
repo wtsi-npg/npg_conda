@@ -22,6 +22,7 @@ import os
 import subprocess
 from collections import defaultdict
 from enum import Enum, unique
+from pathlib import Path
 from typing import Dict, Final, List, Set, Tuple
 
 import networkx as nx
@@ -473,22 +474,29 @@ def find_changed_recipe_files(root: str, branch="master") -> List[str]:
 
     Returns: List[str]
     """
+
     try:
-        out = subprocess.check_output(["git", "diff", "--name-only",
-                                       "--diff-filter=d", branch, root])
+        cmd = ["git", "rev-parse", "--abbrev-ref", "HEAD"]
+        current_branch = subprocess.check_output(cmd, cwd=root).decode(
+                "utf-8").rstrip()
+
+        cmd = ["git", "diff", "--name-only", "--diff-filter=d", branch]
+        out = subprocess.check_output(cmd, cwd=root)
     except subprocess.CalledProcessError as e:
         log.error(e.output)
         raise e
 
     files = [line.rstrip() for line in out.decode("utf-8").split("\n")]
-    dirs = list(set([os.path.dirname(f) for f in files]))
+    dirs = list(set([Path(f).resolve().parent for f in files]))
     dirs.sort()
 
+    recipe_dir = Path(root).resolve()
     recipe_files = []
     for d in dirs:
-        recipe = os.path.join(d, "meta.yaml")
-        if os.path.isfile(recipe):
-            recipe_files.append(recipe)
+        recipe = d / Path("meta.yaml")
+        if recipe.is_file() and recipe.is_relative_to(recipe_dir):
+            recipe_files.append(str(recipe))
 
-    log.info("Recipes changed relative to %s: %s", branch, recipe_files)
+    log.info(f"Recipes changed in {branch} relative to "
+             f"{current_branch}: {recipe_files}")
     return recipe_files
