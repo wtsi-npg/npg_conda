@@ -487,10 +487,9 @@ def find_changed_recipe_files(root: str, branch="master") -> List[str]:
         raise e
 
     files = [line.rstrip() for line in out.decode("utf-8").split("\n")]
-    dirs = list(set([Path(f).resolve().parent for f in files]))
-    dirs.sort()
+    dirs = sorted(set([Path(f).parent for f in files]))
 
-    recipe_dir = Path(root).resolve()
+    recipe_dir = Path(root)
     recipe_files = []
     for d in dirs:
         recipe = d / Path("meta.yaml")
