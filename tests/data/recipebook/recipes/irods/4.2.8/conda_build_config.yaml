@@ -1,0 +1,9 @@
+
+CFLAGS: >-
+  -O2
+  -fPIC
+  -ffunction-sections
+  -ftree-vectorize
+  -march=x86-64
+  -mtune=generic
+  -pipe

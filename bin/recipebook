@@ -1,0 +1,140 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# Copyright © 2019, 2020 Genome Research Ltd. All rights reserved.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# @author Keith James <kdj@sanger.ac.uk>
+
+import logging as log
+import argparse
+import sys
+
+from recipebook.recipebook import PrintLevel, RecipeBook, UnknownPackageError
+from recipebook.recipebook import find_changed_recipe_files, find_recipe_files
+
+description = """recipebook creates a directed, acyclic graph (DAG) of Conda
+recipes which allows us to sort them for building, ensuring those recipes that
+are dependencies of others are build first.
+
+Each node is a package name, version tuple and each edge represents a
+dependency relationship. The graph is built by inspecting the meta.yaml files
+in a set of Conda recipes. A topological sort of the graph provides a list of
+packages and versions in an order suitable for building.
+
+This used to be a capability of conda-build, which no longer supports
+from-source build dependency calculation.
+"""
+
+parser = argparse.ArgumentParser(
+    description=description,
+    formatter_class=argparse.RawDescriptionHelpFormatter)
+
+parser.add_argument("recipes",
+                    help="Recipes directory, defaults to current directory",
+                    type=str, nargs="?", default=".")
+
+parser.add_argument("-p", "--package", type=str,
+                    required=any(arg in sys.argv for arg in
+                                 ["--provides", "-v", "--version"]),
+                    help="Report dependency relationships for the "
+                         "specified package. Defaults to reporting the "
+                         "packages that the specified package depends on. "
+                         "See --provides."
+                         "Required by --provides and -v/--version.")
+parser.add_argument("-v", "--version", type=str,
+                    required=any(arg in sys.argv for arg in
+                                 ["--provides", "-p", "--package"]),
+                    help="Report dependency relationships of the "
+                         "specified package version. Defaults to reporting "
+                         "the packages that the specified package depends on. "
+                         "See --provides."
+                         "Required by --provides and -p/--package.")
+parser.add_argument("-c", "--changes", type=str,
+                    help="Report only on recipes that have changed "
+                         "relative to another branch (defaults to 'master')")
+parser.add_argument("--provides",
+                    help="When reporting dependency relationships with "
+                         "-p|--package and -v|--version, report the packages "
+                         "which the specified package provides for. "
+                         "i.e. those that are dependencies of the package, "
+                         "rather than those it depends on."
+                         "Requires -p/--package and -v/--version.",
+                    action="store_true")
+level_group = parser.add_mutually_exclusive_group()
+level_group.add_argument("--sub-packages",
+                         help="Report only sub-package names instead of root "
+                              "package names. Excludes --grouped-packages.",
+                         action="store_true")
+level_group.add_argument("--grouped-packages",
+                         help="Report root package names followed by their "
+                              "group of sub-packages. Excludes --sub-packages",
+                         action="store_true")
+
+parser.add_argument("--debug",
+                    help="Enable DEBUG level logging to STDERR",
+                    action="store_true")
+parser.add_argument("--verbose",
+                    help="Enable INFO level logging to STDERR",
+                    action="store_true")
+
+args = parser.parse_args()
+
+log_level = log.ERROR
+if args.debug:
+    log_level = log.DEBUG
+elif args.verbose:
+    log_level = log.INFO
+log.basicConfig(level=log_level, stream=sys.stderr)
+
+package_level = PrintLevel.ROOT
+if args.sub_packages:
+    package_level = PrintLevel.SUB
+elif args.grouped_packages:
+    package_level = PrintLevel.GROUPED
+
+args = parser.parse_args()
+
+
+def main():
+    root = args.recipes
+    recipe_book = RecipeBook()
+    recipe_book.log.setLevel(log_level)
+
+    if args.package and args.version:
+        # Print a sub-graph for a specific package name and version
+        recipe_book.add_recipes(find_recipe_files(root))
+
+        nv = (args.package, args.version)
+        if nv not in recipe_book.dependency_graph():
+            raise UnknownPackageError("Package {} is not present "
+                                      "in the graph".format(nv))
+        if args.provides:
+            recipe_book.print_descendants(nv, package_level)
+        else:
+            recipe_book.print_ancestors(nv, package_level)
+
+    elif args.changes:
+        # Print a unified list of all changed recipes
+        recipe_book.add_recipes(find_changed_recipe_files(root, args.changes))
+        recipe_book.print_graph(package_level)
+    else:
+        # Print everything
+        recipe_book.add_recipes(find_recipe_files(root))
+        recipe_book.print_graph(package_level)
+
+
+if __name__ == "__main__":
+    main()

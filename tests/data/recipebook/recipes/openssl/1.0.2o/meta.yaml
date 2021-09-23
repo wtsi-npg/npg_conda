@@ -1,0 +1,78 @@
+{% set version = "1.0.2o" %}
+{% set sha256 = "ec3f5c9714ba0fd45cb4e087301eb1336c317e0d20b575a125050470e8089e4d" %}
+
+package:
+  name: openssl-pkg
+  version: "{{ version }}"
+
+about:
+  home: https://openssl.org/
+  license: OpenSSL
+  summary: "Cryptography and SSL/TLS Toolkit."
+
+build:
+  number: 4
+
+source:
+  - url: https://www.openssl.org/source/openssl-{{ version }}.tar.gz
+    fn: openssl-{{ version }}.tar.gz
+    sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - libtool
+    - make
+    - pkg-config
+  host:
+    - libz-dev
+  run:
+    - libz
+
+outputs:
+  - name: openssl
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - libtool
+        - make
+        - pkg-config
+      host:
+        - libz-dev
+      run:
+        - {{ pin_subpackage("libssl", exact=True) }}
+        - libz
+    files:
+      - bin/c_rehash
+      - bin/openssl
+      - etc/ssl/man/man1
+    test:
+      commands:
+        - openssl help
+
+  - name: libssl
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - libtool
+        - make
+        - pkg-config
+      host:
+        - libz-dev
+      run:
+        - libz
+    files:
+      - lib/libcrypto.*
+      - lib/libssl.*
+      - lib/engines
+
+  - name: libssl-dev
+    version: {{ version }}
+    requirements:
+      run:
+        - {{ pin_subpackage("libssl", exact=True) }}
+    files:
+      - etc/ssl/man/man3
+      - include/openssl
