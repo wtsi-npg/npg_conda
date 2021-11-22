@@ -105,7 +105,7 @@ class Package:
         """
         ctx = conda.base.context.Context()
         if ctx.root_dir is None:
-           raise PackageError("Unable to locate the installed test scripts "
+            raise PackageError("Unable to locate the installed test scripts "
                                f"of {self} because Conda is not activated")
 
         conda_root = Path(ctx.root_dir)
@@ -116,13 +116,13 @@ class Package:
         if self.sub_packages():
             for sub in self.sub_packages():
                 scripts = list(conda_root.glob(
-                        glob_pattern.format(sub,self.version())))
+                    glob_pattern.format(sub, self.version())))
                 log.debug("Found {} test scripts "
                           "for {}".format(len(scripts), sub))
                 test_scripts.extend(scripts)
         else:
             scripts = list(conda_root.glob(
-                    glob_pattern.format(self.name(), self.version())))
+                glob_pattern.format(self.name(), self.version())))
             log.debug("Found {} test scripts "
                       "for {}".format(len(scripts), self.name()))
             test_scripts.extend(scripts)
@@ -143,7 +143,8 @@ class Package:
         failures = {}
 
         for script in test_scripts:
-            _, stderr, code = run_command(Commands.RUN, "-n", env, script)
+            _, stderr, code = run_command(Commands.RUN, "-n", env,
+                                          "/bin/bash", script)
             if code > 0:
                 failures[script] = stderr
 

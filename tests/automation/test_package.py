@@ -44,7 +44,7 @@ class TestPackage(object):
     def test_run_test_scripts_fail(self, test_recipebook, mocker):
         test_env = "base"  # We need a valid environment for the mock
         mocker.patch("automation.package.Package.get_test_scripts",
-                     return_value=["false"])  # /bin/false or equivalent
+                     return_value=["./tests/automation/fail"])
 
         with pytest.raises(FailedTestError):
             Package(("fail", "1.0.0"),
@@ -55,7 +55,7 @@ class TestPackage(object):
     def test_run_test_scripts_pass(self, test_recipebook, mocker):
         test_env = "base"  # We need a valid environment for the mock
         mocker.patch("automation.package.Package.get_test_scripts",
-                     return_value=["true"])  # /bin/true or equivalent
+                     return_value=["./tests/automation/succeed"])
 
         Package(("success", "1.0.0"),
                 recipebook=test_recipebook).run_test_scripts(test_env)
