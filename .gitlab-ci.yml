@@ -9,7 +9,8 @@ variables:
   #
   MINICONDA: https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-x86_64.sh
   CONDA_DIR: /tmp/miniconda
-  WSI_CONDA_CHANNEL: https://dnap.cog.sanger.ac.uk/npg/conda/devel/generic
+  DEVEL_WSI_CONDA_CHANNEL: https://dnap.cog.sanger.ac.uk/npg/conda/devel/generic
+  PROD_WSI_CONDA_CHANNEL: https://dnap.cog.sanger.ac.uk/npg/conda/prod/generic
   CONDA_IMAGE: wsinpg/centos-7-conda:latest
   S3_URL: https://cog.sanger.ac.uk/
   #
@@ -27,10 +28,16 @@ variables:
   DEVEL_BUILD_DIR: /tmp/conda_artefacts/devel
   DEVEL_COMPARE_BRANCH: master
   #
+  # master commits
+  #
+  MASTER_CHANNEL_REM: s3://dnap/npg/conda/prod/generic
+  MASTER_CHANNEL_DIR: /tmp/prod/generic
+  MASTER_BUILD_DIR: /tmp/conda_artefacts/prod
+  MASTER_COMPARE_BRANCH: old_master
+  #
   # TEST
   #
   TEST_ENV_PREFIX: $CONDA_DIR/envs/test_env
-  PROD_WSI_CONDA_CHANNEL: https://dnap.cog.sanger.ac.uk/npg/conda/prod/generic
 
 include:
   - .gitlab_include/mirror.yml

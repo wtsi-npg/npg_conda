@@ -14,7 +14,7 @@ build_devel:
     - echo "Building devel packages"
     - . /tmp/miniconda/etc/profile.d/conda.sh
     - conda activate base
-    - scripts/gitlab_build.sh "$DEVEL_COMPARE_BRANCH" "$DEVEL_CHANNEL_DIR" "$DEVEL_BUILD_DIR"
+    - scripts/gitlab_build.sh "$DEVEL_COMPARE_BRANCH" "$DEVEL_CHANNEL_DIR" "$DEVEL_BUILD_DIR" "$DEVEL_WSI_CONDA_CHANNEL"
   only:
     - devel
   except:
@@ -39,7 +39,7 @@ test_devel:
     - . /tmp/miniconda/etc/profile.d/conda.sh
     - conda activate base
     - export PREFIX=$TEST_ENV_PREFIX
-    - python bin/gitlab_test -b "$DEVEL_BUILD_DIR" -c "origin/$DEVEL_COMPARE_BRANCH" -p "$PROD_WSI_CONDA_CHANNEL" -d "$WSI_CONDA_CHANNEL"
+    - python bin/gitlab_test -b "$DEVEL_BUILD_DIR" -c "origin/$DEVEL_COMPARE_BRANCH" -p "$PROD_WSI_CONDA_CHANNEL" -d "$DEVEL_WSI_CONDA_CHANNEL"
   only:
     - devel
   except:
