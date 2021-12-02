@@ -18,6 +18,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: "Get public IP"
+        run: curl -s https://ipinfo.io/ip
+
       - name: "Initialize Miniconda"
         run: |
           echo 'source $CONDA/etc/profile.d/conda.sh' >> "$HOME/.bash_profile"
