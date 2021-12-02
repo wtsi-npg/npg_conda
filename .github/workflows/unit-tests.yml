@@ -21,6 +21,9 @@ jobs:
       - name: "Get public IP"
         run: curl -s https://ipinfo.io/ip
 
+      - name: "Get Azure instance info"
+        run: curl -s -H Metadata:true --noproxy "*" "http://169.254.169.254/metadata/instance?api-version=2021-02-01" | cat | jq .
+
       - name: "Initialize Miniconda"
         run: |
           echo 'source $CONDA/etc/profile.d/conda.sh' >> "$HOME/.bash_profile"
