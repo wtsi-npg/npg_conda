@@ -41,6 +41,7 @@ variables:
 
 include:
   - .gitlab_include/mirror.yml
+  - .gitlab_include/master_commit.yml
   - .gitlab_include/merge_requests.yml
   - .gitlab_include/devel_commit.yml
 
