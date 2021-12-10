@@ -6,6 +6,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.2.0]
+
+### Added
+
+#### Recipes
+ - wr 0.28.0, 0.29.0
+ - samtools/bctools/htslib 1.14
+ - Build htslib-plugins for iRODS 4.2.10
+
+#### Features
+
+### Removed
+
+#### Recipes
+  - iRODS 4.2.8
+
+### Changed
+ - Python source file location moved to src
+ - Use conda-build API
+
+
+## [4.1.0]
+
+### Added
+ - wr 0.27.0
+
+#### Recipes
+ - baton 3.1.0, 3.2.0
+ - Build variants for iRODS 4.2.7 and 4.2.10
+
+#### Features
+ - Add support for Conda build variants and Conda versions
+
+### Removed
+
+### Changed
+ - Python source file location moved to src
+ - Use conda-build API
+ - find_changed_recipe_files returns relative paths
+ - Add a requirement for Python >=3.9, due to the use of Path.is_relative_to
+ - Add `.` to requirments.txt so that pip will install the local tools and their modules when `pip install -r requirments` is run.
+ - Move Python source files to ./src and unify python files into a module structure
+ - Allow tests to be run from any directory.
+
 
 ## [4.0.0]
 
