@@ -65,7 +65,10 @@ fi
 
 gitlab_repo=$(echo ${gitlab_repo} | sed "s|.*@|https://${gitlab_token_name}:${gitlab_token}@|")
 
-# update master and devel
+git checkout master
+git checkout -B old_master
+git push -f $gitlab_repo old_master
+
 git checkout master
 git pull $github_repo master
 git push -f $gitlab_repo master

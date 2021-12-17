@@ -1,0 +1,46 @@
+setup_master:
+  stage: .pre
+  script:
+    - echo "Setting up master ci"
+    - scripts/gitlab_setup.sh "$MASTER_CHANNEL_DIR" "$MASTER_BUILD_DIR" "$MASTER_CHANNEL_REM"
+  only:
+    - master
+  except:
+    - schedules
+
+build_master:
+  stage: build
+  script:
+    - echo "Building master packages"
+    - . /tmp/miniconda/etc/profile.d/conda.sh
+    - conda activate base
+    - scripts/gitlab_build.sh "$MASTER_COMPARE_BRANCH" "$MASTER_CHANNEL_DIR" "$MASTER_BUILD_DIR" "$PROD_WSI_CONDA_CHANNEL"
+  only:
+    - master
+  except:
+    - schedules
+
+deploy_master:
+  stage: deploy
+  script:
+    - echo "Deploying master packages"
+    - . /tmp/miniconda/etc/profile.d/conda.sh
+    - conda activate base
+    - scripts/gitlab_deploy.sh "$MASTER_BUILD_DIR" "$MASTER_CHANNEL_DIR" "$MASTER_CHANNEL_REM"
+  only:
+    - master
+  except:
+    - schedules
+
+test_master:
+  stage: test
+  script:
+    - echo "Testing master packages"
+    - . /tmp/miniconda/etc/profile.d/conda.sh
+    - conda activate base
+    - export PREFIX=$TEST_ENV_PREFIX
+    - python bin/gitlab_test -b "$MASTER_BUILD_DIR" -c "origin/$MASTER_COMPARE_BRANCH" -p "$PROD_WSI_CONDA_CHANNEL"
+  only:
+    - master
+  except:
+    - schedules

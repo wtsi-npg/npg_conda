@@ -18,8 +18,7 @@ then
     . $CONDA_DIR/etc/profile.d/conda.sh
     conda activate base
     conda config --set auto_update_conda False
-    conda config --prepend channels "$WSI_CONDA_CHANNEL"
-    conda config --append channels conda-forge
+    conda config --prepend channels "$DEVEL_WSI_CONDA_CHANNEL"
 
 else
     . $CONDA_DIR/etc/profile.d/conda.sh
