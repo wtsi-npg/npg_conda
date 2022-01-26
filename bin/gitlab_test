@@ -154,12 +154,12 @@ def main():
                             break
                         except PackagesNotFoundError as e:
                             run_command(Commands.REMOVE, '-n', env, '--all')
-                            if channel is "local":
+                            if channel == "local":
                                 raise PackageNotFoundLocallyError(*e.args)
                             print(descendant_package.name, 'not in',
                                   channels[channel].address)
                         except ValueError or FailedTestError or LibError:
-                            if channel is "local":
+                            if channel == "local":
                                 raise
 
 
