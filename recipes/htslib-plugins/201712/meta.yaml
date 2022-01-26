@@ -10,7 +10,7 @@ about:
   summary: C library for high-throughput sequencing data formats.
 
 build:
-  number: 2
+  number: 3
 
 source:
   - git_url: https://github.com/samtools/htslib-plugins.git
