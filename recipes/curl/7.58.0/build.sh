@@ -7,6 +7,7 @@ n="$CPU_COUNT"
 ./configure prefix="$PREFIX" \
             --with-gnutls="$PREFIX" \
             --with-zlib="$PREFIX" \
+            --with-ca-bundle=${PREFIX}/ssl/cacert.pem \
             --without-ssl \
             CPPFLAGS="-I$PREFIX/include" LDFLAGS="-L$PREFIX/lib"
 
