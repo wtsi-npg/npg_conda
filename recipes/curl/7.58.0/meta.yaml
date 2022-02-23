@@ -55,6 +55,7 @@ outputs:
     test:
       commands:
         - curl -h
+        - curl -LI https://google.com
 
   - name: libcurl
     version: {{ version }}
