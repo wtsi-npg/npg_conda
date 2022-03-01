@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 #### Recipes
+ - remove spurious irods-dev dependency for io_lib
  - curl 7.58.0 to use Conda ca-certs
 
 ## [4.2.0]
