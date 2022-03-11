@@ -33,7 +33,6 @@ class TestRecipeBook(object):
         pkg = ("baton-pkg", "3.0.1")
         assert test_recipebook.package_requirements(pkg) == \
             {("irods-dev", VersionSpec("4.2.7")),
-             ("irods-dev", VersionSpec("4.2.8")),
              ("libjansson-dev", None),
              ("libssl-dev", None)}
 
@@ -57,7 +56,6 @@ class TestRecipeBook(object):
         desc = [n for n in g.nodes()]
         desc.sort()
         assert desc == [("irods", "4.2.7"),
-                        ("irods", "4.2.8"),
                         ("libjansson-pkg", "2.10"),
                         ("openssl-pkg", "1.0.2o")]
 
