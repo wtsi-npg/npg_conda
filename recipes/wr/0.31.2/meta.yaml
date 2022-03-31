@@ -1,0 +1,24 @@
+{% set version = "0.31.2" %}
+{% set sha256 = "b608bc969688f375e23fb7ddb5636983768daa38ec448ffcbf055b2f65458b1d" %}
+
+package:
+  name: wr
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/VertebrateResequencing/wr
+  license: GPL3
+  summary: "High performance Workflow Runner."
+
+build:
+  number: 0
+  binary_relocation: false
+
+source:
+  url: https://github.com/VertebrateResequencing/wr/releases/download/v{{ version }}/wr-linux-x86-64.zip
+  fn: wr-{{ version }}.zip
+  sha256: {{ sha256 }}
+
+test:
+  commands:
+    - wr -h
