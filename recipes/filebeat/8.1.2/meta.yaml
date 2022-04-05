@@ -1,0 +1,24 @@
+{% set version = "8.1.2" %}
+{% set sha256 = "94e3331dafac88ed696e515621148876b182d7d97c0859a6065ce5cca154fdc4" %}
+
+package:
+  name: filebeat
+  version: "{{ version }}"
+
+about:
+  home: https://www.elastic.co/beats/filebeat
+  license: Elastic License
+  summary: "File harvester for ELK"
+
+build:
+  number: 0
+  binary_relocation: false
+
+source:
+  url: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-{{ version }}-linux-x86_64.tar.gz
+  fn: filebeat-{{ version }}-linux-x86_64.tar.gz
+  sha256: {{ sha256 }}
+
+test:
+  commands:
+    - filebeat -h
