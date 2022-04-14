@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Recipes
  - wr 0.30.0, 0.31.0, 0.31.1, 0.31.2
- - samtools/bcftools/htslib 1.15
+ - samtools/bcftools/htslib 1.15, 1.15.1
  - filebeat 8.1.2
 
 #### Features
