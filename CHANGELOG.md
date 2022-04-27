@@ -9,9 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### Recipes
- - wr 0.30.0, 0.31.0, 0.31.1, 0.31.2
- - samtools/bcftools/htslib 1.15, 1.15.1
- - filebeat 8.1.2
 
 #### Features
 
@@ -22,8 +19,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 #### Recipes
- - remove spurious irods-dev dependency for io_lib
+
+## [4.3.0]
+
+### Added
+
+#### Recipes
+ - wr 0.30.0, 0.31.0, 0.31.1, 0.31.2
+ - samtools/bcftools/htslib 1.15, 1.15.1
+ - filebeat 8.1.2
+ - ml-warehouse 0.1.0
+ - iRODS 4.2.11
+
+#### Features
+ - Gitlab CI : master branch build will be pushed to prod channel
+
+### Removed
+
+#### Recipes
+ - iRODS 4.2.8, 4.2.9
+
+### Changed
+ - build configs to use iRODS 4.2.11 and increment build numbers
+   - baton 3.2.0
+   - htslib-plugins 201712
+   - tears 1.3.1
+
+#### Recipes
+ - remove spurious iRODS-dev dependency for io_lib
  - curl 7.58.0 to use Conda ca-certs
+ - iRODS : pin the fmt dependency to a version <8.0
 
 ## [4.2.0]
 
