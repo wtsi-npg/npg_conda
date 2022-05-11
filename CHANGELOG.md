@@ -20,6 +20,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Recipes
 
+## [4.3.1]
+
+### Added
+
+### Removed
+
+### Changed
+ - Gitlab CI: rsync location for prod channel build fixed
+
 ## [4.3.0]
 
 ### Added
