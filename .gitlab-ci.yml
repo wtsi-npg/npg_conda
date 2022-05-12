@@ -31,7 +31,7 @@ variables:
   # master commits
   #
   MASTER_CHANNEL_REM: s3://dnap/npg/conda/prod/generic
-  MASTER_CHANNEL_DIR: /tmp/prod/generic
+  MASTER_CHANNEL_DIR: /tmp/prod/generic/
   MASTER_BUILD_DIR: /tmp/conda_artefacts/prod
   MASTER_COMPARE_BRANCH: old_master
   #
