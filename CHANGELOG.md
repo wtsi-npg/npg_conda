@@ -9,9 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### Recipes
- - baton 3.3.0
 
 #### Features
+
+### Removed
+
+#### Recipes
+
+### Changed
+
+#### Recipes 
+
+## [4.4.0]
+
+### Added
+
+#### Recipes
+ - baton 3.3.0
 
 ### Removed
 
@@ -19,8 +33,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - ml-warehouse 0.1.0
 
 ### Changed
-
-#### Recipes
 
 ## [4.3.1]
 
