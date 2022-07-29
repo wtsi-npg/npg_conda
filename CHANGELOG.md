@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### Recipes
+
+#### Features
+
+### Removed
+
+#### Recipes
+
+### Changed
+
+## [4.5.0]
+
+### Added
+
+#### Recipes
  - wr 0.32.0
 
 #### Features
