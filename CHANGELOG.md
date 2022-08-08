@@ -18,6 +18,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [4.5.0]
+
+### Added
+
+#### Recipes
+ - wr 0.32.0
+ - baton 4.0.0
+
+#### Features
+
+### Removed
+
+#### Recipes
+
+### Changed
+
 #### Recipes 
 
 ## [4.4.0]
