@@ -1,5 +1,5 @@
 {% set version = "4.3.0" %}
-{% set clang_version = "8.0.1" %}
+{% set clang_version = "14.0.6" %}
 
 package:
   name: irods
@@ -17,13 +17,16 @@ source:
   - git_url: https://github.com/irods/irods.git
     git_rev: "{{ version }}"
     folder: irods
+    patches:
+      - irods-cmakelists.patch
+      - irods-lib-core-irods-load-plugin-path-truncation-bug.patch
   - git_url: https://github.com/irods/irods_client_icommands.git
     git_rev: "{{ version }}"
     folder: irods_client_icommands
 
 requirements:
   build:
-    - cmake >=3.7.0
+    - cmake >=3.21.4
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - clang =={{ clang_version }}
@@ -34,7 +37,7 @@ requirements:
     - avrocpp-dev >=1.9
     - catch2
     - cppzmq
-    - fmt <8.0
+    - fmt >8.0
     - json
     - krb5-dev
     - libarchive-dev
@@ -42,6 +45,7 @@ requirements:
     - libpam-dev
     - libssl-dev
     - nanodbc
+    - spdlog
     - unixodbc
     - zeromq
 
@@ -50,7 +54,7 @@ outputs:
     version: {{ version }}
     requirements:
       run:
-        - fmt <8.0
+        - fmt >8.0
         - libarchive
         - libavrocpp >=1.9
         - libboost
@@ -87,7 +91,7 @@ outputs:
     requirements:
       run:
         - {{ pin_subpackage("irods-runtime", exact=True) }}
-        - fmt <8.0
+        - fmt >8.0
         - libarchive
         - libavrocpp >=1.9
         - libboost
