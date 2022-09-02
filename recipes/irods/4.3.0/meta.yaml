@@ -1,5 +1,6 @@
 {% set version = "4.3.0" %}
 {% set clang_version = "14.0.6" %}
+{% set min_avro_version = "1.11" %}
 
 package:
   name: irods
@@ -36,10 +37,10 @@ requirements:
     - make
     - help2man
   host:
-    - avrocpp-dev >=1.11
+    - avrocpp-dev >={{ min_avro_version}}
     - catch2
     - cppzmq
-    - fmt >8.0
+    - fmt
     - json
     - krb5-dev
     - libarchive-dev
@@ -57,9 +58,9 @@ outputs:
     version: {{ version }}
     requirements:
       run:
-        - fmt >8.0
+        - fmt
         - libarchive
-        - libavrocpp >=1.11
+        - libavrocpp >={{ min_avro_version }}
         - libboost
         - libkrb5
         - libpam
@@ -94,9 +95,9 @@ outputs:
     requirements:
       run:
         - {{ pin_subpackage("irods-runtime", exact=True) }}
-        - fmt >8.0
+        - fmt
         - libarchive
-        - libavrocpp >=1.11
+        - libavrocpp >={{ min_avro_version }}
         - libboost
         - libkrb5
         - libpam
