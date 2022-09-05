@@ -21,6 +21,7 @@ source:
     patches:
       - irods-cmakelists.patch
       - irods-lib-core-irods-load-plugin-path-truncation-bug.patch
+      - irods-plugins-database-cmakelists.patch
   - git_url: https://github.com/irods/irods_client_icommands.git
     git_rev: "{{ version }}"
     folder: irods_client_icommands

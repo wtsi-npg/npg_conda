@@ -1,0 +1,13 @@
+diff --git a/plugins/database/CMakeLists.txt b/plugins/database/CMakeLists.txt
+index 815afed47..178713b2f 100644
+--- a/plugins/database/CMakeLists.txt
++++ b/plugins/database/CMakeLists.txt
+@@ -40,7 +40,7 @@ foreach(plugin IN LISTS IRODS_DATABASE_PLUGINS)
+   # FIXME: running `cpp` like this feels icky.
+   add_custom_command(
+     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/icatSysTables_${plugin}.sql"
+-    COMMAND cpp -E -P -D${plugin} "${CMAKE_CURRENT_BINARY_DIR}/src/icatSysTables.sql.pp" "${CMAKE_CURRENT_BINARY_DIR}/icatSysTables_${plugin}.sql"
++    COMMAND ${CPP} -E -P -D${plugin} "${CMAKE_CURRENT_BINARY_DIR}/src/icatSysTables.sql.pp" "${CMAKE_CURRENT_BINARY_DIR}/icatSysTables_${plugin}.sql"
+     MAIN_DEPENDENCY "${CMAKE_CURRENT_BINARY_DIR}/src/icatSysTables.sql.pp"
+   )
+   # TODO: perhaps we should make the custom command output part of the dependency chain
