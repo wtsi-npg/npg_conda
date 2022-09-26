@@ -1,0 +1,36 @@
+{% set version = "1.16" %} # reset build to zero on changing
+{% set upstream_version = "1.16" %}
+{% set htslib_version = "1.16" %}  # Bump build version on change
+{% set sha256 = "90bf647c9ad79e10a243b8058c873de057fd7012e250d5ae6574839787a2ecd6" %}
+
+package:
+  name: bcftools
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/samtools/bcftools
+  license: MIT
+  summary: VCF commands and BCF calling.
+
+build:
+  number: 0
+
+source:
+  url: https://github.com/samtools/bcftools/releases/download/{{ upstream_version }}/bcftools-{{ upstream_version }}.tar.bz2
+  fn: bcftools-{{ upstream_version }}.tar.bz2
+  sha256: {{ sha256 }}
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - make
+  host:
+    - libhts-dev =={{ htslib_version }}
+    - libz-dev
+  run:
+    - libhts =={{ htslib_version }}
+    - libz
+
+test:
+  commands:
+    - bcftools --help
