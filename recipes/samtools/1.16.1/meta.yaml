@@ -62,6 +62,4 @@ outputs:
     test:
       commands:
         - echo -e '@HD\tVN:1.0\tSO:unsorted' | samtools view
-        - samtools --help
-        - samtools --help > help.txt
-        - grep Version:\ 1.16.1\ \( 
+        - samtools --help | grep Version:\ {{ version }}\ \(
