@@ -23,6 +23,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### Recipes
+ - samtools 1.16.1
+ - bcftools 1.16
+ - htslib 1.16
+
+#### Features
+
+### Removed
+
+#### Recipes
+
+### Changed
+
+#### Recipes 
+
+## [4.4.0]
+
+### Added
+
+#### Recipes
  - wr 0.32.0
  - baton 4.0.0
 
