@@ -18,6 +18,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [4.6.0]
+
+### Added
+
+#### Recipes
+ - samtools 1.16.1
+ - bcftools 1.16
+ - htslib 1.16
+
+#### Features
+
+### Removed
+
+#### Recipes
+ - irods 4.2.10
+
+### Changed
+ - Github Actions: Move from ubuntu-18.04 to ubuntu-latest
+
+#### Recipes
+ - Build config with compiler version and cflags and increment build number:
+   - avrocpp 1.8.2, 1.9.0
+   - boost 1.73.0
+ - Remove irods 4.2.10 from build config:
+   - baton 3.1.0, 3.2.0, 3.3.0, 4.0.0
+   - htslib-plugins 201712
+ - Update release url:
+   - libarchive
+
 ## [4.5.0]
 
 ### Added

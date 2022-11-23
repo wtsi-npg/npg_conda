@@ -8,6 +8,7 @@ CFLAGS: >-
   -O2
   -fPIC
   -ffunction-sections
+  -fno-plt
   -fstack-protector-strong
   -ftree-vectorize
   -march=x86-64
