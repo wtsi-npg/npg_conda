@@ -11,7 +11,7 @@ about:
   summary: "Open Source Data Management Software."
 
 build:
-  number: 1
+  number: 2
 
 source:
   - git_url: https://github.com/irods/irods.git
@@ -23,6 +23,7 @@ source:
       - irods-plugins-api-data-object-finalize-compile-error.patch
       - irods-plugins-database-cmakelists.patch
       - irods-plugins-libunixfilesystem-compile-error.patch
+      - irods-rsphyspathreg.patch
   - git_url: https://github.com/irods/irods_client_icommands.git
     git_rev: "{{ version }}"
     folder: irods_client_icommands
