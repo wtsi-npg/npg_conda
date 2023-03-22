@@ -11,7 +11,7 @@ variables:
   CONDA_DIR: /tmp/miniconda
   DEVEL_WSI_CONDA_CHANNEL: https://dnap.cog.sanger.ac.uk/npg/conda/devel/generic
   PROD_WSI_CONDA_CHANNEL: https://dnap.cog.sanger.ac.uk/npg/conda/prod/generic
-  CONDA_IMAGE: wsinpg/centos-7-conda:latest
+  CONDA_IMAGE: ghcr.io/wtsi-npg/centos-7-conda:latest
   S3_URL: https://cog.sanger.ac.uk/
   #
   # merge requests
