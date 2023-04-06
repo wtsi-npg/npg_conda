@@ -36,7 +36,7 @@ DEFAULT_RECIPES_MOUNT="/home/conda/recipes"
 DEFAULT_ARTEFACTS_DIR=os.path.expandvars("$HOME/conda-artefacts")
 DEFAULT_ARTEFACTS_MOUNT="/opt/conda/conda-bld"
 
-DEFAULT_BUILD_IMAGE="ghcr.io/wtsi-npg/centos-7-conda:latest"
+DEFAULT_BUILD_IMAGE="ghcr.io/wtsi-npg/centos-7-conda-build:latest"
 
 description = """
 
