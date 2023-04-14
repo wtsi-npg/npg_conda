@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### CI
  - Update Docker Conda build image name
  - Move from DockerHub to GitHub hosted images
+ - Fix to iRODS 4.2.11 rsPhyPathReg to resolve a compilation error
 
 
 ## [4.7.0]
