@@ -29,6 +29,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Features
  - irmdir to iRODS 4.2.11 package
 
+### Changed
+
+#### CI
+ - Update Docker Conda build image name
+ - Move from DockerHub to GitHub hosted images
+
+
 ## [4.7.0]
 
 ### Added
