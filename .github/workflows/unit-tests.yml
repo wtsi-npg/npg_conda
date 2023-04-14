@@ -12,7 +12,7 @@ jobs:
 
     env:
       WSI_CONDA_CHANNEL: "https://dnap.cog.sanger.ac.uk/npg/conda/devel/generic"
-      CONDA_IMAGE: "wsinpg/centos-7-conda:latest"
+      CONDA_IMAGE: "ghcr.io/wtsi-npg/centos-7-conda-build:latest"
       COMPARE_BRANCH: "origin/devel"
 
     steps:

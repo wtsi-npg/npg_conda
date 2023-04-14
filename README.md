@@ -92,7 +92,7 @@ A complete build example:
 
     ./bin/recipebook | ./bin/build \
     --recipes-dir $PWD --artefacts-dir $HOME/conda-artefacts \
-    --conda-build-image wsinpg/centos-7-conda:latest --verbose
+    --conda-build-image ghcr.io/wtsi-npg/centos-7-conda-build:latest --verbose
 
 Here the recipes directory that will be mounted by the container is
 set explicitly, as is the artefacts directory, where the built
@@ -166,7 +166,7 @@ commands:
     source=/home/ubuntu/conda-artefacts,\
     target=/opt/conda/conda-bld,type=bind \
     -e CONDA_USER_ID=1001 -e CONDA_GROUP_ID=1001 -i --rm \
-    wsinpg/centos-7-conda:latest \ 
+    ghcr.io/wtsi-npg/centos-7-conda-build:latest \ 
     /bin/sh -c 'exportCONDA_BLD_PATH="/opt/conda/conda-bld" ; conda config --set auto_update_conda False ; cd /home/conda/recipes && conda build recipe'
 
     docker run --mount \
@@ -176,5 +176,5 @@ commands:
     source=/home/ubuntu/conda-artefacts,\
     target=/opt/conda/conda-bld,type=bind \
     -e CONDA_USER_ID=1001 -e CONDA_GROUP_ID=1001 -i --rm \
-    wsinpg/centos-7-conda:latest \
+    ghcr.io/wtsi-npg/centos-7-conda-build:latest \
     /bin/sh -c 'export CONDA_BLD_PATH="/opt/conda/conda-bld" ; conda config --set auto_update_conda False ; cd /home/conda/recipes && conda build recipe'

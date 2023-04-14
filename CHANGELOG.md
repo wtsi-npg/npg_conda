@@ -18,6 +18,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [4.8.0]
+
+### Added
+
+#### Recipes
+ - wr 0.32.1
+ - baton 4.0.1
+
+#### Features
+ - irmdir to iRODS 4.2.11 package
+
+### Changed
+
+#### CI
+ - Update Docker Conda build image name
+ - Move from DockerHub to GitHub hosted images
+ - Fix to iRODS 4.2.11 rsPhyPathReg to resolve a compilation error
+
+
 ## [4.7.0]
 
 ### Added
@@ -25,13 +44,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Recipes
  - io_lib 1.14.14
 
-#### Features
-
-### Removed
-
-#### Recipes
-
-### Changed
 
 ## [4.6.0]
 
@@ -41,8 +53,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - samtools 1.16.1
  - bcftools 1.16
  - htslib 1.16
-
-#### Features
 
 ### Removed
 
@@ -62,6 +72,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Update release url:
    - libarchive
 
+
 ## [4.5.0]
 
 ### Added
@@ -70,15 +81,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - wr 0.32.0
  - baton 4.0.0
 
-#### Features
-
-### Removed
-
-#### Recipes
-
-### Changed
-
-#### Recipes 
 
 ## [4.4.0]
 
@@ -92,16 +94,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Recipes
  - ml-warehouse 0.1.0
 
-### Changed
 
 ## [4.3.1]
 
-### Added
-
-### Removed
-
 ### Changed
  - Gitlab CI: rsync location for prod channel build fixed
+
 
 ## [4.3.0]
 
@@ -132,6 +130,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - remove spurious iRODS-dev dependency for io_lib
  - curl 7.58.0 to use Conda ca-certs
  - iRODS : pin the fmt dependency to a version <8.0
+
 
 ## [4.2.0]
 
@@ -165,8 +164,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Features
  - Add support for Conda build variants and Conda versions
-
-### Removed
 
 ### Changed
  - Python source file location moved to src
@@ -223,5 +220,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - krb requirement to krb-dev for irods 4.2.7
  - The default behaviour of the build script is no longer to pull the build
    image, but to expect to find it locally.
+
 
 ## [3.0.0]
