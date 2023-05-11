@@ -18,6 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+## [4.9.0]
+
+### Added
+
+#### Recipes
+ - bambi 0.15.0
+
 ## [4.8.0]
 
 ### Added
