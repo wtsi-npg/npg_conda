@@ -1,0 +1,65 @@
+{% set version = "1.17" %} # reset build to zero on changing
+{% set htslib_version = "1.17" %}
+
+package:
+  name: samtools-pkg
+  version: "{{ version }}"
+
+about:
+  home: https://github.com/samtools/samtools
+  license: MIT
+  summary: C library for high-throughput sequencing data formats.
+
+build:
+  number: 0
+
+source:
+  git_url: https://github.com/samtools/samtools.git
+  git_rev: 4959cc981ad9725d3c6007687ca372ffcdaa3c80
+
+requirements:
+  build:
+    - {{ compiler("c") }}
+    - autoconf
+    - automake
+    - make
+    - perl
+  host:
+    - libhts-dev =={{ htslib_version }}
+    - libz-dev
+  run:
+    - libhts =={{ htslib_version }}
+    - libz
+
+outputs:
+  - name: samtools
+    version: {{ version }}
+    requirements:
+      build:
+        - {{ compiler("c") }}
+        - autoconf
+        - automake
+        - make
+        - perl
+      host:
+        - libhts-dev =={{ htslib_version }}
+        - libz-dev
+      run:
+        - libhts =={{ htslib_version }}
+        - libz
+    files:
+      - bin/ace2sam
+      - bin/maq2sam-*
+      - bin/md5*
+      - bin/plot-ampliconstats
+      - bin/plot-bamstats
+      - bin/samtools
+      - bin/wgsim
+      - bin/*.pl
+      - bin/*.py
+      - share/man/man1/samtools*.1
+      - share/man/man1/wgsim.1
+    test:
+      commands:
+        - echo -e '@HD\tVN:1.0\tSO:unsorted' | samtools view
+        - samtools --help | grep Version:\ {{ version }}\ \(

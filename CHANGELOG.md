@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### Recipes
+ - samtools 1.17
+ - bcftools 1.17
+ - htslib 1.17
 
 #### Features
 
