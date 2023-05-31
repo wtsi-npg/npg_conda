@@ -4,8 +4,7 @@ set -ex
 
 n="$CPU_COUNT"
 
-autoheader
-autoconf
+autoreconf -i
 
 ./configure --prefix="$PREFIX" \
             --with-htslib=system \
