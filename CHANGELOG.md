@@ -23,6 +23,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### Recipes
+
+## [4.10.0]
+
+### Added
+
+#### Recipes
+ - samtools 1.17
+ - bcftools 1.17
+ - htslib 1.17
+
+#### Features
+
+### Removed
+
+#### Recipes
+
+### Changed
+ - GH Actions: fix conda 23.3 to cope with API changes
+
+## [4.9.0]
+
+### Added
+
+#### Recipes
  - bambi 0.15.0
 
 ## [4.8.0]

@@ -25,7 +25,7 @@ jobs:
 
       - name: "Install dependencies"
         run: |
-          conda install conda-build pip
+          conda install conda==23.3 conda-build pip 
           python -m pip install --upgrade pip setuptools wheel
           pip install -r ./requirements.txt
           pip install -r ./test-requirements.txt
