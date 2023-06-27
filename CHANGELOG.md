@@ -6,24 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.11.0]
+
 ### Added
 
 #### Recipes
  - wr 0.32.2
 
-#### Features
-
-### Removed
-
-#### Recipes
-
-### Changed
-
-## [4.9.0]
-
-### Added
-
-#### Recipes
 
 ## [4.10.0]
 
@@ -43,12 +32,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
  - GH Actions: fix conda 23.3 to cope with API changes
 
+
 ## [4.9.0]
 
 ### Added
 
 #### Recipes
  - bambi 0.15.0
+
 
 ## [4.8.0]
 
