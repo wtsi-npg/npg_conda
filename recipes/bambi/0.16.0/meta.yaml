@@ -38,7 +38,7 @@ requirements:
 
 outputs:
   - name: bambi
-    requirem ents:
+    requirements:
       build:
         - {{ compiler("c") }}
         - autoconf
