@@ -8,8 +8,8 @@ mkdir -p $2 # $BUILD_DIR
 if [ ! -d $CONDA_DIR ]
 then
 
-    wget --quiet $MINICONDA -O /tmp/miniconda.sh
-    /bin/bash /tmp/miniconda.sh -b -p $CONDA_DIR
+    wget --quiet $MINIFORGE -O /tmp/miniforge.sh
+    /bin/bash /tmp/miniforge.sh -b -p $CONDA_DIR
     $CONDA_DIR/bin/conda clean -tipsy
 
     echo ". $CONDA_DIR/etc/profile.d/conda.sh" >> ~/.bashrc
@@ -35,4 +35,3 @@ aws configure set s3.endpoint_url $S3_URL
 aws configure set s3api.endpoint_url $S3_URL
 
 aws s3 sync "$3" "$1" # $CHANNEL_REM $CHANNEL_DIR
-

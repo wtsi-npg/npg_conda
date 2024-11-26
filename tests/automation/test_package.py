@@ -64,7 +64,7 @@ class TestPackage(object):
     @m.it("Raises an error")
     def test_ldd_fail(self, test_recipebook, mocker):
         test_env = "base"  # We need a valid environment for the mock
-        test_path = "/home/ubuntu/miniconda3/envs/bin"
+        test_path = "/home/ubuntu/miniforge/envs/bin"
         ldd_result = "libsub.so.0 => /usr/lib/libsub.so.0" \
                      " (0x00007ffee9523000)"
 
@@ -80,8 +80,8 @@ class TestPackage(object):
     @m.it("Succeeds")
     def test_ldd_pass(self, test_recipebook, mocker):
         test_env = "base"  # We need a valid environment for the mock
-        test_path = "/home/ubuntu/miniconda3/envs/bin"
-        ldd_result = "libsub.so.0 => /home/ubuntu/miniconda3/lib/libsub.so.0" \
+        test_path = "/home/ubuntu/miniforge/envs/bin"
+        ldd_result = "libsub.so.0 => /home/ubuntu/miniforge/lib/libsub.so.0" \
                      " (0x00007ffee9523000)"
 
         mocker.patch('automation.package.run_command',

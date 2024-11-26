@@ -12,7 +12,7 @@ build_devel:
   stage: build
   script:
     - echo "Building devel packages"
-    - . /tmp/miniconda/etc/profile.d/conda.sh
+    - . /tmp/miniforge/etc/profile.d/conda.sh
     - conda activate base
     - scripts/gitlab_build.sh "$DEVEL_COMPARE_BRANCH" "$DEVEL_CHANNEL_DIR" "$DEVEL_BUILD_DIR" "$DEVEL_WSI_CONDA_CHANNEL"
   only:
@@ -24,7 +24,7 @@ deploy_devel:
   stage: deploy
   script:
     - echo "Deploying devel packages"
-    - . /tmp/miniconda/etc/profile.d/conda.sh
+    - . /tmp/miniforge/etc/profile.d/conda.sh
     - conda activate base
     - scripts/gitlab_deploy.sh "$DEVEL_BUILD_DIR" "$DEVEL_CHANNEL_DIR" "$DEVEL_CHANNEL_REM"
   only:
@@ -36,7 +36,7 @@ test_devel:
   stage: test
   script:
     - echo "Testing devel packages"
-    - . /tmp/miniconda/etc/profile.d/conda.sh
+    - . /tmp/miniforge/etc/profile.d/conda.sh
     - conda activate base
     - export PREFIX=$TEST_ENV_PREFIX
     - python bin/gitlab_test -b "$DEVEL_BUILD_DIR" -c "origin/$DEVEL_COMPARE_BRANCH" -p "$PROD_WSI_CONDA_CHANNEL" -d "$DEVEL_WSI_CONDA_CHANNEL"
