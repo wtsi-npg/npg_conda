@@ -51,7 +51,7 @@ args = parser.parse_args()
 channels = {
     "prod": Channel(args.prod_channel),
     "local": Channel(args.build_dir),
-    "defaults": Channel("pkgs/main")
+    "conda-forge": Channel("conda-forge")
     }
 
 if args.devel_channel:
@@ -72,7 +72,7 @@ def install_package_products(package: Package, primary_channel: Channel,
     install_channels = [primary_channel]
     if args.devel_channel:
         install_channels.append(channels["devel"])
-    install_channels.append(channels["defaults"])
+    install_channels.append(channels["conda-forge"])
     if package.sub_packages():
         for sub in package.sub_packages():
             if primary_channel.has_package((sub, package.version())):

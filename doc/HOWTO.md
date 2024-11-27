@@ -3,7 +3,7 @@
 
 ## Ensure that you hava Conda available ##
 
-We use the [Miniconda](https://conda.io/miniconda.html) version of
+We use the [Miniforge](https://github.com/conda-forge/miniforge) version of
 Conda. Your `$HOME/.condarc` file should look like this:
 
 ```bash
@@ -11,7 +11,7 @@ show_channel_urls: true
 
 channels:
   - https://dnap.cog.sanger.ac.uk/npg/conda/prod/generic/
-  - defaults
+  - conda-forge
 ```
 
 The public channel URLs are structured by channel purpose (`prod`, for
@@ -20,7 +20,7 @@ production, `test` for testing), OS distribution name (e.g. `Ubuntu`,
 for RedHat Enterprise Linux).
 
 Unless you are building a complete stack from scratch, you should have
-a single channel defined, in addition to the `defaults` channel, from
+a single channel defined, in addition to the `conda-forge` channel, from
 which your new package's dependencies may be obtained at build time.
 
 Conda does not include by default the tools required to build a new

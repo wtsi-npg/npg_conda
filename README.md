@@ -2,7 +2,6 @@ This repository contains [Conda](https://conda.io) recipes to build
 tools and libraries used by [WSI NPG](https://github.com/wtsi-npg).
 
 Our recipes differ from those provided by
-[Anaconda Inc.](https://github.com/AnacondaRecipes),
 [Conda Forge](https://conda-forge.org) and
 [BioConda](https://bioconda.github.io/) in order to meet our specific
 needs:
@@ -44,7 +43,7 @@ recipes by omitting support for them.
 ### Building the recipes ###
 
 Building from source requires Conda (we use
-[Miniconda](https://docs.conda.io/en/latest/miniconda.html)), with the
+[Miniforge](https://github.com/conda-forge/miniforge), with the
 [conda-build](https://github.com/conda/conda-build) and
 [conda-verify](https://github.com/conda/conda-verify) packages
 installed.
@@ -119,11 +118,7 @@ build so that you can investigate. Common reasons for build failures
 A successfully built package will be dropped in the output root
 directory, the default being `<CONDA_PREFIX>/conda-bld/`. This may be
 changed in the `.condarc` file or by setting the `CONDA_BLD_PATH`
-environment variable, see
-[Conda build configuration](https://conda.io/docs/user-guide/configuration/use-condarc.html#specify-conda-build-output-root-directory-root-dir)
-section of the
-[Conda User guide](https://conda.io/docs/user-guide/index.html)
-
+environment variable
 
 ### Naming new recipes ###
 
@@ -141,40 +136,3 @@ the executables sub-package keeps the common name
 is a library name and the software also provides executables, then the
 executables package is renamed {package}-bin,
 (e.g. libml2-pkg,libxml2-bin,libxml2,libxml2-dev).
-
-
-### Notes on glibc ###
-
-The `defaults` Conda channel uses glibc 2.17 from CentOS 7.x. Our packages 
-are built in a Docker CentOS 7.x container.
-
-### Special compilers ###
-
-iRODS requires Clang to build. The Clang package available from 
-`conda-forge` is unable to locate the Conda GCC 9.3 installation. We have 
-made forks of the [LLVM](https://github.com/wtsi-npg/llvmdev-feedstock) and 
-[Clang](https://github.com/wtsi-npg/clangdev-feedstock) Conda recipes to 
-work around this.
-
-The packages may be built within the CentOS container using the following 
-commands:
-
-    docker run --mount \
-    source=/home/ubuntu/llvmdev-feedstock,\
-    target=/home/conda/recipes,type=bind \
-    --mount \
-    source=/home/ubuntu/conda-artefacts,\
-    target=/opt/conda/conda-bld,type=bind \
-    -e CONDA_USER_ID=1001 -e CONDA_GROUP_ID=1001 -i --rm \
-    ghcr.io/wtsi-npg/centos-7-conda-build:latest \ 
-    /bin/sh -c 'exportCONDA_BLD_PATH="/opt/conda/conda-bld" ; conda config --set auto_update_conda False ; cd /home/conda/recipes && conda build recipe'
-
-    docker run --mount \
-    source=/home/ubuntu/clangdev-feedstock,\
-    target=/home/conda/recipes,type=bind \
-    --mount \
-    source=/home/ubuntu/conda-artefacts,\
-    target=/opt/conda/conda-bld,type=bind \
-    -e CONDA_USER_ID=1001 -e CONDA_GROUP_ID=1001 -i --rm \
-    ghcr.io/wtsi-npg/centos-7-conda-build:latest \
-    /bin/sh -c 'export CONDA_BLD_PATH="/opt/conda/conda-bld" ; conda config --set auto_update_conda False ; cd /home/conda/recipes && conda build recipe'

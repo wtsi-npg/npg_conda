@@ -13,15 +13,17 @@ jobs:
     env:
       WSI_CONDA_CHANNEL: "https://dnap.cog.sanger.ac.uk/npg/conda/devel/generic"
       CONDA_IMAGE: "ghcr.io/wtsi-npg/centos-7-conda-build:latest"
+      CONDA_HOME: $HOME/conda
       COMPARE_BRANCH: "origin/devel"
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: "Initialize Miniconda"
+      - name: "Install Miniforge"
         run: |
-          echo 'source $CONDA/etc/profile.d/conda.sh' >> "$HOME/.bash_profile"
-          echo 'conda activate' >> "$HOME/.bash_profile"
+          CONDA_HOME=${{ env.CONDA_HOME }} ./scripts/install_miniforge.sh
+          echo 'source "${{ env.CONDA_HOME }}/etc/profile.d/conda.sh"' >> "$HOME/.bash_profile"
+
 
       - name: "Install dependencies"
         run: |

@@ -7,8 +7,8 @@ variables:
   #
   # BUILD
   #
-  MINICONDA: https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-x86_64.sh
-  CONDA_DIR: /tmp/miniconda
+  MINIFORGE: https://github.com/conda-forge/miniforge/releases/download/24.9.2-0/Miniforge3-Linux-x86_64.sh
+  CONDA_DIR: /tmp/miniforge
   DEVEL_WSI_CONDA_CHANNEL: https://dnap.cog.sanger.ac.uk/npg/conda/devel/generic
   PROD_WSI_CONDA_CHANNEL: https://dnap.cog.sanger.ac.uk/npg/conda/prod/generic
   CONDA_IMAGE: ghcr.io/wtsi-npg/centos-7-conda-build:latest

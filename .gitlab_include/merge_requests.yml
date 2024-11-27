@@ -10,7 +10,7 @@ build_merge:
   stage: build
   script:
     - echo "Building merge request packages"
-    - . /tmp/miniconda/etc/profile.d/conda.sh
+    - . /tmp/miniforge/etc/profile.d/conda.sh
     - conda activate base
     - scripts/gitlab_build.sh "$PRE_DEVEL_COMPARE_BRANCH" "$PRE_DEVEL_CHANNEL_DIR" "$PRE_DEVEL_BUILD_DIR" "$DEVEL_WSI_CONDA_CHANNEL"
   only:
@@ -20,7 +20,7 @@ deploy_merge:
   stage: deploy
   script:
     - echo "Deploying merge request packages"
-    - . /tmp/miniconda/etc/profile.d/conda.sh
+    - . /tmp/miniforge/etc/profile.d/conda.sh
     - conda activate base
     - scripts/gitlab_deploy.sh "$PRE_DEVEL_BUILD_DIR" "$PRE_DEVEL_CHANNEL_DIR" "$PRE_DEVEL_CHANNEL_REM"
   only:
@@ -30,10 +30,9 @@ test_merge:
   stage: test
   script:
     - echo "Testing merge request packages"
-    - . /tmp/miniconda/etc/profile.d/conda.sh
+    - . /tmp/miniforge/etc/profile.d/conda.sh
     - conda activate base
     - export PREFIX=$TEST_ENV_PREFIX
     - python bin/gitlab_test -b "$PRE_DEVEL_BUILD_DIR" -c "origin/$PRE_DEVEL_COMPARE_BRANCH" -p "$PROD_WSI_CONDA_CHANNEL" -d "$DEVEL_WSI_CONDA_CHANNEL"
   only:
     - merge_requests
-
